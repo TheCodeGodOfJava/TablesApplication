@@ -1,0 +1,11 @@
+.toolbar {
+  height: 35px;
+  background-color: transparent;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+
+  .spacer {
+    flex: 1;
+  }
+}
