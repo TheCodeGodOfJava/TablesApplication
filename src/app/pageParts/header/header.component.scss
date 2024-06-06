@@ -1,0 +1,49 @@
+.header {
+  overflow: hidden;
+  min-height: 0;
+
+  mat-toolbar-row {
+    background-color: transparent;
+    height: 52px;
+
+    .nav-button-wrapper {
+      margin-left: 20px;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      button[mat-button] {
+        color: #777;
+        padding: 10px 15px;
+        line-height: 20px;
+        font-size: 16px;
+        font-weight: 500;
+        height: 32px;
+        margin: 10px auto 10px 10px;
+      }
+    }
+  }
+
+  .app-name-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .app-name {
+      color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.active {
+  color: #555;
+  background-color: #e7e7e7;
+}
+

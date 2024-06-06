@@ -1,0 +1,41 @@
+<div>
+  <mat-toolbar class="header">
+    <mat-toolbar-row style="background-color: transparent; height: 52px">
+      <span>
+        <img
+          alt="header-logo"
+          src="assets/logoIpsum.png"
+          style="max-height: 42px"
+        />
+      </span>
+
+      <div class="nav-button-wrapper">
+        <div>
+          <button
+            mat-button
+            [routerLink]="APP_ROUTES.landing"
+            routerLinkActive="active"
+          >
+            Landing
+          </button>
+          <button
+            mat-button
+            [routerLink]="APP_ROUTES.route"
+            routerLinkActive="active"
+          >
+            Route
+          </button>
+        </div>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-toolbar-row
+      style="height: 35px; justify-content: center"
+      [style.backgroundColor]="'blue'"
+    >
+      <div class="app-name-wrapper">
+        <span class="app-name">DEMO PROJECT</span>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
