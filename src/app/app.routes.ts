@@ -9,6 +9,11 @@ export const routes: Routes = [
     component: LandingComponent,
   },
   {
+    path: APPLICATION_ROUTES.base,
+    redirectTo: APPLICATION_ROUTES.landing,
+    pathMatch: 'full',
+  },
+  {
     path: APPLICATION_ROUTES.route,
     component: RouteComponent,
   },
