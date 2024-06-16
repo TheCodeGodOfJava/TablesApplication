@@ -1,0 +1,26 @@
+<div class="mat-elevation-z6 container">
+  <div>
+    <table
+      mat-table
+      [dataSource]="dataSource.modelSubject"
+      matSort
+      matSortDisableClear
+    >
+      @for (column of columns; track column.alias; let i = $index) {
+      <ng-container [matColumnDef]="column.alias || ''">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ column.alias }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ column.cell(row) }}
+        </td>
+      </ng-container>
+      }
+      <tr
+        mat-header-row
+        *matHeaderRowDef="getDisplayedColumns(); sticky: true"
+      ></tr>
+      <tr mat-row *matRowDef="let row; columns: getDisplayedColumns()"></tr>
+    </table>
+  </div>
+</div>
