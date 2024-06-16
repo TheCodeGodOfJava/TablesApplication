@@ -62,12 +62,13 @@ export abstract class AbstractDataTableComponent<T>
     controllerPath: string,
     sort: Sort | null = null
   ): Observable<DtOutput<T>> {
+    const aliases = this.getDisplayedColumns();
     return this.dataSource.loadTableData(controllerPath, {
-      sortAlias: sort ? sort?.active : this.getDisplayedColumns()[0],
+      sortAlias: sort ? sort?.active : aliases[0],
       sortDir: sort ? sort?.direction : 'asc',
       pageStart: 0,
       pageOffset: -1,
-      aliases: [],
+      aliases: aliases,
       filters: null,
     });
   }
