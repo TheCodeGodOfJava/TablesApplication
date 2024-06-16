@@ -2,5 +2,14 @@
 export const APPLICATION_ROUTES = {
   base: '',
   landing: 'landing',
-  route: 'route',
+  studentsTable: 'studentsTable',
+};
+
+export const CONTROLLER_PATHS = {
+  students: 'students',
+};
+
+
+export const ALIAS_GROUPS = {
+  studentTable: 'studentTable',
 };

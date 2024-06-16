@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LandingComponent } from './components/landing/landing.component';
-import { RouteComponent } from './components/route/route.component';
 import { APPLICATION_ROUTES } from './constants';
+import { StudentTableComponent } from './components/data-tables/components/students-data-table/students-data-table.component';
 
 export const routes: Routes = [
   {
@@ -14,7 +14,7 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: APPLICATION_ROUTES.route,
-    component: RouteComponent,
+    path: APPLICATION_ROUTES.studentsTable,
+    component: StudentTableComponent,
   },
 ];
