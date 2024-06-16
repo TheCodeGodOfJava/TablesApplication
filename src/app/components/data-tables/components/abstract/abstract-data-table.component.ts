@@ -32,7 +32,7 @@ export abstract class AbstractDataTableComponent<T>
 
   protected dataSource!: GenericDataSource<T>;
 
-  protected reloadTableSubject = new Subject<boolean>();
+  reloadTableSubject = new Subject<boolean>();
 
   constructor(protected ds: GenericDataSource<T>) {
     this.dataSource = ds;
@@ -54,11 +54,11 @@ export abstract class AbstractDataTableComponent<T>
       .subscribe();
   }
 
-  protected getDisplayedColumns(): string[] {
+  getDisplayedColumns(): string[] {
     return this.columns.map((c) => c.alias);
   }
 
-  protected loadTableData(
+  loadTableData(
     controllerPath: string,
     sort: Sort | null = null
   ): Observable<DtOutput<T>> {
