@@ -44,8 +44,10 @@ export abstract class AbstractDataTableComponent<T>
   }
 
   ngAfterViewInit() {
-    this.loadTable();
-    this.reloadTableSubject.next(true);
+    setTimeout(() => {
+      this.loadTable();
+      this.reloadTableSubject.next(true);
+    });
   }
 
   loadTable() {

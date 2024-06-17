@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
@@ -43,15 +43,16 @@ describe('StudentTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize sort and load table data after view init', () => {
+  it('should initialize sort and load table data after view init', fakeAsync(() => {
     spyOn(component, 'loadTable').and.callThrough();
     spyOn(component.reloadTableSubject, 'next').and.callThrough();
 
     component.ngAfterViewInit();
+    tick(); // Simulate passage of time for the async operations
 
     expect(component.loadTable).toHaveBeenCalled();
     expect(component.reloadTableSubject.next).toHaveBeenCalledWith(true);
-  });
+  }));
 
   it('should get displayed columns', () => {
     expect(component.getDisplayedColumns()).toEqual(
@@ -59,11 +60,12 @@ describe('StudentTableComponent', () => {
     );
   });
 
-  it('should load table data with correct parameters', () => {
+  it('should load table data with correct parameters', fakeAsync(() => {
     spyOn(mockTableService, 'loadTableData').and.callThrough();
 
     const sort: Sort = { active: 'id', direction: 'asc' };
-    component.loadTableData(CONTROLLER_PATHS.students, sort).subscribe();
+    component.loadTableData(CONTROLLER_PATHS.students, sort, 0, -1).subscribe();
+    tick(); // Simulate passage of time for the async operations
 
     expect(mockTableService.loadTableData).toHaveBeenCalledWith(
       CONTROLLER_PATHS.students,
@@ -76,7 +78,7 @@ describe('StudentTableComponent', () => {
         filters: null,
       }
     );
-  });
+  }));
 
   it('should complete reloadTableSubject on destroy', () => {
     spyOn(component.reloadTableSubject, 'complete').and.callThrough();
