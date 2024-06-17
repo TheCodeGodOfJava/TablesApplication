@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-import { DtColumn } from '../interfaces/dtColumn';
-import { DtInput } from '../interfaces/dtInput';
-import { DtOutput } from '../interfaces/dtOutput';
-import { DtParam } from '../interfaces/dtParam';
+import { environment } from '../../../environments/environment';
+import { DtColumn } from '../../components/data-tables/interfaces/dtColumn';
+import { DtInput } from '../../components/data-tables/interfaces/dtInput';
+import { DtOutput } from '../../components/data-tables/interfaces/dtOutput';
+import { DtParam } from '../../components/data-tables/interfaces/dtParam';
 
 @Injectable({
   providedIn: 'root',

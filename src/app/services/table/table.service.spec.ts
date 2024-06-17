@@ -1,9 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TableService } from './table.service';
-import { environment } from '../../../../environments/environment';
-import { DtOutput } from '../interfaces/dtOutput';
-import { DtParam } from '../interfaces/dtParam';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+import { TableService } from '../../components/data-tables/service/table.service';
+import { environment } from '../../../environments/environment';
+import { DtOutput } from '../../components/data-tables/interfaces/dtOutput';
+import { DtParam } from '../../components/data-tables/interfaces/dtParam';
 
 describe('TableService', () => {
   let service: TableService<any>;
@@ -67,7 +70,8 @@ describe('TableService', () => {
       };
 
       const result = service['getSearchString'](serverParams);
-      const expected = '?start=0&length=10&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age';
+      const expected =
+        '?start=0&length=10&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age';
       expect(decodeURIComponent(result)).toBe(expected);
     });
   });
@@ -80,7 +84,8 @@ describe('TableService', () => {
       ];
 
       const result = service['mapColumnsToQueryString'](columns);
-      const expected = '&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age';
+      const expected =
+        '&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age';
       expect(decodeURIComponent(result)).toBe(expected);
     });
   });
