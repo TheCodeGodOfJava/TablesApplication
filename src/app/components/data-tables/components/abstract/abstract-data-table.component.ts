@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
@@ -10,6 +16,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
@@ -23,7 +30,7 @@ import { GenericDataSource } from './genericDataSource';
   imports: [DataTablesModule, MatTooltip],
 })
 export abstract class AbstractDataTableComponent<T>
-  implements AfterViewInit, OnDestroy
+  implements OnInit, AfterViewInit, OnDestroy
 {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
@@ -39,8 +46,16 @@ export abstract class AbstractDataTableComponent<T>
 
   reloadTableSubject = new Subject<boolean>();
 
-  constructor(protected ds: GenericDataSource<T>) {
+  protected formGroup!: FormGroup;
+
+  constructor(protected ds: GenericDataSource<T>, protected fb: FormBuilder) {
     this.dataSource = ds;
+    this.formGroup = this.fb.group({});
+  }
+  ngOnInit(): void {
+    this.columns.forEach((c) =>
+      this.formGroup.addControl(c.alias, c.formControl)
+    );
   }
 
   ngAfterViewInit() {
@@ -66,11 +81,16 @@ export abstract class AbstractDataTableComponent<T>
             ? paginator.pageSize
             : this.pageSizeOptions[0];
           const pageStart = pageOffset * (paginator ? paginator.pageIndex : 0);
+          const filters = new Map<string, string>();
+          Object.entries(this.formGroup.value).forEach(([key, value]) => {
+            filters.set(key, String(value || ''));
+          });
           return this.loadTableData(
             this.controllerPath,
             sort,
             pageStart,
-            pageOffset
+            pageOffset,
+            filters
           );
         })
       )
@@ -85,7 +105,8 @@ export abstract class AbstractDataTableComponent<T>
     controllerPath: string,
     sort: Sort | null = null,
     pageStart: number,
-    pageOffset: number
+    pageOffset: number,
+    filters: Map<string, string>
   ): Observable<DtOutput<T>> {
     const aliases = this.getDisplayedColumns();
     return this.dataSource.loadTableData(controllerPath, {
@@ -94,12 +115,24 @@ export abstract class AbstractDataTableComponent<T>
       pageStart: pageStart,
       pageOffset: pageOffset,
       aliases: aliases,
-      filters: null,
+      filters: filters,
     });
   }
 
-  pageEvent(event: PageEvent) {
+  pageEvent(event: PageEvent): void {
     this.pageSize = event.pageSize;
+  }
+
+  reloadTable(): void {
+    this.reloadTableSubject.next(true);
+  }
+
+  clearAllFilters(): void {
+    this.formGroup.reset();
+  }
+
+  clearCurrentFilter(alias: string): void {
+    this.formGroup.get(alias)?.reset();
   }
 
   ngOnDestroy(): void {

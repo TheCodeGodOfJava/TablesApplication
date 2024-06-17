@@ -1,0 +1,34 @@
+.table-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 4%;
+}
+
+.control-buttons {
+  margin-left: 2%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .table {
+        position: relative;
+        flex: 1;
+        overflow: auto; 
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto; /* Push to bottom of container */
+        padding: 10px; /* Optional: Add padding as needed */
+        background-color: #f0f0f0; /* Optional: Add background color */
+      }
+}
+
+
+

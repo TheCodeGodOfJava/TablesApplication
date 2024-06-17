@@ -1,12 +1,18 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
+import { FilterService } from '../../../../services/filter/filter.service';
+import { TableService } from '../../../../services/table/table.service';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
-import { TableService } from '../../service/table.service';
 import { customerWorkOrderColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
 
@@ -16,13 +22,34 @@ class MockTableService {
   }
 }
 
+export class MockFilterService {
+  constructor() {}
+
+  public getDataForFilter(
+    controllerPath: string,
+    field: string,
+    term: string
+  ): Observable<string[]> {
+    // Mock response data
+    const mockData: { [key: string]: string[] } = {
+      exampleField1: ['example1', 'example2', 'example3'],
+      exampleField2: ['test1', 'test2', 'test3'],
+    };
+
+    // Return mock data based on the field
+    return of(mockData[field] || []);
+  }
+}
+
 describe('StudentTableComponent', () => {
   let component: StudentTableComponent;
   let fixture: ComponentFixture<StudentTableComponent>;
   let mockTableService: MockTableService;
+  let mockFilterService: MockFilterService;
 
   beforeEach(async () => {
     mockTableService = new MockTableService();
+    mockFilterService = new MockFilterService();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -31,7 +58,10 @@ describe('StudentTableComponent', () => {
         MatSortModule,
         StudentTableComponent, // Import the standalone component here
       ],
-      providers: [{ provide: TableService, useValue: mockTableService }],
+      providers: [
+        { provide: TableService, useValue: mockTableService },
+        { provide: FilterService, useValue: mockFilterService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentTableComponent);
@@ -64,7 +94,9 @@ describe('StudentTableComponent', () => {
     spyOn(mockTableService, 'loadTableData').and.callThrough();
 
     const sort: Sort = { active: 'id', direction: 'asc' };
-    component.loadTableData(CONTROLLER_PATHS.students, sort, 0, -1).subscribe();
+    component
+      .loadTableData(CONTROLLER_PATHS.students, sort, 0, -1, new Map())
+      .subscribe();
     tick(); // Simulate passage of time for the async operations
 
     expect(mockTableService.loadTableData).toHaveBeenCalledWith(
@@ -75,7 +107,7 @@ describe('StudentTableComponent', () => {
         pageStart: 0,
         pageOffset: -1,
         aliases: customerWorkOrderColumns.map((c) => c.alias),
-        filters: null,
+        filters: new Map(),
       }
     );
   }));

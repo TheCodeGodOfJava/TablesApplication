@@ -3,10 +3,10 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { TableService } from '../../components/data-tables/service/table.service';
 import { environment } from '../../../environments/environment';
 import { DtOutput } from '../../components/data-tables/interfaces/dtOutput';
 import { DtParam } from '../../components/data-tables/interfaces/dtParam';
+import { TableService } from './table.service';
 
 describe('TableService', () => {
   let service: TableService<any>;

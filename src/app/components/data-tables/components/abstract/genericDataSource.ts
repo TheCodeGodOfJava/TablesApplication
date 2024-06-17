@@ -2,7 +2,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable, finalize, tap } from 'rxjs';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DtParam } from '../../interfaces/dtParam';
-import { TableService } from '../../service/table.service';
+import { TableService } from '../../../../services/table/table.service';
 import { LoadTableDataInterface } from './loadTableDataInterface';
 
 export class GenericDataSource<T>
