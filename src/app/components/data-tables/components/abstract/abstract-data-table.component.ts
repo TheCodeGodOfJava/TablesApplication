@@ -10,6 +10,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
@@ -25,6 +26,10 @@ export abstract class AbstractDataTableComponent<T>
   implements AfterViewInit, OnDestroy
 {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+
+  protected pageSize: number = 5;
+  protected pageSizeOptions: number[] = [5, 10, 15];
 
   protected aliasGroup = '';
   protected columns!: AppColumn<T>[];
@@ -44,11 +49,27 @@ export abstract class AbstractDataTableComponent<T>
   }
 
   loadTable() {
-    return merge(this.sort.sortChange, this.reloadTableSubject)
+    return merge(
+      this.sort.sortChange,
+      this.paginator.page,
+      this.reloadTableSubject
+    )
       .pipe(
-        withLatestFrom(this.sort.sortChange.pipe(startWith(null))),
-        switchMap(([, sort]) => {
-          return this.loadTableData(this.controllerPath, sort);
+        withLatestFrom(
+          this.sort.sortChange.pipe(startWith(null)),
+          this.paginator.page.pipe(startWith(null))
+        ),
+        switchMap(([, sort, paginator]) => {
+          const pageOffset = paginator
+            ? paginator.pageSize
+            : this.pageSizeOptions[0];
+          const pageStart = pageOffset * (paginator ? paginator.pageIndex : 0);
+          return this.loadTableData(
+            this.controllerPath,
+            sort,
+            pageStart,
+            pageOffset
+          );
         })
       )
       .subscribe();
@@ -60,17 +81,23 @@ export abstract class AbstractDataTableComponent<T>
 
   loadTableData(
     controllerPath: string,
-    sort: Sort | null = null
+    sort: Sort | null = null,
+    pageStart: number,
+    pageOffset: number
   ): Observable<DtOutput<T>> {
     const aliases = this.getDisplayedColumns();
     return this.dataSource.loadTableData(controllerPath, {
       sortAlias: sort ? sort?.active : aliases[0],
       sortDir: sort ? sort?.direction : 'asc',
-      pageStart: 0,
-      pageOffset: -1,
+      pageStart: pageStart,
+      pageOffset: pageOffset,
       aliases: aliases,
       filters: null,
     });
+  }
+
+  pageEvent(event: PageEvent) {
+    this.pageSize = event.pageSize;
   }
 
   ngOnDestroy(): void {
