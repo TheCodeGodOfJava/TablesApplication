@@ -1,0 +1,18 @@
+<ng-container [formGroup]="formGroup">
+  <mat-form-field>
+    <mat-label>{{ placeholder }}</mat-label>
+    <mat-select [formControlName]="alias" placeholder="search">
+      <mat-option>
+        <ngx-mat-select-search
+          placeholderLabel="Search"
+          noEntriesFoundLabel="No records!"
+          [formControl]="searchControl"
+        >
+        </ngx-mat-select-search>
+      </mat-option>
+      <mat-option *ngFor="let entry of options | async" [value]="entry">
+        {{ entry }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-container>
