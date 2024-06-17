@@ -34,7 +34,7 @@ export class BaseSelectComponent implements AfterViewInit {
 
   subscriptions$: Subject<any> = new Subject<any>();
 
-  protected searchControl: FormControl = new FormControl<String | null>(null);
+  searchControl: FormControl = new FormControl<String | null>(null);
 
   protected options: Observable<string[]> = of([]);
 
