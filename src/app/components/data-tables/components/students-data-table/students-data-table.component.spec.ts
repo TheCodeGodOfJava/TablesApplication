@@ -6,6 +6,7 @@ import {
 } from '@angular/core/testing';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
@@ -52,17 +53,27 @@ class MockStateService<T> {
   }
 }
 
+export class MockToastrService {
+  success(message?: string, title?: string): void {}
+  error(message?: string, title?: string): void {}
+  warning(message?: string, title?: string): void {}
+  info(message?: string, title?: string): void {}
+  clear(): void {}
+}
+
 describe('StudentTableComponent', () => {
   let component: StudentTableComponent;
   let fixture: ComponentFixture<StudentTableComponent>;
   let mockTableService: MockTableService;
   let mockFilterService: MockFilterService;
   let mockStateService: MockStateService<Student>;
+  let mockToastrService: MockToastrService;
 
   beforeEach(async () => {
     mockTableService = new MockTableService();
     mockFilterService = new MockFilterService();
     mockStateService = new MockStateService();
+    mockToastrService = new MockToastrService();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -75,6 +86,7 @@ describe('StudentTableComponent', () => {
         { provide: TableService, useValue: mockTableService },
         { provide: FilterService, useValue: mockFilterService },
         { provide: StateService, useValue: mockStateService },
+        { provide: ToastrService, useValue: mockToastrService },
       ],
     }).compileComponents();
 

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import {
-    ComponentFixture,
-    TestBed,
-    fakeAsync,
-    tick,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
 } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -51,6 +51,7 @@ describe('BaseSelectComponent', () => {
   });
 
   it('should create the component', () => {
+    component.isMulti = false;
     component.controllerPath = 'testPath';
     component.alias = 'testAlias';
     component.placeholder = 'testPlaceholder';
@@ -63,7 +64,7 @@ describe('BaseSelectComponent', () => {
 
   it('should initialize and fetch data on search control value change', fakeAsync(() => {
     spyOn(mockFilterService, 'getDataForFilter').and.callThrough();
-
+    component.isMulti = false;
     component.controllerPath = 'testPath';
     component.alias = 'testAlias';
     component.placeholder = 'testPlaceholder';
