@@ -1,4 +1,5 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
 import { ACTIONS, AppAction } from '../../interfaces/appAction';
@@ -10,7 +11,8 @@ export class ActionsColumnOperations<T extends Id> {
     private controllerPath: string,
     private formGroup: FormGroup,
     private dataSource: GenericDataSource<T>,
-    private stateService: StateService<T>
+    private stateService: StateService<T>,
+    private toastrService: ToastrService
   ) {}
 
   allActions: AppAction<T>[] = [
@@ -28,14 +30,17 @@ export class ActionsColumnOperations<T extends Id> {
         model = rowFormGroup.value;
         this.stateService.save(this.controllerPath, model).subscribe({
           next: (returnedModel: T) => {
-            console.log('Succesfully updated!');
             const data = this.dataSource.modelSubject.getValue();
             data[index] = returnedModel;
             this.dataSource.modelSubject.next(data);
             model.visible = false;
+            this.toastrService.success('Row data successfully updated!');
           },
           error: (error) => {
             console.error('error:', error);
+            this.toastrService.error(
+              'Error occured! See console log for details!'
+            );
           },
         });
       },
@@ -53,14 +58,17 @@ export class ActionsColumnOperations<T extends Id> {
       getAction: (model: T, index: number) => {
         this.stateService.remove(this.controllerPath, [model.id]).subscribe({
           next: () => {
-            console.log('Succesfully deleted!');
             const data = this.dataSource.modelSubject.getValue();
             data.splice(index, 1);
             this.removeRowFormGroup(index);
             this.dataSource.modelSubject.next(data);
+            this.toastrService.success('Row data successfully deleted!');
           },
           error: (error) => {
             console.error('error:', error);
+            this.toastrService.error(
+              'Error occured! See console log for details!'
+            );
           },
         });
       },

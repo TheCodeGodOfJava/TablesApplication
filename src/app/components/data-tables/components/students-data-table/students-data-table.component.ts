@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractDataTableComponent } from '../abstract/abstract-data-table.component';
 
 import { FormBuilder } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { StateService } from '../../../../services/state/state.service';
@@ -32,8 +33,14 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
   constructor(
     private tableService: TableService<Student>,
     protected override stateService: StateService<Student>,
+    protected override toastrService: ToastrService,
     protected override fb: FormBuilder
   ) {
-    super(new GenericDataSource<Student>(tableService), stateService, fb);
+    super(
+      new GenericDataSource<Student>(tableService),
+      stateService,
+      toastrService,
+      fb
+    );
   }
 }

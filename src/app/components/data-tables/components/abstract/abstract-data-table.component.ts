@@ -18,6 +18,7 @@ import {
 
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
 import { ACTIONS } from '../../interfaces/appAction';
@@ -58,6 +59,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
+    protected toastrService: ToastrService,
     protected fb: FormBuilder
   ) {
     this.dataSource = ds;
@@ -72,7 +74,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.controllerPath,
       this.formGroup,
       this.dataSource,
-      this.stateService
+      this.stateService,
+      this.toastrService
     );
     this.actionsColumnOps.addActionColumn(this.columns, this.allowedActions);
   }
@@ -163,6 +166,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   clearAllFilters(): void {
     this.formGroup.reset();
+    this.toastrService.success('All filters cleared!');
   }
 
   clearCurrentFilter(alias: string): void {
@@ -177,9 +181,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
       const control = c.getFormControl();
       rowGroup.setControl(c.alias, control);
     });
-    data.push(rowGroup.value as T);
+    const model = rowGroup.value as T;
+    model.visible = true;
+    data.push(model);
     rowsFormGroupArray.push(rowGroup);
     this.dataSource.modelSubject.next(data);
+    this.toastrService.success(
+      'New entity template created! Set data, please.'
+    );
   }
 
   ngOnDestroy(): void {
