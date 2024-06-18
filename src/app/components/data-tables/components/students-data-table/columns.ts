@@ -8,6 +8,7 @@ export const customerWorkOrderColumns: AppColumn<Student>[] = [
     placeholder: 'ID',
     cell: (element: Student) => `${element.id}`,
     getFormControl: () => new FormControl<number | null>(null),
+    notEditable: true
   },
   {
     alias: 'firstName',

@@ -5,4 +5,6 @@ export interface AppColumn<T> {
   alias: string;
   placeholder: string;
   getFormControl: () => FormControl;
+  isActionColumn?: boolean;
+  notEditable?: boolean;
 }
