@@ -16,8 +16,11 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Id } from '../../../../models/id';
+import { StateService } from '../../../../services/state/state.service';
+import { ACTIONS, AppAction } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
@@ -29,7 +32,7 @@ import { GenericDataSource } from './genericDataSource';
   styleUrl: './abstract-data-table.component.scss',
   imports: [DataTablesModule, MatTooltip],
 })
-export abstract class AbstractDataTableComponent<T>
+export abstract class AbstractDataTableComponent<T extends Id>
   implements OnInit, AfterViewInit, OnDestroy
 {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
@@ -47,7 +50,55 @@ export abstract class AbstractDataTableComponent<T>
 
   protected formGroup!: FormGroup;
 
-  constructor(protected ds: GenericDataSource<T>, protected fb: FormBuilder) {
+  protected allowedActions: ACTIONS[] = [];
+
+  protected allActions: AppAction<T>[] = [
+    {
+      type: ACTIONS.EDIT,
+      icon: 'create',
+      getAction: (model: T, index: number) => (model.visible = true),
+      getShowCondition: (model: T) => !model.visible,
+    },
+    {
+      type: ACTIONS.SAVE,
+      icon: 'check',
+      getAction: (model: T, index: number) => {
+        const rowFormGroup = this.getRowFormGroup(index);
+        model = rowFormGroup.value;
+        this.stateService.save(this.controllerPath, model).subscribe({
+          next: () => {
+            console.log('Succesfully updated!');
+            this.reloadTable();
+          },
+          error: (error) => {
+            console.error('error:', error);
+          },
+        });
+      },
+      getShowCondition: (model: T) => !!model.visible,
+    },
+    {
+      type: ACTIONS.CANCEL,
+      icon: 'cancel',
+      getAction: (model: T, index: number) => (model.visible = false),
+      getShowCondition: (model: T) => !!model.visible,
+    },
+    {
+      type: ACTIONS.REMOVE,
+      icon: 'remove',
+      getAction: (model: T, index: number) => {
+        model.visible = true;
+        this.stateService.remove(this.controllerPath, [model.id]);
+      },
+      getShowCondition: (model: T) => !model.visible,
+    },
+  ];
+
+  constructor(
+    protected ds: GenericDataSource<T>,
+    protected stateService: StateService<T>,
+    protected fb: FormBuilder
+  ) {
     this.dataSource = ds;
     this.formGroup = this.fb.group({});
   }
@@ -55,6 +106,14 @@ export abstract class AbstractDataTableComponent<T>
     this.columns.forEach((c) =>
       this.formGroup.addControl(c.alias, c.getFormControl())
     );
+    const actionsColumn: AppColumn<T> = {
+      alias: 'actions',
+      placeholder: 'Actions',
+      cell: (element: T) => `${element.visible}`,
+      getFormControl: () => new FormControl<null>(null),
+      isActionColumn: true,
+    };
+    this.allowedActions.length && this.columns.push(actionsColumn);
   }
 
   ngAfterViewInit() {
@@ -98,7 +157,7 @@ export abstract class AbstractDataTableComponent<T>
           const rowGroup = this.fb.group({});
           this.columns.forEach((c) => {
             const control = c.getFormControl();
-            control.setValue(c.cell(row));
+            control.setValue((c.cell && c.cell(row)) || null);
             rowGroup.setControl(c.alias, control);
           });
           return rowGroup;
@@ -150,7 +209,6 @@ export abstract class AbstractDataTableComponent<T>
   getRowFormGroup(i: number): FormGroup {
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
     const rowGroup = rowsFormGroupArray.controls[i] as FormGroup;
-    console.log(rowGroup);
     return rowGroup;
   }
 

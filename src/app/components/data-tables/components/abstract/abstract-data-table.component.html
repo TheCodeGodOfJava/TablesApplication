@@ -10,6 +10,9 @@
       <ng-container [matColumnDef]="column.alias || ''">
         <th mat-header-cell *matHeaderCellDef style="background-color: #f0f0f0">
           <div class="table-header">
+            @if(column.isActionColumn){
+            {{ column.alias }}
+            }@else{
             <div class="sort-div" mat-sort-header></div>
             <base-select
               [alias]="column.alias"
@@ -21,11 +24,22 @@
             <button mat-icon-button (click)="clearCurrentFilter(column.alias)">
               <mat-icon>clear</mat-icon>
             </button>
+            }
           </div>
         </th>
         <td mat-cell *matCellDef="let row; let i = index">
           <div class="center-content">
-            @if(row.visible){
+            @if(column.isActionColumn){ @for (action of allActions; track
+            action) { @if(allowedActions.includes(action.type) &&
+            action.getShowCondition(row) ){
+            <button
+              mat-mini-fab
+              (click)="action.getAction(row, i)"
+              style="margin-right: 10px"
+            >
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+            } } }@else{ @if(row.visible && !column.notEditable){
             <base-input
               [alias]="column.alias"
               [placeholder]="column.placeholder"
@@ -34,7 +48,7 @@
             ></base-input>
             }@else{
             {{ column.cell(row) }}
-            }
+            } }
           </div>
         </td>
       </ng-container>
@@ -52,7 +66,6 @@
       <button
         mat-mini-fab
         matTooltip="Start search and reload the table"
-        aria-label="Search and reload the table"
         (click)="reloadTable()"
       >
         <mat-icon>search</mat-icon>
@@ -60,7 +73,6 @@
       <button
         mat-mini-fab
         matTooltip="Reset all the search filters"
-        aria-label="Reset all the search filters"
         (click)="clearAllFilters()"
         style="margin-left: 10px"
       >
