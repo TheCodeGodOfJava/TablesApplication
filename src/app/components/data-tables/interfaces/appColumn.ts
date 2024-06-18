@@ -7,4 +7,5 @@ export interface AppColumn<T> {
   getFormControl: () => FormControl;
   isActionColumn?: boolean;
   notEditable?: boolean;
+  isMulti: boolean;
 }

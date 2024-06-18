@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -37,6 +37,9 @@ export class BaseSelectComponent
   constructor(protected filterService: FilterService) {
     super();
   }
+
+  @Input()
+  isMulti: boolean | null = null;
 
   subscriptions$: Subject<any> = new Subject<any>();
 

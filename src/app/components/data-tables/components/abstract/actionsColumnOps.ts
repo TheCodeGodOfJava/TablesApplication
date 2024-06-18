@@ -95,6 +95,7 @@ export class ActionsColumnOperations<T extends Id> {
         cell: (element: T) => `${element.visible}`,
         getFormControl: () => new FormControl<null>(null),
         isActionColumn: true,
+        isMulti: false,
       };
       columns.push(actionsColumn);
     }
