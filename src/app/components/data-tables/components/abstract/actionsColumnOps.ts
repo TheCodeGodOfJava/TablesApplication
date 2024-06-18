@@ -28,12 +28,13 @@ export class ActionsColumnOperations<T extends Id> {
       getAction: (model: T, index: number) => {
         const rowFormGroup = this.getRowFormGroup(index);
         model = rowFormGroup.value;
+        const data = this.dataSource.modelSubject.getValue();
+        data[index] = model;
+        this.dataSource.modelSubject.next(data);
+        model.visible = false;
         this.stateService.save(this.controllerPath, model).subscribe({
           next: (returnedModel: T) => {
-            const data = this.dataSource.modelSubject.getValue();
-            data[index] = returnedModel;
-            this.dataSource.modelSubject.next(data);
-            model.visible = false;
+            model.id = returnedModel.id;
             this.toastrService.success('Row data successfully updated!');
           },
           error: (error) => {
@@ -56,25 +57,32 @@ export class ActionsColumnOperations<T extends Id> {
       type: ACTIONS.REMOVE,
       icon: 'remove',
       getAction: (model: T, index: number) => {
-        this.stateService.remove(this.controllerPath, [model.id]).subscribe({
-          next: () => {
-            const data = this.dataSource.modelSubject.getValue();
-            data.splice(index, 1);
-            this.removeRowFormGroup(index);
-            this.dataSource.modelSubject.next(data);
-            this.toastrService.success('Row data successfully deleted!');
-          },
-          error: (error) => {
-            console.error('error:', error);
-            this.toastrService.error(
-              'Error occured! See console log for details!'
-            );
-          },
-        });
+        if (!model.id) {
+          this.removeRow(index);
+        } else {
+          this.removeRow(index);
+          this.stateService.remove(this.controllerPath, [model.id]).subscribe({
+            next: () =>
+              this.toastrService.success('Row data successfully deleted!'),
+            error: (error) => {
+              console.error('error:', error);
+              this.toastrService.error(
+                'Error occured! See console log for details!'
+              );
+            },
+          });
+        }
       },
       getShowCondition: (model: T) => !model.visible,
     },
   ];
+
+  private removeRow(index: number): void {
+    const data = this.dataSource.modelSubject.getValue();
+    data.splice(index, 1);
+    this.removeRowFormGroup(index);
+    this.dataSource.modelSubject.next(data);
+  }
 
   addActionColumn(columns: AppColumn<T>[], allowedActions: ACTIONS[]) {
     if (
