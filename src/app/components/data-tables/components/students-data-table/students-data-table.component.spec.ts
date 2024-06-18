@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { FilterService } from '../../../../services/filter/filter.service';
+import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
@@ -41,15 +42,27 @@ export class MockFilterService {
   }
 }
 
+class MockStateService<T> {
+  save(path: string, model: T): Observable<T> {
+    return of(model);
+  }
+
+  remove(controllerPath: string, ids: number[]): Observable<void> {
+    return of(undefined);
+  }
+}
+
 describe('StudentTableComponent', () => {
   let component: StudentTableComponent;
   let fixture: ComponentFixture<StudentTableComponent>;
   let mockTableService: MockTableService;
   let mockFilterService: MockFilterService;
+  let mockStateService: MockStateService<Student>;
 
   beforeEach(async () => {
     mockTableService = new MockTableService();
     mockFilterService = new MockFilterService();
+    mockStateService = new MockStateService();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -61,6 +74,7 @@ describe('StudentTableComponent', () => {
       providers: [
         { provide: TableService, useValue: mockTableService },
         { provide: FilterService, useValue: mockFilterService },
+        { provide: StateService, useValue: mockStateService },
       ],
     }).compileComponents();
 

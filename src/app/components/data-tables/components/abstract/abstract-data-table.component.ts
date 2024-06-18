@@ -115,18 +115,25 @@ export abstract class AbstractDataTableComponent<T extends Id>
     this.dataSource = ds;
     this.formGroup = this.fb.group({});
   }
+
   ngOnInit(): void {
     this.columns.forEach((c) =>
       this.formGroup.addControl(c.alias, c.getFormControl())
     );
-    const actionsColumn: AppColumn<T> = {
-      alias: 'actions',
-      placeholder: 'Actions',
-      cell: (element: T) => `${element.visible}`,
-      getFormControl: () => new FormControl<null>(null),
-      isActionColumn: true,
-    };
-    this.allowedActions.length && this.columns.push(actionsColumn);
+
+    if (
+      this.allowedActions.length > 0 &&
+      !this.columns.find((c) => c.alias === 'actions')
+    ) {
+      const actionsColumn: AppColumn<T> = {
+        alias: 'actions',
+        placeholder: 'Actions',
+        cell: (element: T) => `${element.visible}`,
+        getFormControl: () => new FormControl<null>(null),
+        isActionColumn: true,
+      };
+      this.columns.push(actionsColumn);
+    }
   }
 
   ngAfterViewInit() {
@@ -166,18 +173,20 @@ export abstract class AbstractDataTableComponent<T extends Id>
         })
       )
       .subscribe((output: DtOutput<T>) => {
-        const rowsFormGroupArray = output.data.map((row) => {
-          const rowGroup = this.fb.group({});
-          this.columns.forEach((c) => {
-            const control = c.getFormControl();
-            control.setValue((c.cell && c.cell(row)) || null);
-            rowGroup.setControl(c.alias, control);
+        if (output.data) {
+          const rowsFormGroupArray = output.data.map((row) => {
+            const rowGroup = this.fb.group({});
+            this.columns.forEach((c) => {
+              const control = c.getFormControl();
+              control.setValue((c.cell && c.cell(row)) || null);
+              rowGroup.setControl(c.alias, control);
+            });
+            return rowGroup;
           });
-          return rowGroup;
-        });
 
-        const formArray = this.fb.array(rowsFormGroupArray);
-        this.formGroup.setControl('rows', formArray);
+          const formArray = this.fb.array(rowsFormGroupArray);
+          this.formGroup.setControl('rows', formArray);
+        }
       });
   }
 
