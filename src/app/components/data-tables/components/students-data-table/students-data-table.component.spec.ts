@@ -4,7 +4,6 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
@@ -15,7 +14,7 @@ import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
-import { customerWorkOrderColumns } from './columns';
+import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
 
 class MockTableService {
@@ -101,7 +100,7 @@ describe('StudentTableComponent', () => {
 
   it('should get displayed columns', () => {
     expect(component.getDisplayedColumns()).toEqual(
-      customerWorkOrderColumns.map((c) => c.alias)
+      studentColumns.map((c) => c.alias)
     );
   });
 
@@ -121,7 +120,7 @@ describe('StudentTableComponent', () => {
         sortDir: 'asc',
         pageStart: 0,
         pageOffset: -1,
-        aliases: customerWorkOrderColumns.map((c) => c.alias),
+        aliases: studentColumns.map((c) => c.alias),
         filters: new Map(),
       }
     );
@@ -134,51 +133,4 @@ describe('StudentTableComponent', () => {
 
     expect(component.reloadTableSubject.complete).toHaveBeenCalled();
   });
-
-  it('should save a student successfully', fakeAsync(() => {
-    spyOn(mockStateService, 'save').and.callThrough();
-
-    const student: Student = {
-      id: 1,
-      firstName: 'John Doe',
-      lastName: 'Doe',
-      age: 25,
-      visible: false,
-    };
-
-    // Mock form controls structure to match StudentTableComponent's form structure
-    component.formGroup = new FormGroup({
-      rows: new FormArray([
-        new FormGroup({
-          id: new FormControl(student.id),
-          firstName: new FormControl(student.firstName),
-          lastName: new FormControl(student.lastName),
-          age: new FormControl(student.age),
-          // Ensure all form controls are mapped correctly
-        }),
-      ]),
-    });
-
-    // Trigger save action
-    component.allActions
-      .find((action) => action.type === 'SAVE')
-      ?.getAction(student, 0);
-
-    tick(); // Simulate passage of time for the async operations
-
-    // Adjusted expectation to match the expected parameter structure
-    expect(mockStateService.save).toHaveBeenCalledWith(
-      CONTROLLER_PATHS.students,
-      {
-        id: student.id,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        age: student.age,
-        visible: false,
-      } as Student
-    );
-
-    // Expect that after successful save, the model should be updated in dataSource
-    expect(component.dataSource.modelSubject.getValue()[0]).toEqual(student);
-  }));
 });

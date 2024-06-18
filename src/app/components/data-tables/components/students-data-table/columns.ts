@@ -2,7 +2,7 @@ import { FormControl } from '@angular/forms';
 import { Student } from '../../../../models/student';
 import { AppColumn } from '../../interfaces/appColumn';
 
-export const customerWorkOrderColumns: AppColumn<Student>[] = [
+export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'id',
     placeholder: 'ID',

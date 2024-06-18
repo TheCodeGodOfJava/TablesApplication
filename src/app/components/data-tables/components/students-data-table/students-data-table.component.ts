@@ -9,7 +9,7 @@ import { TableService } from '../../../../services/table/table.service';
 import { ACTIONS } from '../../interfaces/appAction';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { GenericDataSource } from '../abstract/genericDataSource';
-import { customerWorkOrderColumns } from './columns';
+import { studentColumns } from './columns';
 
 @Component({
   selector: 'customer-work-order-number-data-table',
@@ -19,7 +19,7 @@ import { customerWorkOrderColumns } from './columns';
   imports: [DataTablesModule],
 })
 export class StudentTableComponent extends AbstractDataTableComponent<Student> {
-  protected override columns = customerWorkOrderColumns;
+  protected override columns = studentColumns;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;
   protected override allowedActions: ACTIONS[] = [
