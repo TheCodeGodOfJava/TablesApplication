@@ -68,7 +68,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   ngOnInit(): void {
     this.columns.forEach((c) =>
-      this.formGroup.addControl(c.alias, c.getFormControl())
+      this.formGroup.addControl(c.alias, c.getHeaderControl())
     );
     this.actionsColumnOps = new ActionsColumnOperations(
       this.controllerPath,
@@ -121,7 +121,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
           const rowsFormGroupArray = output.data.map((row) => {
             const rowGroup = this.fb.group({});
             this.columns.forEach((c) => {
-              const control = c.getFormControl();
+              const control = c.getInlineControl();
               control.setValue((c.cell && c.cell(row)) || null);
               rowGroup.setControl(c.alias, control);
             });
@@ -178,7 +178,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
     const rowGroup = this.fb.group({});
     this.columns.forEach((c) => {
-      const control = c.getFormControl();
+      const control = c.getInlineControl();
       rowGroup.setControl(c.alias, control);
     });
     const model = rowGroup.value as T;

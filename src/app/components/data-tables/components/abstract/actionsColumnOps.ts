@@ -93,7 +93,8 @@ export class ActionsColumnOperations<T extends Id> {
         alias: 'actions',
         placeholder: 'Actions',
         cell: (element: T) => `${element.visible}`,
-        getFormControl: () => new FormControl<null>(null),
+        getHeaderControl: () => new FormControl<null>(null),
+        getInlineControl: () => new FormControl<null>(null),
         isActionColumn: true,
         isMulti: false,
       };
