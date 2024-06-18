@@ -27,10 +27,10 @@ export class ActionsColumnOperations<T extends Id> {
         const rowFormGroup = this.getRowFormGroup(index);
         model = rowFormGroup.value;
         this.stateService.save(this.controllerPath, model).subscribe({
-          next: () => {
+          next: (returnedModel: T) => {
             console.log('Succesfully updated!');
             const data = this.dataSource.modelSubject.getValue();
-            data[index] = model;
+            data[index] = returnedModel;
             this.dataSource.modelSubject.next(data);
             model.visible = false;
           },

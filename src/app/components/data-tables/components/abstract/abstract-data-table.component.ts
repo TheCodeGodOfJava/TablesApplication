@@ -16,7 +16,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
@@ -169,7 +169,18 @@ export abstract class AbstractDataTableComponent<T extends Id>
     this.formGroup.get(alias)?.reset();
   }
 
-  createNew() {}
+  createNew() {
+    const data = this.dataSource.modelSubject.getValue();
+    const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
+    const rowGroup = this.fb.group({});
+    this.columns.forEach((c) => {
+      const control = c.getFormControl();
+      rowGroup.setControl(c.alias, control);
+    });
+    data.push(rowGroup.value as T);
+    rowsFormGroupArray.push(rowGroup);
+    this.dataSource.modelSubject.next(data);
+  }
 
   ngOnDestroy(): void {
     this.reloadTableSubject.complete();
