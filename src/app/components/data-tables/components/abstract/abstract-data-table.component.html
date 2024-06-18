@@ -10,7 +10,7 @@
       <ng-container [matColumnDef]="column.alias || ''">
         <th mat-header-cell *matHeaderCellDef style="background-color: #f0f0f0">
           <div class="table-header">
-            <div style="width: 30px" mat-sort-header></div>
+            <div class="sort-div" mat-sort-header matTooltip="Sorting"></div>
             <base-select
               [alias]="column.alias"
               [placeholder]="column.placeholder"
