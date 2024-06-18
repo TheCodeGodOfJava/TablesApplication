@@ -16,14 +16,15 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
-import { ACTIONS, AppAction } from '../../interfaces/appAction';
+import { ACTIONS } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
+import { ActionsColumnOperations } from './actionsColumnOps';
 import { GenericDataSource } from './genericDataSource';
 
 @Component({
@@ -52,60 +53,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected allowedActions: ACTIONS[] = [];
 
-  allActions: AppAction<T>[] = [
-    {
-      type: ACTIONS.EDIT,
-      icon: 'create',
-      getAction: (model: T, index: number) => (model.visible = true),
-      getShowCondition: (model: T) => !model.visible,
-    },
-    {
-      type: ACTIONS.SAVE,
-      icon: 'check',
-      getAction: (model: T, index: number) => {
-        const rowFormGroup = this.getRowFormGroup(index);
-        model = rowFormGroup.value;
-        this.stateService.save(this.controllerPath, model).subscribe({
-          next: () => {
-            console.log('Succesfully updated!');
-            const data = this.dataSource.modelSubject.getValue();
-            data[index] = model;
-            this.dataSource.modelSubject.next(data);
-            model.visible = false;
-          },
-          error: (error) => {
-            console.error('error:', error);
-          },
-        });
-      },
-      getShowCondition: (model: T) => !!model.visible,
-    },
-    {
-      type: ACTIONS.CANCEL,
-      icon: 'cancel',
-      getAction: (model: T, index: number) => (model.visible = false),
-      getShowCondition: (model: T) => !!model.visible,
-    },
-    {
-      type: ACTIONS.REMOVE,
-      icon: 'remove',
-      getAction: (model: T, index: number) => {
-        this.stateService.remove(this.controllerPath, [model.id]).subscribe({
-          next: () => {
-            console.log('Succesfully deleted!');
-            const data = this.dataSource.modelSubject.getValue();
-            data.splice(index, 1);
-            this.removeRowFormGroup(index);
-            this.dataSource.modelSubject.next(data);
-          },
-          error: (error) => {
-            console.error('error:', error);
-          },
-        });
-      },
-      getShowCondition: (model: T) => !model.visible,
-    },
-  ];
+  actionsColumnOps!: ActionsColumnOperations<T>;
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -120,20 +68,13 @@ export abstract class AbstractDataTableComponent<T extends Id>
     this.columns.forEach((c) =>
       this.formGroup.addControl(c.alias, c.getFormControl())
     );
-
-    if (
-      this.allowedActions.length > 0 &&
-      !this.columns.find((c) => c.alias === 'actions')
-    ) {
-      const actionsColumn: AppColumn<T> = {
-        alias: 'actions',
-        placeholder: 'Actions',
-        cell: (element: T) => `${element.visible}`,
-        getFormControl: () => new FormControl<null>(null),
-        isActionColumn: true,
-      };
-      this.columns.push(actionsColumn);
-    }
+    this.actionsColumnOps = new ActionsColumnOperations(
+      this.controllerPath,
+      this.formGroup,
+      this.dataSource,
+      this.stateService
+    );
+    this.actionsColumnOps.addActionColumn(this.columns, this.allowedActions);
   }
 
   ngAfterViewInit() {
@@ -228,15 +169,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     this.formGroup.get(alias)?.reset();
   }
 
-  getRowFormGroup(i: number): FormGroup {
-    const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    return rowsFormGroupArray.controls[i] as FormGroup;
-  }
-
-  removeRowFormGroup(i: number): void {
-    const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    rowsFormGroupArray.controls.splice(i, 1);
-  }
+  createNew() {}
 
   ngOnDestroy(): void {
     this.reloadTableSubject.complete();
