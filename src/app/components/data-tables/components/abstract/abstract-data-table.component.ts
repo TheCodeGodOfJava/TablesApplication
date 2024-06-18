@@ -68,7 +68,10 @@ export abstract class AbstractDataTableComponent<T extends Id>
         this.stateService.save(this.controllerPath, model).subscribe({
           next: () => {
             console.log('Succesfully updated!');
-            this.reloadTable();
+            const data = this.dataSource.modelSubject.getValue();
+            data[index] = model;
+            this.dataSource.modelSubject.next(data);
+            model.visible = false;
           },
           error: (error) => {
             console.error('error:', error);
@@ -87,8 +90,18 @@ export abstract class AbstractDataTableComponent<T extends Id>
       type: ACTIONS.REMOVE,
       icon: 'remove',
       getAction: (model: T, index: number) => {
-        model.visible = true;
-        this.stateService.remove(this.controllerPath, [model.id]);
+        this.stateService.remove(this.controllerPath, [model.id]).subscribe({
+          next: () => {
+            console.log('Succesfully deleted!');
+            const data = this.dataSource.modelSubject.getValue();
+            data.splice(index, 1);
+            this.removeRowFormGroup(index);
+            this.dataSource.modelSubject.next(data);
+          },
+          error: (error) => {
+            console.error('error:', error);
+          },
+        });
       },
       getShowCondition: (model: T) => !model.visible,
     },
@@ -208,8 +221,12 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   getRowFormGroup(i: number): FormGroup {
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    const rowGroup = rowsFormGroupArray.controls[i] as FormGroup;
-    return rowGroup;
+    return rowsFormGroupArray.controls[i] as FormGroup;
+  }
+
+  removeRowFormGroup(i: number): void {
+    const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
+    rowsFormGroupArray.controls.splice(i, 1);
   }
 
   ngOnDestroy(): void {
