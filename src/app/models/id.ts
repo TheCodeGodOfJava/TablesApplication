@@ -1,7 +1,7 @@
-export interface Id {
-  id: number;
+interface Visibility {
+  visible?: boolean;
 }
 
-export interface ExtendedId extends Id {
-  [key: string]: any;
+export interface Id extends Visibility {
+  id: number;
 }

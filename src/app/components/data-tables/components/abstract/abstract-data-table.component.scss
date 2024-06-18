@@ -1,8 +1,12 @@
 .table-header {
+  @extend .center-content;
+  padding-top: 4%;
+}
+
+.center-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 4%;
 }
 
 .control-buttons {

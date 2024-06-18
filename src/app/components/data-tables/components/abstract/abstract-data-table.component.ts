@@ -16,7 +16,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
@@ -53,7 +53,7 @@ export abstract class AbstractDataTableComponent<T>
   }
   ngOnInit(): void {
     this.columns.forEach((c) =>
-      this.formGroup.addControl(c.alias, c.formControl)
+      this.formGroup.addControl(c.alias, c.getFormControl())
     );
   }
 
@@ -93,7 +93,20 @@ export abstract class AbstractDataTableComponent<T>
           );
         })
       )
-      .subscribe();
+      .subscribe((output: DtOutput<T>) => {
+        const rowsFormGroupArray = output.data.map((row) => {
+          const rowGroup = this.fb.group({});
+          this.columns.forEach((c) => {
+            const control = c.getFormControl();
+            control.setValue(c.cell(row));
+            rowGroup.setControl(c.alias, control);
+          });
+          return rowGroup;
+        });
+
+        const formArray = this.fb.array(rowsFormGroupArray);
+        this.formGroup.setControl('rows', formArray);
+      });
   }
 
   getDisplayedColumns(): string[] {
@@ -132,6 +145,13 @@ export abstract class AbstractDataTableComponent<T>
 
   clearCurrentFilter(alias: string): void {
     this.formGroup.get(alias)?.reset();
+  }
+
+  getRowFormGroup(i: number): FormGroup {
+    const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
+    const rowGroup = rowsFormGroupArray.controls[i] as FormGroup;
+    console.log(rowGroup);
+    return rowGroup;
   }
 
   ngOnDestroy(): void {

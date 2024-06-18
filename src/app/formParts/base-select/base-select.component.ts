@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AfterViewInit, Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -15,6 +15,7 @@ import {
   tap,
 } from 'rxjs';
 import { FilterService } from '../../services/filter/filter.service';
+import { AbstractFormComponent } from '../abstract/abstractFormComponent';
 
 @Component({
   selector: 'base-select',
@@ -29,25 +30,19 @@ import { FilterService } from '../../services/filter/filter.service';
   templateUrl: './base-select.component.html',
   styleUrl: './base-select.component.scss',
 })
-export class BaseSelectComponent implements AfterViewInit {
-  constructor(protected filterService: FilterService) {}
+export class BaseSelectComponent
+  extends AbstractFormComponent
+  implements AfterViewInit
+{
+  constructor(protected filterService: FilterService) {
+    super();
+  }
 
   subscriptions$: Subject<any> = new Subject<any>();
 
   searchControl: FormControl = new FormControl<String | null>(null);
 
   protected options: Observable<string[]> = of([]);
-
-  @Input()
-  controllerPath!: string;
-
-  @Input()
-  alias!: string;
-
-  @Input()
-  placeholder!: string;
-
-  @Input() formGroup!: FormGroup; 
 
   ngAfterViewInit(): void {
     this.initSelect();

@@ -10,7 +10,7 @@
       <ng-container [matColumnDef]="column.alias || ''">
         <th mat-header-cell *matHeaderCellDef style="background-color: #f0f0f0">
           <div class="table-header">
-            <div class="sort-div" mat-sort-header matTooltip="Sorting"></div>
+            <div class="sort-div" mat-sort-header></div>
             <base-select
               [alias]="column.alias"
               [placeholder]="column.placeholder"
@@ -18,18 +18,24 @@
               [formGroup]="formGroup"
             />
 
-            <button
-              mat-icon-button
-              matTooltip="Reset this search filter"
-              aria-label="Reset this search filter"
-              (click)="clearCurrentFilter(column.alias)"
-            >
+            <button mat-icon-button (click)="clearCurrentFilter(column.alias)">
               <mat-icon>clear</mat-icon>
             </button>
           </div>
         </th>
-        <td mat-cell *matCellDef="let row">
-          {{ column.cell(row) }}
+        <td mat-cell *matCellDef="let row; let i = index">
+          <div class="center-content">
+            @if(row.visible){
+            <base-input
+              [alias]="column.alias"
+              [placeholder]="column.placeholder"
+              [controllerPath]="controllerPath"
+              [formGroup]="getRowFormGroup(i)"
+            ></base-input>
+            }@else{
+            {{ column.cell(row) }}
+            }
+          </div>
         </td>
       </ng-container>
       }
