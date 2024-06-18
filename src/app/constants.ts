@@ -8,8 +8,3 @@ export const APPLICATION_ROUTES = {
 export const CONTROLLER_PATHS = {
   students: 'students',
 };
-
-
-export const ALIAS_GROUPS = {
-  studentTable: 'studentTable',
-};

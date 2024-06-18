@@ -38,7 +38,6 @@ export abstract class AbstractDataTableComponent<T>
   protected pageSize: number = 5;
   protected pageSizeOptions: number[] = [5, 10, 15];
 
-  protected aliasGroup = '';
   protected columns!: AppColumn<T>[];
   protected controllerPath!: string;
 
