@@ -44,15 +44,15 @@ export abstract class AbstractDataTableComponent<T extends Id>
   protected columns!: AppColumn<T>[];
   protected controllerPath!: string;
 
-  protected dataSource!: GenericDataSource<T>;
+  dataSource!: GenericDataSource<T>;
 
   reloadTableSubject = new Subject<boolean>();
 
-  protected formGroup!: FormGroup;
+  formGroup!: FormGroup;
 
   protected allowedActions: ACTIONS[] = [];
 
-  protected allActions: AppAction<T>[] = [
+  allActions: AppAction<T>[] = [
     {
       type: ACTIONS.EDIT,
       icon: 'create',
