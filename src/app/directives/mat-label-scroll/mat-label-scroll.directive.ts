@@ -1,66 +1,76 @@
-import { Directive, ElementRef, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  Renderer2,
+} from '@angular/core';
 
 @Directive({
-  selector: '[appMatLabelScroll]',
   standalone: true,
+  selector: '[appMatLabelScroll]',
 })
-export class MatLabelScrollDirective implements AfterViewInit, OnDestroy {
-  private styleElement: HTMLStyleElement;
+export class MatLabelScrollDirective implements AfterViewInit {
+  private styleElement: HTMLStyleElement = this.renderer.createElement('style');
+  private topPositionClassName: string = 'label-top-position';
   private labelElement!: HTMLElement;
-  private mutationObserver!: MutationObserver;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {
-    this.styleElement = this.renderer.createElement('style');
-    this.initAnimationStyles();
-  }
+  indent: number = 16;
+
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
 
   ngAfterViewInit() {
-    this.labelElement = this.el.nativeElement.querySelector('label');
-    if (this.labelElement) {
-      this.startMarquee();
-
-      this.mutationObserver = new MutationObserver(() => {
-        this.handleMutation();
-      });
-      this.mutationObserver.observe(this.labelElement, {
-        childList: true,
-        characterData: true,
-        subtree: true,
-      });
-    }
+    this.labelElement = this.el.nativeElement.querySelector(
+      '.mdc-floating-label--float-above'
+    );
   }
 
-  ngOnDestroy() {
-    if (this.mutationObserver) {
-      this.mutationObserver.disconnect();
-    }
+  @HostListener('mouseenter') onMouseEnter() {
+    this.startMarquee();
   }
 
-  initAnimationStyles() {
-    const styles = `
-      @keyframes marquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-      }
+  @HostListener('mouseleave', ['$event'])
+  @HostListener('keydown', ['$event'])
+  @HostListener('mousedown', ['$event'])
+  handleEvent() {
+    if (!this.labelElement) {
+      return;
+    }
+    this.renderer.removeClass(this.labelElement, this.topPositionClassName);
+    this.renderer.removeChild(this.labelElement, this.styleElement);
+  }
 
-      .marquee {
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        animation: marquee 10s linear infinite;
-      }
-    `;
-    this.styleElement.textContent = styles;
-    this.renderer.appendChild(document.head, this.styleElement);
+  @HostListener('keyup', ['$event'])
+  @HostListener('mouseup', ['$event'])
+  onKeyUp(event: KeyboardEvent) {
+    this.startMarquee();
   }
 
   startMarquee() {
-    this.renderer.addClass(this.labelElement, 'marquee');
-  }
+    const labelWidth = this.labelElement.getBoundingClientRect().width;
+    const labelWrapperWidth =
+      this.el.nativeElement.getBoundingClientRect().width;
 
-  handleMutation() {
-    this.renderer.removeClass(this.labelElement, 'marquee');
-    void this.labelElement.offsetWidth; // Trigger reflow
-    this.renderer.addClass(this.labelElement, 'marquee');
+    if (labelWrapperWidth > labelWidth) {
+      return;
+    }
+
+    const transition = labelWrapperWidth - labelWidth;
+    const standardTime = 1.1;
+    const transitionDuration = standardTime * (labelWidth / labelWrapperWidth);
+    let styles = `
+    transition: transform ${transitionDuration}s ease-in !important;
+    transition-delay: 0.1s !important;
+    transform: translate(${
+      transition - this.indent
+    }px,-106%) scale(0.75) !important;
+    `;
+    let selectElNecessaryStyles =
+      'text-overflow: clip !important; overflow: visible !important;';
+    styles += selectElNecessaryStyles;
+
+    this.styleElement.textContent = `.${this.topPositionClassName} { ${styles} }`;
+    this.renderer.appendChild(this.el.nativeElement, this.styleElement);
+    this.renderer.addClass(this.labelElement, this.topPositionClassName);
   }
 }
