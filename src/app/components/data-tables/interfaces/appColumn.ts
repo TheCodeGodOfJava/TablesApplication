@@ -1,4 +1,4 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 
 export interface AppColumn<T> {
   cell: (model: T) => any;
@@ -6,6 +6,7 @@ export interface AppColumn<T> {
   placeholder: string;
   getHeaderControl: () => FormControl;
   getInlineControl: () => FormControl;
+  inlineValidators?: ValidatorFn[];
   isActionColumn?: boolean;
   notEditable?: boolean;
   isMulti: boolean;
