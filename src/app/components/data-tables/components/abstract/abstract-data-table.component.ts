@@ -118,21 +118,24 @@ export abstract class AbstractDataTableComponent<T extends Id>
       )
       .subscribe((output: DtOutput<T>) => {
         if (output.data) {
-          const rowsFormGroupArray = output.data.map((row) => {
-            const rowGroup = this.fb.group({});
-            this.columns.forEach((c) => {
-              const control = c.getInlineControl();
-              control.setValue((c.cell && c.cell(row)) || null);
-              rowGroup.setControl(c.alias, control);
-            });
-            return rowGroup;
-          });
-
+          const rowsFormGroupArray = output.data.map(this.createNewRowGroup);
           const formArray = this.fb.array(rowsFormGroupArray);
           this.formGroup.setControl('rows', formArray);
         }
       });
   }
+
+  private createNewRowGroup = (row: T | null = null): FormGroup => {
+    const rowGroup = this.fb.group({});
+    this.columns.forEach((c) => {
+      const control = c.getInlineControl();
+      control.setValue(row ? (c.cell && c.cell(row)) || null : null);
+      c.inlineValidators && control.addValidators(c.inlineValidators);
+      rowGroup.setControl(c.alias, control);
+    });
+    rowGroup.markAllAsTouched();
+    return rowGroup;
+  };
 
   getDisplayedColumns(): string[] {
     return this.columns.map((c) => c.alias);
@@ -176,11 +179,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   createNew() {
     const data = this.dataSource.modelSubject.getValue();
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    const rowGroup = this.fb.group({});
-    this.columns.forEach((c) => {
-      const control = c.getInlineControl();
-      rowGroup.setControl(c.alias, control);
-    });
+    const rowGroup = this.createNewRowGroup();
     const model = rowGroup.value as T;
     model.visible = true;
     data.push(model);
