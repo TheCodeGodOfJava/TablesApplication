@@ -27,23 +27,27 @@ export class ActionsColumnOperations<T extends Id> {
       icon: 'check',
       getAction: (model: T, index: number) => {
         const rowFormGroup = this.getRowFormGroup(index);
-        model = rowFormGroup.value;
-        const data = this.dataSource.modelSubject.getValue();
-        data[index] = model;
-        this.dataSource.modelSubject.next(data);
-        model.visible = false;
-        this.stateService.save(this.controllerPath, model).subscribe({
-          next: (returnedModel: T) => {
-            model.id = returnedModel.id;
-            this.toastrService.success('Row data successfully updated!');
-          },
-          error: (error) => {
-            console.error('error:', error);
-            this.toastrService.error(
-              'Error occured! See console log for details!'
-            );
-          },
-        });
+        if (rowFormGroup.invalid) {
+          this.toastrService.error('Your form is invalid. Validate it first!');
+        } else {
+          model = rowFormGroup.value;
+          const data = this.dataSource.modelSubject.getValue();
+          data[index] = model;
+          this.dataSource.modelSubject.next(data);
+          model.visible = false;
+          this.stateService.save(this.controllerPath, model).subscribe({
+            next: (returnedModel: T) => {
+              model.id = returnedModel.id;
+              this.toastrService.success('Row data successfully updated!');
+            },
+            error: (error) => {
+              console.error('error:', error);
+              this.toastrService.error(
+                'Error occured! See console log for details!'
+              );
+            },
+          });
+        }
       },
       getShowCondition: (model: T) => !!model.visible,
     },

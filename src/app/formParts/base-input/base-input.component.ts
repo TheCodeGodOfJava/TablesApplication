@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatLabelScrollDirective } from '../../directives/mat-label-scroll/mat-label-scroll.directive';
 import { AbstractFormComponent } from '../abstract/abstractFormComponent';
 
 @Component({
@@ -13,6 +14,7 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
     MatInputModule,
     ReactiveFormsModule,
     CommonModule,
+    MatLabelScrollDirective,
   ],
   templateUrl: './base-input.component.html',
   styleUrl: './base-input.component.scss',
