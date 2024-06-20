@@ -21,11 +21,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
+import { Actions } from '../../../actions';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
-import { ActionsColumnOperations } from './actionsColumnOps';
 import { GenericDataSource } from './genericDataSource';
 
 @Component({
@@ -54,7 +54,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected allowedActions: ACTIONS[] = [];
 
-  actionsColumnOps!: ActionsColumnOperations<T>;
+  actions!: Actions<T>;
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -70,14 +70,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
     this.columns.forEach((c) =>
       this.formGroup.addControl(c.alias, c.getHeaderControl())
     );
-    this.actionsColumnOps = new ActionsColumnOperations(
+    this.actions = new Actions(
       this.controllerPath,
       this.formGroup,
       this.dataSource,
       this.stateService,
       this.toastrService
     );
-    this.actionsColumnOps.addActionColumn(this.columns, this.allowedActions);
+    this.actions.convertActionToColumn(this.columns, this.allowedActions);
   }
 
   ngAfterViewInit() {
@@ -185,6 +185,9 @@ export abstract class AbstractDataTableComponent<T extends Id>
     data.push(model);
     rowsFormGroupArray.push(rowGroup);
     this.dataSource.modelSubject.next(data);
+    this.actions.changeVisibilityForUnselectedRows(
+      rowsFormGroupArray.length - 1
+    );
     this.toastrService.success(
       'New entity template created! Set data, please.'
     );

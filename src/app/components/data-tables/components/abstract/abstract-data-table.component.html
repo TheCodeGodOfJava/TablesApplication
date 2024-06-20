@@ -30,9 +30,8 @@
         </th>
         <td mat-cell *matCellDef="let row; let i = index">
           <div class="center-content">
-            @if(column.isActionColumn){ @for (action of
-            actionsColumnOps.allActions; track action) {
-            @if(allowedActions.includes(action.type) &&
+            @if(column.isActionColumn){ @for (action of actions.allActions;
+            track action) { @if(allowedActions.includes(action.type) &&
             action.getShowCondition(row) ){
             <button
               mat-mini-fab
@@ -46,7 +45,7 @@
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [controllerPath]="controllerPath"
-              [formGroup]="actionsColumnOps.getRowFormGroup(i)"
+              [formGroup]="actions.getRowFormGroup(i)"
             ></base-input>
             }@else{
             {{ column.cell(row) }}
