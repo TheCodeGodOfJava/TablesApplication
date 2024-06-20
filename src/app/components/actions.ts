@@ -1,12 +1,12 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Id } from '../../../../models/id';
-import { StateService } from '../../../../services/state/state.service';
-import { ACTIONS, AppAction } from '../../interfaces/appAction';
-import { AppColumn } from '../../interfaces/appColumn';
-import { GenericDataSource } from './genericDataSource';
+import { Id } from '../models/id';
+import { StateService } from '../services/state/state.service';
+import { GenericDataSource } from './data-tables/components/abstract/genericDataSource';
+import { ACTIONS, AppAction } from './data-tables/interfaces/appAction';
+import { AppColumn } from './data-tables/interfaces/appColumn';
 
-export class ActionsColumnOperations<T extends Id> {
+export class Actions<T extends Id> {
   constructor(
     private controllerPath: string,
     private formGroup: FormGroup,
@@ -19,7 +19,10 @@ export class ActionsColumnOperations<T extends Id> {
     {
       type: ACTIONS.EDIT,
       icon: 'create',
-      getAction: (model: T, index: number) => (model.visible = true),
+      getAction: (model: T, index: number) => {
+        model.visible = true;
+        this.changeVisibilityForUnselectedRows(index);
+      },
       getShowCondition: (model: T) => !model.visible,
     },
     {
@@ -88,7 +91,7 @@ export class ActionsColumnOperations<T extends Id> {
     this.dataSource.modelSubject.next(data);
   }
 
-  addActionColumn(columns: AppColumn<T>[], allowedActions: ACTIONS[]) {
+  convertActionToColumn(columns: AppColumn<T>[], allowedActions: ACTIONS[]) {
     if (
       allowedActions.length > 0 &&
       !columns.find((c) => c.alias === 'actions')
@@ -104,6 +107,12 @@ export class ActionsColumnOperations<T extends Id> {
       };
       columns.push(actionsColumn);
     }
+  }
+
+  changeVisibilityForUnselectedRows(index: number): void {
+    const data = this.dataSource.modelSubject.getValue();
+    data.forEach((m, i) => i != index && (m.visible = false));
+    this.dataSource.modelSubject.next(data);
   }
 
   getRowFormGroup(i: number): FormGroup {
