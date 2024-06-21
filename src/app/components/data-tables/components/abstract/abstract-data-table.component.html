@@ -27,6 +27,12 @@
               [placeholder]="column.placeholder"
               [formGroup]="formGroup"
             />
+            <base-input
+              *ngIf="column.headerControl?.type === CONTROL_TYPE.INPUT"
+              [alias]="column.alias"
+              [placeholder]="column.placeholder"
+              [formGroup]="formGroup"
+            />
             <button mat-icon-button (click)="clearCurrentFilter(column.alias)">
               <mat-icon>clear</mat-icon>
             </button>
@@ -63,6 +69,12 @@
               [alias]="column.alias"
               [formGroup]="actions.getRowFormGroup(i)"
               [placeholder]="column.placeholder"
+            />
+            <base-text-field
+              *ngIf="column.inlineControl?.type === CONTROL_TYPE.TEXT"
+              [alias]="column.alias"
+              [placeholder]="column.placeholder"
+              [formGroup]="actions.getRowFormGroup(i)"
             />
             }@else{
             {{ column.cell ? column.cell(row) : row[column.alias] }}

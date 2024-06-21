@@ -3,5 +3,6 @@ export enum CONTROL_TYPE {
     INPUT,
     BOOLEAN,
     DATE_RANGE,
-    DATE_INPUT
+    DATE_INPUT,
+    TEXT
   }

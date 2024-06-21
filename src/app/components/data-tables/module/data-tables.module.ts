@@ -12,6 +12,7 @@ import { BaseInputComponent } from '../../../formParts/base-input/base-input.com
 import { BaseSelectComponent } from '../../../formParts/base-select/base-select.component';
 import { DateRangeInputComponent } from '../../../formParts/date-range-input/date-range-input.component';
 import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/base-date-picker.component';
+import { BaseTextFieldComponent } from '../../../formParts/base-text-field/base-text-field.component';
 
 @NgModule({
   declarations: [],
@@ -25,6 +26,7 @@ import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/bas
     BaseCheckboxComponent,
     DateRangeInputComponent,
     BaseDatePickerComponent,
+    BaseTextFieldComponent,
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
@@ -40,6 +42,7 @@ import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/bas
     BaseCheckboxComponent,
     DateRangeInputComponent,
     BaseDatePickerComponent,
+    BaseTextFieldComponent,
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,

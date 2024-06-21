@@ -97,4 +97,16 @@ export const studentColumns: AppColumn<Student>[] = [
       getControl: () => new FormControl<boolean | null>(null),
     },
   },
+  {
+    alias: 'about',
+    placeholder: 'About',
+    headerControl: {
+      type: CONTROL_TYPE.INPUT,
+      getControl: () => new FormControl<string | null>(null),
+    },
+    inlineControl: {
+      type: CONTROL_TYPE.TEXT,
+      getControl: () => new FormControl<string | null>(null),
+    },
+  },
 ];
