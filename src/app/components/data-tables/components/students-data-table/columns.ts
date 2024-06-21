@@ -22,7 +22,7 @@ export const studentColumns: AppColumn<Student>[] = [
     placeholder: 'First Name',
     headerControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<[]>([]),
+      getControl: () => new FormControl<string[]>([]),
     },
     inlineControl: {
       type: CONTROL_TYPE.INPUT,
@@ -38,7 +38,7 @@ export const studentColumns: AppColumn<Student>[] = [
     placeholder: 'Last Name',
     headerControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<[]>([]),
+      getControl: () => new FormControl<string[]>([]),
     },
     inlineControl: {
       type: CONTROL_TYPE.INPUT,
