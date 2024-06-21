@@ -1,4 +1,4 @@
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../models/id';
 import { StateService } from '../services/state/state.service';
@@ -100,10 +100,7 @@ export class Actions<T extends Id> {
         alias: 'actions',
         placeholder: 'Actions',
         cell: (element: T) => `${element.visible}`,
-        getHeaderControl: () => new FormControl<null>(null),
-        getInlineControl: () => new FormControl<null>(null),
         isActionColumn: true,
-        isMulti: false,
       };
       columns.push(actionsColumn);
     }

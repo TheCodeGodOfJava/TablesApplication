@@ -56,7 +56,7 @@ export class MatLabelScrollDirective implements AfterViewInit {
     }
 
     const transition = labelWrapperWidth - labelWidth;
-    const standardTime = 1.1;
+    const standardTime = 1.7;
     const transitionDuration = standardTime * (labelWidth / labelWrapperWidth);
     let styles = `
     transition: transform ${transitionDuration}s ease-in !important;
