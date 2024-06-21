@@ -28,6 +28,7 @@ import { AppColumn, Control } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
+import { ColumnsOperations } from './columnsOperations';
 import { GenericDataSource } from './genericDataSource';
 
 @Component({
@@ -60,6 +61,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   actions!: Actions<T>;
 
+  public colOps!: ColumnsOperations<T>;
+
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
@@ -71,15 +74,11 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   ngOnInit(): void {
+    this.colOps = new ColumnsOperations(this.columns);
     if (this.columns) {
-      this.columns.forEach((c) => {
-        const headerControl = c.headerControl;
-        if (headerControl) {
-          const control = headerControl.getControl();
-          this.addSelectSearchControl(c.alias, headerControl, this.formGroup);
-          control && this.formGroup.addControl(c.alias, control);
-        }
-      });
+      this.columns.forEach((c) =>
+        this.addControlsToFormGroup(c.alias, c.headerControl, this.formGroup)
+      );
     }
     this.actions = new Actions(
       this.controllerPath,
@@ -157,23 +156,30 @@ export abstract class AbstractDataTableComponent<T extends Id>
     row: (T & { [key: string]: any }) | null = null
   ): FormGroup => {
     const rowGroup = this.fb.group({});
-    this.columns.forEach((c) => {
-      const inlineControl = c.inlineControl;
-      if (inlineControl) {
-        const inlineFormControl = inlineControl.getControl();
-        if (inlineFormControl) {
-          inlineFormControl.setValue(row && row[c.alias]);
-          rowGroup.setControl(c.alias, inlineFormControl);
-          this.addSelectSearchControl(c.alias, inlineControl, rowGroup);
-        }
-      }
-    });
-    rowGroup.markAllAsTouched();
-    return rowGroup;
+    if (this.columns) {
+      this.columns.forEach((c) =>
+        this.addControlsToFormGroup(c.alias, c.inlineControl, rowGroup, row)
+      );
+      rowGroup.markAllAsTouched();
+      return rowGroup;
+    }
+    throw new Error('Your columns are not defined!');
   };
 
-  getDisplayedColumns(): string[] {
-    return this.columns.map((c) => c.alias);
+  private addControlsToFormGroup(
+    alias: string,
+    control: Control | undefined,
+    formGroup: FormGroup,
+    row: (T & { [key: string]: any }) | null = null
+  ) {
+    if (control) {
+      const formControl = control.getControl();
+      if (formControl) {
+        row && formControl.setValue(row[alias]);
+        formControl && formGroup.addControl(alias, formControl);
+        this.addSelectSearchControl(alias, control, this.formGroup);
+      }
+    }
   }
 
   loadTableData(
@@ -182,8 +188,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
     pageStart: number,
     pageOffset: number,
     filters: Map<string, string>
-  ): Observable<DtOutput<T>> {
-    const aliases = this.getDisplayedColumns();
+  ): Observable<DtOutput<T>> {    
+    const aliases = this.colOps.getActiveColsAliases();
     return this.dataSource.loadTableData(controllerPath, {
       sortAlias: sort ? sort?.active : aliases[0],
       sortDir: sort ? sort?.direction : 'asc',

@@ -5,10 +5,18 @@
       [dataSource]="dataSource.modelSubject"
       matSort
       matSortDisableClear
+      cdkDropList
+      cdkDropListOrientation="horizontal"
+      (cdkDropListDropped)="colOps.drop($event)"
     >
       @for (column of columns; track column.alias; let i = $index) {
       <ng-container [matColumnDef]="column.alias || ''">
-        <th mat-header-cell *matHeaderCellDef style="background-color: #f0f0f0">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          style="background-color: #f0f0f0"
+          cdkDrag
+        >
           <div class="table-header">
             @if(column.isActionColumn){
             {{ column.placeholder }}
@@ -85,9 +93,12 @@
       }
       <tr
         mat-header-row
-        *matHeaderRowDef="getDisplayedColumns(); sticky: true"
+        *matHeaderRowDef="colOps.getActiveColsAliases(); sticky: true"
       ></tr>
-      <tr mat-row *matRowDef="let row; columns: getDisplayedColumns()"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: colOps.getActiveColsAliases()"
+      ></tr>
     </table>
   </div>
 
