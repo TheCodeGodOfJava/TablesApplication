@@ -15,13 +15,18 @@
             }@else{
             <div class="sort-div" mat-sort-header></div>
             <base-select
+              *ngIf="column.headerControl?.type === CONTROL_TYPE.SELECT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [controllerPath]="controllerPath"
               [formGroup]="formGroup"
-              [isMulti]="column.isMulti"
             />
-
+            <date-range-input
+              *ngIf="column.headerControl?.type === CONTROL_TYPE.DATE_RANGE"
+              [alias]="column.alias"
+              [placeholder]="column.placeholder"
+              [formGroup]="formGroup"
+            />
             <button mat-icon-button (click)="clearCurrentFilter(column.alias)">
               <mat-icon>clear</mat-icon>
             </button>
@@ -42,11 +47,23 @@
             </button>
             } } }@else{ @if(row.visible && !column.notEditable){
             <base-input
+              *ngIf="column.inlineControl?.type === CONTROL_TYPE.INPUT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
-              [controllerPath]="controllerPath"
               [formGroup]="actions.getRowFormGroup(i)"
-            ></base-input>
+            />
+            <base-checkbox
+              *ngIf="column.inlineControl?.type === CONTROL_TYPE.BOOLEAN"
+              [alias]="column.alias"
+              [formGroup]="actions.getRowFormGroup(i)"
+              [placeholder]="column.placeholder"
+            />
+            <base-date-picker
+              *ngIf="column.inlineControl?.type === CONTROL_TYPE.DATE_INPUT"
+              [alias]="column.alias"
+              [formGroup]="actions.getRowFormGroup(i)"
+              [placeholder]="column.placeholder"
+            />
             }@else{
             {{ column.cell(row) }}
             } }

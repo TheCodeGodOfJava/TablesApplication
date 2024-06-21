@@ -25,6 +25,7 @@ import { Actions } from '../../../actions';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
+import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { GenericDataSource } from './genericDataSource';
 
@@ -39,6 +40,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
 {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+
+  CONTROL_TYPE = CONTROL_TYPE;
 
   protected pageSize: number = 5;
   protected pageSizeOptions: number[] = [5, 10, 15];
@@ -68,7 +71,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   ngOnInit(): void {
     this.columns.forEach((c) =>
-      this.formGroup.addControl(c.alias, c.getHeaderControl())
+      this.formGroup.addControl(c.alias, c.headerControl?.getControl())
     );
     this.actions = new Actions(
       this.controllerPath,
@@ -104,8 +107,13 @@ export abstract class AbstractDataTableComponent<T extends Id>
             : this.pageSizeOptions[0];
           const pageStart = pageOffset * (paginator ? paginator.pageIndex : 0);
           const filters = new Map<string, string>();
+
           Object.entries(this.formGroup.value).forEach(([key, value]) => {
-            filters.set(key, String(value || ''));
+            const jsonString =
+              value instanceof Object && !Array.isArray(value)
+                ? JSON.stringify(value)
+                : String(value || '');
+            filters.set(key, jsonString);
           });
           return this.loadTableData(
             this.controllerPath,
@@ -128,10 +136,11 @@ export abstract class AbstractDataTableComponent<T extends Id>
   private createNewRowGroup = (row: T | null = null): FormGroup => {
     const rowGroup = this.fb.group({});
     this.columns.forEach((c) => {
-      const control = c.getInlineControl();
-      control.setValue(row ? (c.cell && c.cell(row)) || null : null);
-      c.inlineValidators && control.addValidators(c.inlineValidators);
-      rowGroup.setControl(c.alias, control);
+      const control = c.inlineControl?.getControl();
+      if (control) {
+        control.setValue(row ? (c.cell && c.cell(row)) || null : null);
+        rowGroup.setControl(c.alias, control);
+      }
     });
     rowGroup.markAllAsTouched();
     return rowGroup;
