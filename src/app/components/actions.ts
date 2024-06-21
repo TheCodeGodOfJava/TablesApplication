@@ -99,7 +99,6 @@ export class Actions<T extends Id> {
       const actionsColumn: AppColumn<T> = {
         alias: 'actions',
         placeholder: 'Actions',
-        cell: (element: T) => `${element.visible}`,
         isActionColumn: true,
       };
       columns.push(actionsColumn);

@@ -1,4 +1,4 @@
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Student } from '../../../../models/student';
 import { AppColumn } from '../../interfaces/appColumn';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
@@ -79,20 +79,22 @@ export const studentColumns: AppColumn<Student>[] = [
       getControl: () => new FormControl<boolean | null>(null),
     },
   },
-  // {
-  //   alias: 'enrollDate',
-  //   placeholder: 'Enroll Date',
-  //   cell: (element: Student) => `${element.enrollDate}`,
-  //   headerControl: {
-  //     type: CONTROL_TYPE.DATE_RANGE,
-  //     getControl: () => new FormGroup({
-  //       start: new FormControl<Date | null>(null),
-  //       end: new FormControl<Date | null>(null),
-  //     }),
-  //   },
-  //   inlineControl: {
-  //     type: CONTROL_TYPE.DATE_INPUT,
-  //     getControl: () => new FormControl<boolean | null>(null),
-  //   },
-  // },
+  {
+    alias: 'enrollDate',
+    placeholder: 'Enroll Date',
+    cell: (element: Student) =>
+      new Date(element.enrollDate).toISOString().split('T')[0],
+    headerControl: {
+      type: CONTROL_TYPE.DATE_RANGE,
+      getControl: () =>
+        new FormGroup({
+          start: new FormControl<Date | null>(null),
+          end: new FormControl<Date | null>(null),
+        }),
+    },
+    inlineControl: {
+      type: CONTROL_TYPE.DATE_INPUT,
+      getControl: () => new FormControl<boolean | null>(null),
+    },
+  },
 ];
