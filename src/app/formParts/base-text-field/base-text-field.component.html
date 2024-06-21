@@ -1,0 +1,13 @@
+<ng-container [formGroup]="formGroup">
+  <mat-form-field appMatLabelScroll floatLabel="always">
+    <mat-label *ngIf="formGroup.get(alias)?.valid">{{ placeholder }}</mat-label>
+    <mat-label *ngIf="formGroup.get(alias)?.invalid">{{
+      getError()
+    }}</mat-label>
+    <textarea
+      matInput
+      [formControlName]="alias"
+      [placeholder]="placeholder"
+    ></textarea>
+  </mat-form-field>
+</ng-container>
