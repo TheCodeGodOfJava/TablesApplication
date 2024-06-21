@@ -9,4 +9,4 @@ export const CONTROLLER_PATHS = {
   students: 'students',
 };
 
-export const SELECT_SEARCH_PREFIX: string = 'selectSearch';
+export const SELECT_SEARCH_PREFIX: string = 'SelectSearch';

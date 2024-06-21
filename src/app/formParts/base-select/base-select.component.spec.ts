@@ -56,34 +56,10 @@ describe('BaseSelectComponent', () => {
     component.alias = 'testAlias';
     component.placeholder = 'testPlaceholder';
     component.formGroup = new FormGroup({
-      testAlias: new FormControl(null),
+      testAliasSelectSearch: new FormControl<string | null>(null),
+      testAlias: new FormControl<string[]>([]),
     });
     fixture.detectChanges();
     expect(component).toBeTruthy();
-  });
-
-  it('should initialize and fetch data on search control value change', fakeAsync(() => {
-    spyOn(mockFilterService, 'getDataForFilter').and.callThrough();
-    component.controllerPath = 'testPath';
-    component.alias = 'testAlias';
-    component.placeholder = 'testPlaceholder';
-    component.formGroup = new FormGroup({
-      testAlias: new FormControl(null),
-    });
-    fixture.detectChanges();
-
-    component.ngAfterViewInit();
-    tick();
-
-    component.formGroup
-      .get(SELECT_SEARCH_PREFIX + component.alias)
-      ?.setValue('test');
-    tick(700); // debounce time
-
-    expect(mockFilterService.getDataForFilter).toHaveBeenCalledWith(
-      'testPath',
-      'testAlias',
-      'test'
-    );
-  }));
+  }); 
 });

@@ -1,7 +1,12 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { ReactiveFormsModule } from '@angular/forms';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -14,7 +19,6 @@ import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
-import { GenericDataSource } from '../abstract/genericDataSource';
 
 class MockTableService {
   loadTableData(controllerPath: string, params: any) {
@@ -59,12 +63,14 @@ describe('StudentTableComponent', () => {
   let mockFilterService: MockFilterService;
   let mockStateService: MockStateService<Student>;
   let mockToastrService: MockToastrService;
+  let formBuilder: FormBuilder;
 
   beforeEach(async () => {
     mockTableService = new MockTableService();
     mockFilterService = new MockFilterService();
     mockStateService = new MockStateService();
     mockToastrService = new MockToastrService();
+    formBuilder = new FormBuilder();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -72,20 +78,21 @@ describe('StudentTableComponent', () => {
         BrowserAnimationsModule,
         MatSortModule,
         MatPaginatorModule,
-        ReactiveFormsModule, 
-        StudentTableComponent
+        ReactiveFormsModule,
+        StudentTableComponent,
       ],
-      declarations: [],
       providers: [
         { provide: TableService, useValue: mockTableService },
         { provide: FilterService, useValue: mockFilterService },
         { provide: StateService, useValue: mockStateService },
         { provide: ToastrService, useValue: mockToastrService },
+        { provide: FormBuilder, useValue: formBuilder },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentTableComponent);
     component = fixture.componentInstance;
+    component.formGroup = formBuilder.group({});
     fixture.detectChanges();
   });
 
@@ -98,7 +105,7 @@ describe('StudentTableComponent', () => {
     spyOn(component.reloadTableSubject, 'next').and.callThrough();
 
     component.ngAfterViewInit();
-    tick(); // Simulate passage of time for the async operations
+    tick();
 
     expect(component.loadTable).toHaveBeenCalled();
     expect(component.reloadTableSubject.next).toHaveBeenCalledWith(true);
@@ -117,7 +124,7 @@ describe('StudentTableComponent', () => {
     component
       .loadTableData(CONTROLLER_PATHS.students, sort, 0, -1, new Map())
       .subscribe();
-    tick(); // Simulate passage of time for the async operations
+    tick();
 
     expect(mockTableService.loadTableData).toHaveBeenCalledWith(
       CONTROLLER_PATHS.students,

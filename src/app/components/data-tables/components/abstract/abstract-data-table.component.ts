@@ -98,7 +98,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   ) {
     control.type === CONTROL_TYPE.SELECT &&
       formGroup.addControl(
-        SELECT_SEARCH_PREFIX + alias,
+        alias + SELECT_SEARCH_PREFIX,
         new FormControl<String | null>(null)
       );
   }
