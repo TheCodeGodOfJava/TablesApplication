@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -14,6 +14,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormComponent } from '../abstract/abstractFormComponent';
 
@@ -42,14 +43,13 @@ export class BaseSelectComponent
     this.isMulti = Array.isArray(this.formGroup.get(this.alias)?.value);
   }
 
-
   subscriptions$: Subject<any> = new Subject<any>();
-
-  searchControl: FormControl = new FormControl<String | null>(null);
 
   protected options!: Observable<string[]>;
 
   protected isMulti: boolean | null = null;
+
+  protected PREFIX = SELECT_SEARCH_PREFIX;
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -63,13 +63,12 @@ export class BaseSelectComponent
       }
       initServerOptions && this.initSelect();
     });
-
-
   }
 
   private initSelect(): void {
-    this.searchControl.valueChanges
-      .pipe(
+    this.formGroup
+      .get(this.PREFIX + this.alias)
+      ?.valueChanges.pipe(
         startWith(''),
         takeUntil(this.subscriptions$),
         debounceTime(700),

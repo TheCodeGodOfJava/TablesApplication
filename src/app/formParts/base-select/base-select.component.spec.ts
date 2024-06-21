@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { Observable, of } from 'rxjs';
+import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { BaseSelectComponent } from './base-select.component';
 
@@ -51,7 +52,6 @@ describe('BaseSelectComponent', () => {
   });
 
   it('should create the component', () => {
-    component.isMulti = false;
     component.controllerPath = 'testPath';
     component.alias = 'testAlias';
     component.placeholder = 'testPlaceholder';
@@ -64,7 +64,6 @@ describe('BaseSelectComponent', () => {
 
   it('should initialize and fetch data on search control value change', fakeAsync(() => {
     spyOn(mockFilterService, 'getDataForFilter').and.callThrough();
-    component.isMulti = false;
     component.controllerPath = 'testPath';
     component.alias = 'testAlias';
     component.placeholder = 'testPlaceholder';
@@ -76,7 +75,9 @@ describe('BaseSelectComponent', () => {
     component.ngAfterViewInit();
     tick();
 
-    component.searchControl.setValue('test');
+    component.formGroup
+      .get(SELECT_SEARCH_PREFIX + component.alias)
+      ?.setValue('test');
     tick(700); // debounce time
 
     expect(mockFilterService.getDataForFilter).toHaveBeenCalledWith(

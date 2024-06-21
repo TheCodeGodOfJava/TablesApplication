@@ -1,13 +1,10 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { FilterService } from '../../../../services/filter/filter.service';
@@ -17,6 +14,7 @@ import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
+import { GenericDataSource } from '../abstract/genericDataSource';
 
 class MockTableService {
   loadTableData(controllerPath: string, params: any) {
@@ -24,36 +22,29 @@ class MockTableService {
   }
 }
 
-export class MockFilterService {
+class MockFilterService {
   constructor() {}
 
-  public getDataForFilter(
-    controllerPath: string,
-    field: string,
-    term: string
-  ): Observable<string[]> {
-    // Mock response data
+  public getDataForFilter(controllerPath: string, field: string, term: string) {
     const mockData: { [key: string]: string[] } = {
       exampleField1: ['example1', 'example2', 'example3'],
       exampleField2: ['test1', 'test2', 'test3'],
     };
-
-    // Return mock data based on the field
     return of(mockData[field] || []);
   }
 }
 
 class MockStateService<T> {
-  save(path: string, model: T): Observable<T> {
+  save(path: string, model: T) {
     return of(model);
   }
 
-  remove(controllerPath: string, ids: number[]): Observable<void> {
+  remove(controllerPath: string, ids: number[]) {
     return of(undefined);
   }
 }
 
-export class MockToastrService {
+class MockToastrService {
   success(message?: string, title?: string): void {}
   error(message?: string, title?: string): void {}
   warning(message?: string, title?: string): void {}
@@ -80,8 +71,11 @@ describe('StudentTableComponent', () => {
         DataTablesModule,
         BrowserAnimationsModule,
         MatSortModule,
-        StudentTableComponent, // Import the standalone component here
+        MatPaginatorModule,
+        ReactiveFormsModule, 
+        StudentTableComponent
       ],
+      declarations: [],
       providers: [
         { provide: TableService, useValue: mockTableService },
         { provide: FilterService, useValue: mockFilterService },

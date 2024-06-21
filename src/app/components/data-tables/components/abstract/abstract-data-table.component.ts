@@ -16,14 +16,15 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
+import { SELECT_SEARCH_PREFIX } from '../../../../constants';
 import { Id } from '../../../../models/id';
 import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
 import { ACTIONS } from '../../interfaces/appAction';
-import { AppColumn } from '../../interfaces/appColumn';
+import { AppColumn, Control } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
@@ -70,9 +71,16 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   ngOnInit(): void {
-    this.columns.forEach((c) =>
-      this.formGroup.addControl(c.alias, c.headerControl?.getControl())
-    );
+    if (this.columns) {
+      this.columns.forEach((c) => {
+        const headerControl = c.headerControl;
+        if (headerControl) {
+          const control = headerControl.getControl();
+          this.addSelectSearchControl(c.alias, headerControl, this.formGroup);
+          control && this.formGroup.addControl(c.alias, control);
+        }
+      });
+    }
     this.actions = new Actions(
       this.controllerPath,
       this.formGroup,
@@ -81,6 +89,18 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.toastrService
     );
     this.actions.convertActionToColumn(this.columns, this.allowedActions);
+  }
+
+  private addSelectSearchControl(
+    alias: string,
+    control: Control,
+    formGroup: FormGroup
+  ) {
+    control.type === CONTROL_TYPE.SELECT &&
+      formGroup.addControl(
+        SELECT_SEARCH_PREFIX + alias,
+        new FormControl<String | null>(null)
+      );
   }
 
   ngAfterViewInit() {
@@ -138,10 +158,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
   ): FormGroup => {
     const rowGroup = this.fb.group({});
     this.columns.forEach((c) => {
-      const control = c.inlineControl?.getControl();
-      if (control) {
-        control.setValue(row && row[c.alias]);
-        rowGroup.setControl(c.alias, control);
+      const inlineControl = c.inlineControl;
+      if (inlineControl) {
+        const inlineFormControl = inlineControl.getControl();
+        if (inlineFormControl) {
+          inlineFormControl.setValue(row && row[c.alias]);
+          rowGroup.setControl(c.alias, inlineFormControl);
+          this.addSelectSearchControl(c.alias, inlineControl, rowGroup);
+        }
       }
     });
     rowGroup.markAllAsTouched();
