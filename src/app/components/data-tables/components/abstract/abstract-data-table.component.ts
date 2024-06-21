@@ -133,12 +133,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
       });
   }
 
-  private createNewRowGroup = (row: T | null = null): FormGroup => {
+  private createNewRowGroup = (
+    row: (T & { [key: string]: any }) | null = null
+  ): FormGroup => {
     const rowGroup = this.fb.group({});
     this.columns.forEach((c) => {
       const control = c.inlineControl?.getControl();
       if (control) {
-        control.setValue(row ? (c.cell && c.cell(row)) || null : null);
+        control.setValue(row && row[c.alias]);
         rowGroup.setControl(c.alias, control);
       }
     });

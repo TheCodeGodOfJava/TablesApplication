@@ -7,7 +7,7 @@ export interface Control {
 }
 
 export interface AppColumn<T> {
-  cell: (model: T) => any;
+  cell?: (model: T) => any;
   alias: string;
   placeholder: string;
   headerControl?: Control;

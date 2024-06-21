@@ -65,7 +65,7 @@
               [placeholder]="column.placeholder"
             />
             }@else{
-            {{ column.cell(row) }}
+            {{ column.cell ? column.cell(row) : row[column.alias] }}
             } }
           </div>
         </td>
