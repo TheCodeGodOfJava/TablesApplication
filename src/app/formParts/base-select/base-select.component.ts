@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -32,23 +32,39 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
 })
 export class BaseSelectComponent
   extends AbstractFormComponent
-  implements AfterViewInit
+  implements OnInit, AfterViewInit
 {
   constructor(protected filterService: FilterService) {
     super();
   }
 
-  @Input()
-  isMulti: boolean | null = null;
+  ngOnInit(): void {
+    this.isMulti = Array.isArray(this.formGroup.get(this.alias)?.value);
+  }
+
 
   subscriptions$: Subject<any> = new Subject<any>();
 
   searchControl: FormControl = new FormControl<String | null>(null);
 
-  protected options: Observable<string[]> = of([]);
+  protected options!: Observable<string[]>;
+
+  protected isMulti: boolean | null = null;
 
   ngAfterViewInit(): void {
-    this.initSelect();
+    setTimeout(() => {
+      let initServerOptions: boolean = true;
+      if (this.isMulti) {
+        const constantOption = this.formGroup.get(this.alias)?.value as [];
+        if (constantOption.length) {
+          this.options = of(constantOption);
+          initServerOptions = false;
+        }
+      }
+      initServerOptions && this.initSelect();
+    });
+
+
   }
 
   private initSelect(): void {
