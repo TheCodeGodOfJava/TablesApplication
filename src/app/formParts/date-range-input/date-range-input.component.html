@@ -1,0 +1,27 @@
+<ng-container [formGroup]="formGroup">
+  <mat-form-field floatLabel="always">
+    <mat-label>{{ placeholder }}</mat-label>
+    <mat-date-range-input
+      [formGroupName]="alias"
+      [rangePicker]="picker"
+      (click)="picker.open()"
+    >
+      <input
+        id="start-date-input"
+        matStartDate
+        formControlName="start"
+        placeholder="Start date"
+        readonly
+      />
+      <input
+        id="end-date-input"
+        matEndDate
+        formControlName="end"
+        placeholder="End date"
+        readonly
+      />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+</ng-container>
