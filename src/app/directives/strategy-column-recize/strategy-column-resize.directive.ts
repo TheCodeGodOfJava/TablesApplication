@@ -86,7 +86,7 @@ export class StrategyResizeDirective<T>
     );
   }
 
-  private onResizeColumn(
+  onResizeColumn(
     event: MouseEvent,
     index: number,
     leftHandler: boolean = false
