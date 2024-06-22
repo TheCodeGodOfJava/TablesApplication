@@ -19,6 +19,8 @@ import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
+import { S } from '@angular/cdk/keycodes';
+import { ACTIONS } from '../../interfaces/appAction';
 
 class MockTableService {
   loadTableData(controllerPath: string, params: any) {
@@ -111,8 +113,8 @@ describe('StudentTableComponent', () => {
     expect(component.reloadTableSubject.next).toHaveBeenCalledWith(true);
   }));
 
-  it('should get displayed columns', () => {
-    expect(component.getDisplayedColumns()).toEqual(
+  it('should get displayed columns', () => {    
+    expect(component.colOps.getActiveColsAliases()).toEqual(      
       studentColumns.map((c) => c.alias)
     );
   });

@@ -91,7 +91,10 @@ export class Actions<T extends Id> {
     this.dataSource.modelSubject.next(data);
   }
 
-  convertActionToColumn(columns: AppColumn<T>[], allowedActions: ACTIONS[]) {
+  convertActionToColumn(
+    columns: AppColumn<T>[],
+    allowedActions: ACTIONS[]
+  ): void {
     if (
       allowedActions.length > 0 &&
       !columns.find((c) => c.alias === 'actions')
