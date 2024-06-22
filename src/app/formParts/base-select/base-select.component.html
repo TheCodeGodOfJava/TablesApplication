@@ -1,11 +1,11 @@
-<ng-container [formGroup]="formGroup">
-  <mat-form-field floatLabel="always">
+<ng-container *ngIf="isMulti !== null" [formGroup]="formGroup">
+  <mat-form-field floatLabel="always" [class]="className" style="width: auto;">
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select
-      *ngIf="isMulti !== null"
       [formControlName]="alias"
       placeholder="search"
       [multiple]="isMulti"
+      (closed)="action && action(alias, formGroup)"
     >
       <mat-option>
         <ngx-mat-select-search

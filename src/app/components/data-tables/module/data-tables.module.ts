@@ -8,6 +8,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { StrategyResizeDirective } from '../../../directives/strategy-column-recize/strategy-column-resize.directive';
 import { BaseCheckboxComponent } from '../../../formParts/base-checkbox/base-checkbox.component';
 import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/base-date-picker.component';
 import { BaseInputComponent } from '../../../formParts/base-input/base-input.component';
@@ -34,6 +35,7 @@ import { DateRangeInputComponent } from '../../../formParts/date-range-input/dat
     MatTooltipModule,
     CdkDropList,
     CdkDrag,
+    StrategyResizeDirective,
   ],
   exports: [
     MatTableModule,
@@ -52,6 +54,7 @@ import { DateRangeInputComponent } from '../../../formParts/date-range-input/dat
     MatTooltipModule,
     CdkDropList,
     CdkDrag,
+    StrategyResizeDirective,
   ],
 })
 export class DataTablesModule {}

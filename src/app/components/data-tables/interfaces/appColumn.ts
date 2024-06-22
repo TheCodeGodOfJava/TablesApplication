@@ -1,4 +1,4 @@
-import { AbstractControl, FormControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { CONTROL_TYPE } from './inputTypes';
 
 export interface Control {
@@ -14,4 +14,5 @@ export interface AppColumn<T> {
   inlineControl?: Control;
   isActionColumn?: boolean;
   notEditable?: boolean;
+  width?: number;
 }

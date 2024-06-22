@@ -10,12 +10,17 @@ export abstract class AbstractFormComponent {
   controllerPath!: string;
 
   @Input()
+  className: string = '';
+
+  @Input()
   alias!: string;
 
   @Input()
   placeholder!: string;
 
   @Input() formGroup!: FormGroup;
+
+  @Input() action?: (alias: string, formGroup: FormGroup) => void;
 
   protected getError(): string {
     const formControl = this.formGroup.get(this.alias);

@@ -67,7 +67,7 @@ export class BaseSelectComponent
 
   private initSelect(): void {
     this.formGroup
-      .get(this.PREFIX + this.alias)
+      .get(this.alias + this.PREFIX)
       ?.valueChanges.pipe(
         startWith(''),
         takeUntil(this.subscriptions$),

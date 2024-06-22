@@ -57,11 +57,17 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   formGroup!: FormGroup;
 
+  tableControlFormGroup!: FormGroup;
+
+  columnsOnOffAlias: string = 'colsOnOff';
+
   protected allowedActions: ACTIONS[] = [];
 
   actions!: Actions<T>;
 
-  public colOps!: ColumnsOperations<T>;
+  colOps!: ColumnsOperations<T>;
+
+  protected performMassResize!: boolean;
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -71,6 +77,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   ) {
     this.dataSource = ds;
     this.formGroup = this.fb.group({});
+    this.tableControlFormGroup = this.fb.group({});
   }
 
   ngOnInit(): void {
@@ -88,6 +95,15 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.toastrService
     );
     this.actions.convertActionToColumn(this.columns, this.allowedActions);
+    this.addControlsToFormGroup(
+      this.columnsOnOffAlias,
+      {
+        type: CONTROL_TYPE.SELECT,
+        getControl: () =>
+          new FormControl<string[]>(this.colOps.getActiveHeaders()),
+      },
+      this.tableControlFormGroup
+    );
   }
 
   private addSelectSearchControl(
@@ -98,7 +114,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     control.type === CONTROL_TYPE.SELECT &&
       formGroup.addControl(
         alias + SELECT_SEARCH_PREFIX,
-        new FormControl<String | null>(null)
+        new FormControl<String>('')
       );
   }
 
@@ -177,7 +193,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       if (formControl) {
         row && formControl.setValue(row[alias]);
         formControl && formGroup.addControl(alias, formControl);
-        this.addSelectSearchControl(alias, control, this.formGroup);
+        this.addSelectSearchControl(alias, control, formGroup);
       }
     }
   }
@@ -188,7 +204,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     pageStart: number,
     pageOffset: number,
     filters: Map<string, string>
-  ): Observable<DtOutput<T>> {    
+  ): Observable<DtOutput<T>> {
     const aliases = this.colOps.getActiveColsAliases();
     return this.dataSource.loadTableData(controllerPath, {
       sortAlias: sort ? sort?.active : aliases[0],
@@ -215,6 +231,10 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   clearCurrentFilter(alias: string): void {
     this.formGroup.get(alias)?.reset();
+  }
+
+  massColumnsResize(): void {
+    this.performMassResize = !this.performMassResize;
   }
 
   createNew() {
