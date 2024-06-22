@@ -25,7 +25,10 @@
         >
           <div class="table-header" cdkDrag>
             @if(column.isActionColumn){
-            {{ column.placeholder }}
+            <div class="action-column">
+              <span> {{ column.placeholder }}</span>
+            </div>
+
             }@else{
             <div class="filter-control">
               <div mat-sort-header class="custom-sort-header"></div>
@@ -68,17 +71,23 @@
         </th>
         <td mat-cell *matCellDef="let row; let i = index">
           <div>
-            @if(column.isActionColumn){ @for (action of actions.allActions;
-            track action) { @if(allowedActions.includes(action.type) &&
-            action.getShowCondition(row) ){
-            <button
-              mat-mini-fab
-              (click)="action.getAction(row, i)"
-              style="margin-right: 10px"
-            >
-              <mat-icon>{{ action.icon }}</mat-icon>
-            </button>
-            } } }@else{ @if(row.visible && !column.notEditable){
+            @if(column.isActionColumn) {
+            <div class="action-column">
+              @for (action of actions.allActions; track action) {
+              @if(allowedActions.includes(action.type) &&
+              action.getShowCondition(row) ){
+
+              <button
+                mat-mini-fab
+                (click)="action.getAction(row, i)"
+                style="margin-right: 10px"
+              >
+                <mat-icon>{{ action.icon }}</mat-icon>
+              </button>
+
+              } }
+            </div>
+            }@else{ @if(row.visible && !column.notEditable){
             <base-input
               *ngIf="column.inlineControl?.type === CONTROL_TYPE.INPUT"
               [alias]="column.alias"
