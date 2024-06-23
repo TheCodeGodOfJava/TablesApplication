@@ -1,5 +1,5 @@
 <ng-container *ngIf="isMulti !== null" [formGroup]="formGroup">
-  <mat-form-field floatLabel="always" [class]="className" style="width: auto;">
+  <mat-form-field floatLabel="always" [class]="className" style="width: auto">
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select
       [formControlName]="alias"
@@ -15,7 +15,10 @@
         >
         </ngx-mat-select-search>
       </mat-option>
-      <mat-option *ngFor="let entry of options | async" [value]="entry">
+      <mat-option
+        *ngFor="let entry of getOptionsData(alias).options | async"
+        [value]="entry"
+      >
         {{ entry }}
       </mat-option>
     </mat-select>

@@ -18,6 +18,11 @@ import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormComponent } from '../abstract/abstractFormComponent';
 
+interface OptionsData {
+  parentSelectAlias: string;
+  options: Observable<string[]>;
+}
+
 @Component({
   selector: 'base-select',
   standalone: true,
@@ -43,9 +48,9 @@ export class BaseSelectComponent
     this.isMulti = Array.isArray(this.formGroup.get(this.alias)?.value);
   }
 
-  subscriptions$: Subject<any> = new Subject<any>();
+  protected static optionsDataMap: Map<string, OptionsData> = new Map();
 
-  protected options!: Observable<string[]>;
+  subscriptions$: Subject<any> = new Subject<any>();
 
   protected isMulti: boolean | null = null;
 
@@ -57,7 +62,8 @@ export class BaseSelectComponent
       if (this.isMulti) {
         const constantOption = this.formGroup.get(this.alias)?.value as [];
         if (constantOption.length) {
-          this.options = of(constantOption);
+          const optionsData = this.getOptionsData(this.alias);
+          optionsData.options = of(constantOption);
           initServerOptions = false;
         }
       }
@@ -74,7 +80,8 @@ export class BaseSelectComponent
         debounceTime(700),
         distinctUntilChanged(),
         tap((term: string) => {
-          this.options = this.filterService.getDataForFilter(
+          const optionsData = this.getOptionsData(this.alias);
+          optionsData.options = this.filterService.getDataForFilter(
             this.controllerPath,
             this.alias,
             term || ''
@@ -84,8 +91,22 @@ export class BaseSelectComponent
       .subscribe();
   }
 
+  protected getOptionsData(alias: string): OptionsData {
+    let optionsData: OptionsData | undefined =
+      BaseSelectComponent.optionsDataMap.get(alias);
+    if (!optionsData) {
+      optionsData = {
+        parentSelectAlias: '',
+        options: of([]),
+      };
+      BaseSelectComponent.optionsDataMap.set(alias, optionsData);
+    }
+    return optionsData;
+  }
+
   ngOnDestroy(): void {
     this.subscriptions$.next(true);
     this.subscriptions$.unsubscribe();
+    BaseSelectComponent.optionsDataMap.delete(this.alias);
   }
 }
