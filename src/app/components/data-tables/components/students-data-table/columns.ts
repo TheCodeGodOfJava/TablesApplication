@@ -109,4 +109,30 @@ export const studentColumns: AppColumn<Student>[] = [
       getControl: () => new FormControl<string | null>(null),
     },
   },
+  {
+    alias: 'state',
+    placeholder: 'State',
+    headerControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<number | null>(null),
+      dependentAliases: ['city'],
+    },
+    inlineControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<number | null>(null),
+      dependentAliases: ['city'],
+    },
+  },
+  {
+    alias: 'city',
+    placeholder: 'City',
+    headerControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<number | null>(null),
+    },
+    inlineControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<number | null>(null),
+    },
+  },
 ];

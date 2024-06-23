@@ -4,6 +4,7 @@ import { CONTROL_TYPE } from './inputTypes';
 export interface Control {
   type: CONTROL_TYPE;
   getControl: () => AbstractControl;
+  dependentAliases?: string[]
 }
 
 export interface AppColumn<T> {

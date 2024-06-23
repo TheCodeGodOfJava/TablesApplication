@@ -49,6 +49,10 @@
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
+                [uniqueFormGroupId]="-1"
+                [dependentAliases]="
+                  column.headerControl?.dependentAliases || []
+                "
               />
               <date-range-input
                 *ngIf="column.headerControl?.type === CONTROL_TYPE.DATE_RANGE"
@@ -93,6 +97,15 @@
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [formGroup]="actions.getRowFormGroup(i)"
+            />
+            <base-select
+              *ngIf="column.headerControl?.type === CONTROL_TYPE.SELECT"
+              [alias]="column.alias"
+              [placeholder]="column.placeholder"
+              [controllerPath]="controllerPath"
+              [formGroup]="actions.getRowFormGroup(i)"
+              [dependentAliases]="column.inlineControl?.dependentAliases || []"
+              [uniqueFormGroupId]="i"
             />
             <base-checkbox
               *ngIf="column.inlineControl?.type === CONTROL_TYPE.BOOLEAN"

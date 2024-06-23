@@ -12,11 +12,15 @@ export class FilterService {
   public getDataForFilter = (
     controllerPath: string,
     field: string,
-    term: string
+    term: string,
+    dep: string = ''
   ): Observable<string[]> => {
+    if (dep) {
+      dep = `dep=${dep}&`;
+    }
     const url = `${
       environment.API_BASE_URL
-    }${controllerPath}/filter?field=${encodeURIComponent(
+    }${controllerPath}/filter?${dep}field=${encodeURIComponent(
       field
     )}&term=${encodeURIComponent(term)}`;
     return this.hc.get<string[]>(url);
