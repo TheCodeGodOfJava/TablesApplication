@@ -21,7 +21,7 @@ export class StrategyResizeDirective<T>
 {
   private tableRef!: HTMLTableElement;
   @Input() columns!: AppColumn<T>[];
-  @Input() loadedWidths!: number[] | null;
+  @Input() loadedWidths: boolean = false;
   @Input() loadingSubject!: BehaviorSubject<boolean>;
   @Input() performMassResize: boolean = false;
 
@@ -54,11 +54,6 @@ export class StrategyResizeDirective<T>
     this.subscription = this.loadingSubject.subscribe((loading) =>
       setTimeout(() => {
         if (!loading) {
-          if (!this.initialLoadComplete && this.loadedWidths) {
-            this.columns.forEach(
-              (c, index) => (c.width = this.loadedWidths?.[index])
-            );
-          }
           if (!this.initialLoadComplete && !this.loadedWidths) {
             this.calculateDefaultWidth();
           }
