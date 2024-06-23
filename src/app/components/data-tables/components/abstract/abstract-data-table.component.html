@@ -3,7 +3,7 @@
     class="main-table"
     strategyResize
     [columns]="colOps.activeColumns"
-    [loadingSubject]="dataSource.loadingSubject"
+    [dataSource]="dataSource"
     [performMassResize]="performMassResize"
   >
     <table
@@ -99,7 +99,7 @@
               [formGroup]="actions.getRowFormGroup(i)"
             />
             <base-select
-              *ngIf="column.headerControl?.type === CONTROL_TYPE.SELECT"
+              *ngIf="column.inlineControl?.type === CONTROL_TYPE.SELECT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [controllerPath]="controllerPath"
@@ -126,7 +126,9 @@
               [formGroup]="actions.getRowFormGroup(i)"
             />
             }@else{
-            {{ column.cell ? column.cell(row) : row[column.alias] }}
+            <span class="overflow-ellipsis" style="display: inline-block">{{
+              column.cell ? column.cell(row) : row[column.alias]
+            }}</span>
             } }
           </div>
         </td>

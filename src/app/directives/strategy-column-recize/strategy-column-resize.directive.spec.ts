@@ -1,12 +1,7 @@
 import { Component, DebugElement } from '@angular/core';
-import {
-    ComponentFixture,
-    TestBed,
-    fakeAsync,
-    tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
 import { Student } from '../../models/student';
 import { StrategyResizeDirective } from './strategy-column-resize.directive';
@@ -17,7 +12,7 @@ import { StrategyResizeDirective } from './strategy-column-resize.directive';
       strategyResize
       [columns]="columns"
       [loadedWidths]="loadedWidths"
-      [loadingSubject]="loadingSubject"
+      [dataSource]="dataSource"
     >
       <table>
         <thead>
@@ -42,10 +37,11 @@ class TestComponent {
     { alias: 'col1', width: 100 } as AppColumn<any>,
     { alias: 'col2', width: 100 } as AppColumn<any>,
   ];
-  loadedWidths: number[] | null = null;
-  loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
+  loadedWidths: boolean = false;
+  dataSource = {
+    loadingSubject: new BehaviorSubject<boolean>(false),
+    modelSubject: new Subject<any>(),
+  };
 }
 
 describe('StrategyResizeDirective', () => {
@@ -87,10 +83,10 @@ describe('StrategyResizeDirective', () => {
 
     // Assert: Verify the default widths
     directive.columns.forEach((column) => {
-      expect(column.width).toBeCloseTo(442.5, 1); // Adjust tolerance (second argument) as needed
+      expect(column.width).toBeCloseTo(420.5); // Adjust tolerance (second argument) as needed
     });
   });
-  
+
   it('should resize columns on mouse move', () => {
     // Arrange: Initialize the directive
     const directive = directiveEl.injector.get(StrategyResizeDirective);

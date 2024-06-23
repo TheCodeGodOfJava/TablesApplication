@@ -9,7 +9,8 @@ import {
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription, merge, startWith, tap, withLatestFrom } from 'rxjs';
+import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
 import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
 
 @Directive({
@@ -22,7 +23,7 @@ export class StrategyResizeDirective<T>
   private tableRef!: HTMLTableElement;
   @Input() columns!: AppColumn<T>[];
   @Input() loadedWidths: boolean = false;
-  @Input() loadingSubject!: BehaviorSubject<boolean>;
+  @Input() dataSource!: GenericDataSource<T>;
   @Input() performMassResize: boolean = false;
 
   pressed: boolean = false;
@@ -51,17 +52,29 @@ export class StrategyResizeDirective<T>
 
   ngAfterViewInit(): void {
     this.tableRef = this.el.nativeElement.querySelector('table');
-    this.subscription = this.loadingSubject.subscribe((loading) =>
-      setTimeout(() => {
-        if (!loading) {
-          if (!this.initialLoadComplete && !this.loadedWidths) {
-            this.calculateDefaultWidth();
-          }
-          this.setTableWidth();
-          this.initialLoadComplete = true;
-        }
-      }, 0)
-    );
+
+    this.subscription = merge(
+      this.dataSource.loadingSubject,
+      this.dataSource.modelSubject
+    )
+      .pipe(
+        withLatestFrom(
+          this.dataSource.loadingSubject.pipe(startWith(null)),
+          this.dataSource.modelSubject.pipe(startWith(null))
+        ),
+        tap(([, loading]) => {
+          setTimeout(() => {
+            if (!loading) {
+              if (!this.initialLoadComplete && !this.loadedWidths) {
+                this.calculateDefaultWidth();
+              }
+              this.setTableWidth();
+              this.initialLoadComplete = true;
+            }
+          }, 0);
+        })
+      )
+      .subscribe();
   }
 
   private calculateDefaultWidth() {

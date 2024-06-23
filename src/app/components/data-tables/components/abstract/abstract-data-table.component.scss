@@ -118,6 +118,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  span {
+    max-width: 95%;
+  }
 }
 
 .mat-header-cell {
@@ -162,4 +166,9 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
