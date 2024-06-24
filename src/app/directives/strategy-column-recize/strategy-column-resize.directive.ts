@@ -12,6 +12,7 @@ import {
 import { Subscription, merge, startWith, tap, withLatestFrom } from 'rxjs';
 import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
 import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
+import { LocalStorageService } from '../../services/local-storage/local-storage.service';
 
 @Directive({
   selector: '[strategyResize]',
@@ -22,9 +23,10 @@ export class StrategyResizeDirective<T>
 {
   private tableRef!: HTMLTableElement;
   @Input() columns!: AppColumn<T>[];
-  @Input() loadedWidths: boolean = false;
+  @Input() tableConfigLoaded: boolean = false;
   @Input() dataSource!: GenericDataSource<T>;
   @Input() performMassResize: boolean = false;
+  @Input() tableName!: string;
 
   pressed: boolean = false;
   currentResizeIndex!: number;
@@ -39,7 +41,11 @@ export class StrategyResizeDirective<T>
   subscription: Subscription = new Subscription();
   initialLoadComplete: boolean = false;
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private localStorageService: LocalStorageService
+  ) {}
 
   ngOnChanges(sc: SimpleChanges) {
     if (
@@ -65,7 +71,7 @@ export class StrategyResizeDirective<T>
         tap(([, loading]) => {
           setTimeout(() => {
             if (!loading) {
-              if (!this.initialLoadComplete && !this.loadedWidths) {
+              if (!this.initialLoadComplete && !this.tableConfigLoaded) {
                 this.calculateDefaultWidth();
               }
               this.setTableWidth();
@@ -92,6 +98,16 @@ export class StrategyResizeDirective<T>
     this.columns.forEach((column, i) =>
       this.setColumnWidth(column.alias, column.width || 0, i)
     );
+    if (this.tableName) {
+      this.localStorageService.setItem(
+        this.tableName,
+        JSON.stringify(this.columns)
+      );
+    } else {
+      throw Error(
+        'Error saving table configuration, the table name is not set!'
+      );
+    }
   }
 
   onResizeColumn(
@@ -211,19 +227,15 @@ export class StrategyResizeDirective<T>
     if (el.querySelector('.bar')) {
       return;
     }
-
-    const rightHandleBar = this.createHandleBar(el);
-    this.renderer.listen(rightHandleBar, 'mousedown', (event) =>
-      this.onResizeColumn(event, index)
-    );
-
-    const leftHandleBar = this.createHandleBar(el, true);
-    this.renderer.listen(leftHandleBar, 'mousedown', (event) =>
-      this.onResizeColumn(event, index, true)
-    );
+    this.createHandleBar(el, index);
+    this.createHandleBar(el, index, true);
   }
 
-  private createHandleBar(el: HTMLElement, isLeftHandleBar: boolean = false) {
+  private createHandleBar(
+    el: HTMLElement,
+    index: number,
+    isLeftHandleBar: boolean = false
+  ) {
     const handleBar = this.renderer.createElement('div');
     this.renderer.addClass(handleBar, 'bar');
     this.renderer.addClass(
@@ -234,6 +246,10 @@ export class StrategyResizeDirective<T>
     isLeftHandleBar
       ? this.renderer.insertBefore(el, handleBar, el.firstChild)
       : this.renderer.appendChild(el, handleBar);
+
+    this.renderer.listen(handleBar, 'mousedown', (event) =>
+      this.onResizeColumn(event, index, isLeftHandleBar ? true : false)
+    );
   }
 
   @HostListener('window:resize', ['$event'])

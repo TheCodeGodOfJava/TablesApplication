@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
 import { ACTIONS } from '../../interfaces/appAction';
@@ -34,12 +35,14 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
     private tableService: TableService<Student>,
     protected override stateService: StateService<Student>,
     protected override toastrService: ToastrService,
+    protected override localStorageService: LocalStorageService,
     protected override fb: FormBuilder
   ) {
     super(
       new GenericDataSource<Student>(tableService),
       stateService,
       toastrService,
+      localStorageService,
       fb
     );
     this.tableName = 'Students_table';

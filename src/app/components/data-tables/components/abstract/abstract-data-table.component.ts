@@ -22,6 +22,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { SELECT_SEARCH_PREFIX } from '../../../../constants';
 import { Id } from '../../../../models/id';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
 import { ACTIONS } from '../../interfaces/appAction';
@@ -72,10 +73,13 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   private _tableName!: string;
 
+  tableConfigLoaded: boolean = false;
+
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
     protected toastrService: ToastrService,
+    protected localStorageService: LocalStorageService,
     protected fb: FormBuilder
   ) {
     this.dataSource = ds;
@@ -107,6 +111,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       },
       this.tableControlFormGroup
     );
+    this.loadTableConfig();
   }
 
   get tableName(): string {
@@ -131,6 +136,22 @@ export abstract class AbstractDataTableComponent<T extends Id>
         alias + SELECT_SEARCH_PREFIX,
         new FormControl<String>('')
       );
+  }
+
+  loadTableConfig() {
+    const tableConfigString: string | null = this.localStorageService.getItem(
+      this.tableName
+    );
+    if (tableConfigString) {
+      const tableConfigColumns: AppColumn<T>[] = JSON.parse(tableConfigString);
+      if (tableConfigColumns.length) {
+        const filteredColumns = tableConfigColumns.filter((c) =>
+          this.colOps.getAllColumns().some((ac) => ac.alias === c.alias)
+        );
+        this.colOps.activeColumns = filteredColumns;
+        this.tableConfigLoaded = true;
+      }
+    }
   }
 
   ngAfterViewInit() {

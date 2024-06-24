@@ -44,6 +44,10 @@ export class ColumnsOperations<T> {
     return this.getFromActiveCols((c) => c.placeholder || '');
   }
 
+  public getAllColumns(): AppColumn<T>[] {
+    return this.allColumns;
+  }
+
   public drop(event: CdkDragDrop<string[]>) {
     const activeColumns = this.activeColumns;
     const draggedItem = activeColumns[event.previousIndex];
