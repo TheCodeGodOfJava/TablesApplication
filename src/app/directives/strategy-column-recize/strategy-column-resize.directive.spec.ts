@@ -11,8 +11,9 @@ import { StrategyResizeDirective } from './strategy-column-resize.directive';
     <div
       strategyResize
       [columns]="columns"
-      [loadedWidths]="loadedWidths"
+      [tableConfigLoaded]="tableConfigLoaded"
       [dataSource]="dataSource"
+      [tableName]="'testTableName'"
     >
       <table>
         <thead>
@@ -37,7 +38,7 @@ class TestComponent {
     { alias: 'col1', width: 100 } as AppColumn<any>,
     { alias: 'col2', width: 100 } as AppColumn<any>,
   ];
-  loadedWidths: boolean = false;
+  tableConfigLoaded: boolean = false;
   dataSource = {
     loadingSubject: new BehaviorSubject<boolean>(false),
     modelSubject: new Subject<any>(),
@@ -83,7 +84,7 @@ describe('StrategyResizeDirective', () => {
 
     // Assert: Verify the default widths
     directive.columns.forEach((column) => {
-      expect(column.width).not.toBeNull()
+      expect(column.width).not.toBeNull();
       expect(column.width).toBeGreaterThan(0);
     });
   });

@@ -13,14 +13,29 @@ import { of } from 'rxjs';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { FilterService } from '../../../../services/filter/filter.service';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
-import { S } from '@angular/cdk/keycodes';
-import { ACTIONS } from '../../interfaces/appAction';
+
+class MockLocalStorageService {
+  private store: { [key: string]: string } = {};
+
+  setItem(itemName: string, data: string) {
+    this.store[itemName] = data;
+  }
+
+  removeItem(itemName: string) {
+    delete this.store[itemName];
+  }
+
+  getItem(name: string) {
+    return this.store[name] || null;
+  }
+}
 
 class MockTableService {
   loadTableData(controllerPath: string, params: any) {
@@ -65,6 +80,7 @@ describe('StudentTableComponent', () => {
   let mockFilterService: MockFilterService;
   let mockStateService: MockStateService<Student>;
   let mockToastrService: MockToastrService;
+  let mockLocalStorageService: MockLocalStorageService;
   let formBuilder: FormBuilder;
 
   beforeEach(async () => {
@@ -72,6 +88,7 @@ describe('StudentTableComponent', () => {
     mockFilterService = new MockFilterService();
     mockStateService = new MockStateService();
     mockToastrService = new MockToastrService();
+    mockLocalStorageService = new MockLocalStorageService();
     formBuilder = new FormBuilder();
 
     await TestBed.configureTestingModule({
@@ -88,6 +105,7 @@ describe('StudentTableComponent', () => {
         { provide: FilterService, useValue: mockFilterService },
         { provide: StateService, useValue: mockStateService },
         { provide: ToastrService, useValue: mockToastrService },
+        { provide: LocalStorageService, useValue: mockLocalStorageService },
         { provide: FormBuilder, useValue: formBuilder },
       ],
     }).compileComponents();
@@ -113,8 +131,8 @@ describe('StudentTableComponent', () => {
     expect(component.reloadTableSubject.next).toHaveBeenCalledWith(true);
   }));
 
-  it('should get displayed columns', () => {    
-    expect(component.colOps.getActiveColsAliases()).toEqual(      
+  it('should get displayed columns', () => {
+    expect(component.colOps.getActiveColsAliases()).toEqual(
       studentColumns.map((c) => c.alias)
     );
   });
@@ -147,5 +165,24 @@ describe('StudentTableComponent', () => {
     component.ngOnDestroy();
 
     expect(component.reloadTableSubject.complete).toHaveBeenCalled();
+  });
+
+  it('should load table config and filter columns correctly', () => {
+    const tableName = 'testTable';
+    const tableConfigColumns = [
+      { alias: 'col1' },
+      { alias: 'col2' },
+      { alias: 'col3' },
+    ];
+    const tableConfigString = JSON.stringify(tableConfigColumns);
+
+    spyOn(mockLocalStorageService, 'getItem').and.returnValue(
+      tableConfigString
+    );
+    component['tableName'] = tableName;
+
+    component.loadTableConfig();
+
+    expect(component.tableConfigLoaded).toBeTrue();
   });
 });
