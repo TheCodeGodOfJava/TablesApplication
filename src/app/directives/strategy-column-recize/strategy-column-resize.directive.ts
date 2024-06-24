@@ -97,7 +97,7 @@ export class StrategyResizeDirective<T>
   onResizeColumn(
     event: MouseEvent,
     index: number,
-    leftHandler: boolean = false
+    isleftHandler: boolean = false
   ) {
     this.checkResizing(event, index);
     this.currentResizeIndex = index;
@@ -105,10 +105,10 @@ export class StrategyResizeDirective<T>
     this.startX = event.pageX;
     this.chainedColumnIndex = this.isResizingRight ? index + 1 : index - 1;
     this.firstChained =
-      this.columns[leftHandler ? index - 1 : index].width || 0;
+      this.columns[isleftHandler ? index - 1 : index].width || 0;
     this.secondChained = this.columns[this.chainedColumnIndex].width || 0;
     event.preventDefault();
-    this.mouseMove(index, leftHandler);
+    this.mouseMove(index, isleftHandler);
   }
 
   private checkResizing(event: MouseEvent, index: number) {
@@ -128,7 +128,7 @@ export class StrategyResizeDirective<T>
     return cell.getBoundingClientRect();
   }
 
-  private mouseMove(index: number, leftHandler: boolean = false) {
+  private mouseMove(index: number, isleftHandler: boolean = false) {
     this.resizableMouseMove = this.renderer.listen(
       'document',
       'mousemove',
@@ -140,7 +140,7 @@ export class StrategyResizeDirective<T>
           if (dx !== 0 && this.currentResizeIndex === index) {
             let currColumn;
             let currWidth;
-            if (leftHandler) {
+            if (isleftHandler) {
               currColumn = this.columns[index - 1];
               currWidth = this.firstChained - dx;
               const tableWidth = this.columns.reduce(
@@ -212,25 +212,28 @@ export class StrategyResizeDirective<T>
       return;
     }
 
-    const rightHandleBar = this.renderer.createElement('div');
-    this.renderer.addClass(rightHandleBar, 'bar');
-    this.renderer.addClass(rightHandleBar, 'right-resize-holder');
-    this.renderer.addClass(rightHandleBar, 'gradient-background');
-    this.renderer.insertBefore(el, rightHandleBar, el.firstChild);
-
+    const rightHandleBar = this.createHandleBar(el);
     this.renderer.listen(rightHandleBar, 'mousedown', (event) =>
       this.onResizeColumn(event, index)
     );
 
-    const leftHandleBar = this.renderer.createElement('div');
-    this.renderer.addClass(leftHandleBar, 'bar');
-    this.renderer.addClass(leftHandleBar, 'left-resize-holder');
-    this.renderer.addClass(leftHandleBar, 'gradient-background');
-    this.renderer.insertBefore(el, leftHandleBar, el.firstChild);
-
+    const leftHandleBar = this.createHandleBar(el, true);
     this.renderer.listen(leftHandleBar, 'mousedown', (event) =>
       this.onResizeColumn(event, index, true)
     );
+  }
+
+  private createHandleBar(el: HTMLElement, isLeftHandleBar: boolean = false) {
+    const handleBar = this.renderer.createElement('div');
+    this.renderer.addClass(handleBar, 'bar');
+    this.renderer.addClass(
+      handleBar,
+      (isLeftHandleBar ? 'left' : 'right') + '-resize-holder'
+    );
+    this.renderer.addClass(handleBar, 'gradient-background');
+    isLeftHandleBar
+      ? this.renderer.insertBefore(el, handleBar, el.firstChild)
+      : this.renderer.appendChild(el, handleBar);
   }
 
   @HostListener('window:resize', ['$event'])
