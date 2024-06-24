@@ -49,7 +49,7 @@
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
-                [uniqueFormGroupId]="-1"
+                [uniqueFormGroupId]="tableName + '_headerFormGroup'"
                 [dependentAliases]="
                   column.headerControl?.dependentAliases || []
                 "
@@ -105,7 +105,7 @@
               [controllerPath]="controllerPath"
               [formGroup]="actions.getRowFormGroup(i)"
               [dependentAliases]="column.inlineControl?.dependentAliases || []"
-              [uniqueFormGroupId]="i"
+              [uniqueFormGroupId]="tableName + '_rowFormGroup_' + i"
             />
             <base-checkbox
               *ngIf="column.inlineControl?.type === CONTROL_TYPE.BOOLEAN"

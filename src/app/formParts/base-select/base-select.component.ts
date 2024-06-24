@@ -52,9 +52,9 @@ export class BaseSelectComponent
   dependentAliases: string[] = [];
 
   @Input()
-  uniqueFormGroupId!: number;
+  uniqueFormGroupId!: string;
 
-  protected static optionsDataMap: Map<number, Map<string, OptionsData>> =
+  protected static optionsDataMap: Map<string, Map<string, OptionsData>> =
     new Map();
 
   subscriptions$: Subject<any> = new Subject<any>();
