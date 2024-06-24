@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  Input,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -69,6 +70,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected performMassResize!: boolean;
 
+  private _tableName!: string;
+
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
@@ -104,6 +107,18 @@ export abstract class AbstractDataTableComponent<T extends Id>
       },
       this.tableControlFormGroup
     );
+  }
+
+  get tableName(): string {
+    if (!this._tableName) {
+      throw new Error('The name of the table is not set!');
+    }
+    return this._tableName;
+  }
+
+  @Input()
+  set tableName(name: string) {
+    this._tableName = name;
   }
 
   private addSelectSearchControl(

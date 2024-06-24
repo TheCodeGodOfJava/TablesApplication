@@ -42,5 +42,6 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
       toastrService,
       fb
     );
+    this.tableName = 'Students_table';
   }
 }
