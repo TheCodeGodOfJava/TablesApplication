@@ -143,12 +143,29 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.tableName
     );
     if (tableConfigString) {
-      const tableConfigColumns: AppColumn<T>[] = JSON.parse(tableConfigString);
+      let tableConfigColumns: AppColumn<T>[] = JSON.parse(tableConfigString);
       if (tableConfigColumns.length) {
-        const filteredColumns = tableConfigColumns.filter((c) =>
-          this.colOps.getAllColumns().some((ac) => ac.alias === c.alias)
-        );
+        const allColumns = this.colOps.getAllColumns();
+        const filteredColumns: AppColumn<T>[] = [];
+        tableConfigColumns
+          .filter((loadedColumn) =>
+            allColumns.some((column) => column.alias === loadedColumn.alias)
+          )
+          .forEach((loadedColumn) => {
+            const column: AppColumn<T> | undefined = allColumns.find(
+              (c) => c.alias === loadedColumn.alias
+            );
+            column &&
+              filteredColumns.push({
+                ...column,
+                width: loadedColumn.width ?? 0,
+              });
+          });
+
         this.colOps.activeColumns = filteredColumns;
+        this.tableControlFormGroup
+          .get(this.columnsOnOffAlias)
+          ?.setValue(filteredColumns.map((c) => c.placeholder));
         this.tableConfigLoaded = true;
       }
     }

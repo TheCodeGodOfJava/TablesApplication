@@ -52,6 +52,7 @@
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
                 [uniqueFormGroupId]="tableName + '_headerFormGroup'"
+                [filterLocalSource]="column.headerControl?.filterLocalSource"
                 [dependentAliases]="
                   column.headerControl?.dependentAliases || []
                 "
@@ -179,6 +180,7 @@
         [alias]="columnsOnOffAlias"
         [formGroup]="tableControlFormGroup"
         [action]="this.colOps.enableDisableTableColumns"
+        [filterLocalSource]="colOps.getSortedActiveHeaders"
       />
     </div>
     <div class="center-content">

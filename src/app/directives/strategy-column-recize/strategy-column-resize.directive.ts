@@ -166,7 +166,6 @@ export class StrategyResizeDirective<T>
               const screenWidth = window.innerWidth;
 
               if (currWidth > this.minWidth && tableWidth > screenWidth - 20) {
-                console.log(currWidth);
                 currColumn.width = currWidth;
                 this.setTableWidth();
               }
