@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { of } from 'rxjs';
 import { Student } from '../../../../models/student';
 import { AppColumn } from '../../interfaces/appColumn';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
@@ -72,7 +73,10 @@ export const studentColumns: AppColumn<Student>[] = [
     cell: (element: Student) => `${element.gender ? 'Male' : 'Female'}`,
     headerControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<boolean[]>([true, false]),
+      getControl: () => new FormControl<string[]>([]),
+      filterLocalSource: () => {
+        return of(['true', 'false']);
+      },
     },
     inlineControl: {
       type: CONTROL_TYPE.BOOLEAN,
@@ -109,18 +113,31 @@ export const studentColumns: AppColumn<Student>[] = [
       getControl: () => new FormControl<string | null>(null),
     },
   },
+
+  {
+    alias: 'country',
+    placeholder: 'Country',
+    headerControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<string | null>(null),
+    },
+    inlineControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl<string | null>(null),
+    },
+  },
   {
     alias: 'state',
     placeholder: 'State',
     headerControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<number | null>(null),
-      dependentAliases: ['city'],
+      getControl: () => new FormControl<string | null>(null),
+      dependentAliases: ['country'],
     },
     inlineControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<number | null>(null),
-      dependentAliases: ['city'],
+      getControl: () => new FormControl<string | null>(null),
+      dependentAliases: ['country'],
     },
   },
   {
@@ -128,11 +145,13 @@ export const studentColumns: AppColumn<Student>[] = [
     placeholder: 'City',
     headerControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<number | null>(null),
+      getControl: () => new FormControl<string | null>(null),
+      dependentAliases: ['country', 'state'],
     },
     inlineControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () => new FormControl<number | null>(null),
+      getControl: () => new FormControl<string | null>(null),
+      dependentAliases: ['country', 'state'],
     },
   },
 ];

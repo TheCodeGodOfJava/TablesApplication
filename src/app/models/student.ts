@@ -7,4 +7,7 @@ export interface Student extends Id {
   gender: boolean;
   about: string;
   enrollDate: string;
+  country: string;
+  state: string;
+  city: string;
 }

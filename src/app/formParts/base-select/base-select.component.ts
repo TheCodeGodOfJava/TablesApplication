@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,7 +14,6 @@ import {
   Subject,
   debounceTime,
   distinctUntilChanged,
-  of,
   startWith,
   takeUntil,
   tap,
@@ -17,11 +21,6 @@ import {
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormComponent } from '../abstract/abstractFormComponent';
-
-interface OptionsData {
-  parentAlias: string;
-  options: Observable<string[]>;
-}
 
 @Component({
   selector: 'base-select',
@@ -54,8 +53,14 @@ export class BaseSelectComponent
   @Input()
   uniqueFormGroupId!: string;
 
-  protected static optionsDataMap: Map<string, Map<string, OptionsData>> =
-    new Map();
+  @Input()
+  filterLocalSource?: (
+    field: string,
+    term: string,
+    dep?: string
+  ) => Observable<string[]>;
+
+  protected static optionsDataMap: Map<string, string> = new Map();
 
   subscriptions$: Subject<any> = new Subject<any>();
 
@@ -63,18 +68,14 @@ export class BaseSelectComponent
 
   protected PREFIX = SELECT_SEARCH_PREFIX;
 
+  protected options!: Observable<string[]>;
+
+  private currentDep!: string;
+  private currentDepValue!: string;
+
   ngAfterViewInit(): void {
     setTimeout(() => {
-      let initServerOptions: boolean = true;
-      if (this.isMulti) {
-        const constantOption = this.formGroup.get(this.alias)?.value as [];
-        if (constantOption.length) {
-          const optionsData = this.getOptionsData(this.alias);
-          optionsData.options = of(constantOption);
-          initServerOptions = false;
-        }
-      }
-      initServerOptions && this.initSelect();
+      this.initSelect();
     });
   }
 
@@ -86,58 +87,35 @@ export class BaseSelectComponent
         takeUntil(this.subscriptions$),
         debounceTime(700),
         distinctUntilChanged(),
-        tap((term: string) => this.loadOptionsForSelect(this.alias, term))
+        tap((term: string) => this.loadOptionsForSelect(term))
       )
       .subscribe();
-
-    this.formGroup
-      .get(this.alias)
-      ?.valueChanges.pipe(startWith(''), takeUntil(this.subscriptions$))
-      .subscribe(() =>
-        this.dependentAliases.forEach((alias) =>
-          this.loadOptionsForSelect(alias)
-        )
-      );
+    this.dependentAliases.forEach((parentSelectAlias) => {
+      this.formGroup
+        .get(parentSelectAlias)
+        ?.valueChanges.pipe(startWith(''), takeUntil(this.subscriptions$))
+        .subscribe((value) => {
+          this.currentDep = parentSelectAlias;
+          this.currentDepValue = value;
+          this.loadOptionsForSelect();
+        });
+    });
   }
 
-  loadOptionsForSelect(alias: string, term: string = ''): void {
-    const optionsData = this.getOptionsData(alias);
-    this.alias !== alias && (optionsData.parentAlias = this.alias);
-    const dep = this.formGroup.get(optionsData.parentAlias)?.value || '';
-    optionsData.options = this.filterService.getDataForFilter(
-      this.controllerPath,
-      alias,
-      term,
-      dep
-    );
-  }
-
-  protected getOptionsData(alias: string): OptionsData {
-    let map: Map<string, OptionsData> | undefined =
-      BaseSelectComponent.optionsDataMap.get(this.uniqueFormGroupId);
-    if (!map) {
-      map = new Map<string, OptionsData>();
-      BaseSelectComponent.optionsDataMap.set(this.uniqueFormGroupId, map);
-    }
-
-    let optionsData: OptionsData | undefined = map.get(alias);
-    if (!optionsData) {
-      optionsData = {
-        parentAlias: '',
-        options: of([]),
-      };
-      map.set(alias, optionsData);
-    }
-    return optionsData;
+  loadOptionsForSelect(term: string = ''): void {
+    this.options = this.filterLocalSource
+      ? this.filterLocalSource(this.alias, term)
+      : this.filterService.getDataForFilter(
+          this.controllerPath,
+          this.alias,
+          term,
+          this.currentDep,
+          this.currentDepValue
+        );
   }
 
   ngOnDestroy(): void {
     this.subscriptions$.next(true);
     this.subscriptions$.unsubscribe();
-    let map: Map<string, OptionsData> | undefined =
-      BaseSelectComponent.optionsDataMap.get(this.uniqueFormGroupId);
-    map?.delete(this.alias);
-    !map?.size &&
-      BaseSelectComponent.optionsDataMap.delete(this.uniqueFormGroupId);
   }
 }

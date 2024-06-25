@@ -13,11 +13,12 @@ export class FilterService {
     controllerPath: string,
     field: string,
     term: string,
+    depAlias: string = '',
     dep: string = ''
   ): Observable<string[]> => {
-    if (dep) {
-      dep = `dep=${dep}&`;
-    }
+    dep && (dep = `dep=${dep}&`);
+    depAlias && (depAlias = `depAlias=${depAlias}&`);
+
     const url = `${
       environment.API_BASE_URL
     }${controllerPath}/filter?${dep}field=${encodeURIComponent(
