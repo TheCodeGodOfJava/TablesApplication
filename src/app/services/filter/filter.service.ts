@@ -16,12 +16,11 @@ export class FilterService {
     depAlias: string = '',
     dep: string = ''
   ): Observable<string[]> => {
-    dep && (dep = `dep=${dep}&`);
     depAlias && (depAlias = `depAlias=${depAlias}&`);
-
+    dep && (dep = `dep=${dep}&`);
     const url = `${
       environment.API_BASE_URL
-    }${controllerPath}/filter?${dep}field=${encodeURIComponent(
+    }${controllerPath}/filter?${depAlias}${dep}field=${encodeURIComponent(
       field
     )}&term=${encodeURIComponent(term)}`;
     return this.hc.get<string[]>(url);
