@@ -68,7 +68,7 @@ export class BaseSelectComponent
 
   protected PREFIX = SELECT_SEARCH_PREFIX;
 
-  protected options!: Observable<string[]>;
+  options!: Observable<string[]>;
 
   private currentDep!: string;
   private currentDepValue!: string;
