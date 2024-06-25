@@ -4,7 +4,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -184,5 +184,51 @@ describe('StudentTableComponent', () => {
     component.loadTableConfig();
 
     expect(component.tableConfigLoaded).toBeTrue();
+  });
+
+  it('should enable and disable table columns', () => {
+    const formGroup = formBuilder.group({
+      colsOnOff: new FormControl(['First Name', 'Age']),
+    });
+
+    component.colOps.enableDisableTableColumns('colsOnOff', formGroup);
+    expect(component.colOps.activeColumns.length).toEqual(2);
+  });
+
+  it('should get active column aliases', () => {
+    component.colOps.activeColumns = studentColumns;
+    expect(component.colOps.getActiveColsAliases()).toEqual(
+      studentColumns.map((c) => c.alias)
+    );
+  });
+
+  it('should get active headers', () => {
+    component.colOps.activeColumns = studentColumns;
+    expect(component.colOps.getActiveHeaders()).toEqual(
+      studentColumns.map((c) => c.placeholder)
+    );
+  });
+
+  it('should sort active headers', fakeAsync(() => {
+    component.colOps.activeColumns = studentColumns;
+    component.colOps
+      .getSortedActiveHeaders('', '')
+      .subscribe((sortedHeaders) => {
+        expect(sortedHeaders).toEqual(
+          studentColumns.map((c) => c.placeholder).sort()
+        );
+      });
+    tick();
+  }));
+
+  it('should drop columns and reorder them', () => {
+    component.colOps.activeColumns = studentColumns.slice();
+    const event = {
+      previousIndex: 0,
+      currentIndex: 1,
+    } as any;
+    component.colOps.drop(event);
+    expect(component.colOps.activeColumns[0]).toEqual(studentColumns[1]);
+    expect(component.colOps.activeColumns[1]).toEqual(studentColumns[0]);
   });
 });
