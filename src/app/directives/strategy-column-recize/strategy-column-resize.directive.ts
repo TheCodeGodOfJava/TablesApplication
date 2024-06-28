@@ -9,7 +9,7 @@ import {
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
-import { Subscription, merge, startWith, tap, withLatestFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
 import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
 import { LocalStorageService } from '../../services/local-storage/local-storage.service';
@@ -58,29 +58,15 @@ export class StrategyResizeDirective<T>
 
   ngAfterViewInit(): void {
     this.tableRef = this.el.nativeElement.querySelector('table');
-
-    this.subscription = merge(
-      this.dataSource.loadingSubject,
-      this.dataSource.modelSubject
-    )
-      .pipe(
-        withLatestFrom(
-          this.dataSource.loadingSubject.pipe(startWith(null)),
-          this.dataSource.modelSubject.pipe(startWith(null))
-        ),
-        tap(([, loading]) => {
-          setTimeout(() => {
-            if (!loading) {
-              if (!this.initialLoadComplete && !this.tableConfigLoaded) {
-                this.calculateDefaultWidth();
-              }
-              this.setTableWidth();
-              this.initialLoadComplete = true;
-            }
-          }, 0);
-        })
-      )
-      .subscribe();
+    this.subscription = this.dataSource.modelSubject.subscribe(() => {
+      setTimeout(() => {
+        if (!this.initialLoadComplete && !this.tableConfigLoaded) {
+          this.calculateDefaultWidth();
+        }
+        this.setTableWidth();
+        this.initialLoadComplete = true;
+      }, 0);
+    });
   }
 
   private calculateDefaultWidth() {
