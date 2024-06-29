@@ -18,12 +18,14 @@ import {
 } from 'rxjs';
 
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
+import { RowDetailDialogComponent } from '../../../row-detail-dialog/row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
@@ -81,7 +83,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
     protected stateService: StateService<T>,
     protected toastrService: ToastrService,
     protected localStorageService: LocalStorageService,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    protected dialog: MatDialog
   ) {
     this.dataSource = ds;
     this.formGroup = this.fb.group({});
@@ -278,6 +281,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   goToRow(row: T) {
-    this.toastrService.success('Current row ID is ' + row.id);
+    this.dialog.open(RowDetailDialogComponent, {
+      height: 'calc(100% - 30px)',
+      width: 'calc(100% - 30px)',
+      maxWidth: '100%',
+      maxHeight: '100%',
+      data: {
+        rowId: row.id,
+      },
+    });
   }
 }

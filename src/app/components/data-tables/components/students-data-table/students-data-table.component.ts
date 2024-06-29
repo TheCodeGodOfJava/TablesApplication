@@ -12,6 +12,7 @@ import { ACTIONS } from '../../interfaces/appAction';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { GenericDataSource } from '../abstract/genericDataSource';
 import { studentColumns } from './columns';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'customer-work-order-number-data-table',
@@ -36,14 +37,16 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
     protected override stateService: StateService<Student>,
     protected override toastrService: ToastrService,
     protected override localStorageService: LocalStorageService,
-    protected override fb: FormBuilder
+    protected override fb: FormBuilder,
+    protected override dialog: MatDialog
   ) {
     super(
       new GenericDataSource<Student>(tableService),
       stateService,
       toastrService,
       localStorageService,
-      fb
+      fb,
+      dialog
     );
     this.tableName = 'Students_table';
   }
