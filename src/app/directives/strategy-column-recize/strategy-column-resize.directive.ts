@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
-import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
+import { AppEntity } from '../../components/data-tables/interfaces/appColumn';
 import { LocalStorageService } from '../../services/local-storage/local-storage.service';
 
 @Directive({
@@ -22,7 +22,7 @@ export class StrategyResizeDirective<T>
   implements AfterViewInit, OnChanges, OnDestroy
 {
   private tableRef!: HTMLTableElement;
-  @Input() columns!: AppColumn<T>[];
+  @Input() columns!: AppEntity<T>[];
   @Input() tableConfigLoaded: boolean = false;
   @Input() dataSource!: GenericDataSource<T>;
   @Input() performMassResize: boolean = false;

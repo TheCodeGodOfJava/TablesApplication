@@ -4,7 +4,7 @@ import { Id } from '../models/id';
 import { StateService } from '../services/state/state.service';
 import { GenericDataSource } from './data-tables/components/abstract/genericDataSource';
 import { ACTIONS, AppAction } from './data-tables/interfaces/appAction';
-import { AppColumn } from './data-tables/interfaces/appColumn';
+import { AppEntity } from './data-tables/interfaces/appColumn';
 
 export class Actions<T extends Id> {
   constructor(
@@ -92,14 +92,14 @@ export class Actions<T extends Id> {
   }
 
   convertActionToColumn(
-    columns: AppColumn<T>[],
+    columns: AppEntity<T>[],
     allowedActions: ACTIONS[]
   ): void {
     if (
       allowedActions.length > 0 &&
       !columns.find((c) => c.alias === 'actions')
     ) {
-      const actionsColumn: AppColumn<T> = {
+      const actionsColumn: AppEntity<T> = {
         alias: 'actions',
         placeholder: 'Actions',
         isActionColumn: true,

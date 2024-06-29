@@ -46,25 +46,25 @@
             </div>
             <div style="width: 100%">
               <base-select
-                *ngIf="column.headerControl?.type === CONTROL_TYPE.SELECT"
+                *ngIf="column.mainControl?.type === CONTROL_TYPE.SELECT"
                 [alias]="column.alias"
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
                 [uniqueFormGroupId]="tableName + '_headerFormGroup'"
-                [filterLocalSource]="column.headerControl?.filterLocalSource"
+                [filterLocalSource]="column.mainControl?.filterLocalSource"
                 [dependentAliases]="
-                  column.headerControl?.dependentAliases || []
+                  column.mainControl?.dependentAliases || []
                 "
               />
               <date-range-input
-                *ngIf="column.headerControl?.type === CONTROL_TYPE.DATE_RANGE"
+                *ngIf="column.mainControl?.type === CONTROL_TYPE.DATE_RANGE"
                 [alias]="column.alias"
                 [placeholder]="column.placeholder"
                 [formGroup]="formGroup"
               />
               <base-input
-                *ngIf="column.headerControl?.type === CONTROL_TYPE.INPUT"
+                *ngIf="column.mainControl?.type === CONTROL_TYPE.INPUT"
                 [alias]="column.alias"
                 [placeholder]="column.placeholder"
                 [formGroup]="formGroup"
@@ -96,34 +96,34 @@
             </div>
             }@else{ @if(row.visible && !column.notEditable){
             <base-input
-              *ngIf="column.inlineControl?.type === CONTROL_TYPE.INPUT"
+              *ngIf="column.rowControl?.type === CONTROL_TYPE.INPUT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [formGroup]="actions.getRowFormGroup(i)"
             />
             <base-select
-              *ngIf="column.inlineControl?.type === CONTROL_TYPE.SELECT"
+              *ngIf="column.rowControl?.type === CONTROL_TYPE.SELECT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [controllerPath]="controllerPath"
               [formGroup]="actions.getRowFormGroup(i)"
-              [dependentAliases]="column.inlineControl?.dependentAliases || []"
+              [dependentAliases]="column.rowControl?.dependentAliases || []"
               [uniqueFormGroupId]="tableName + '_rowFormGroup_' + i"
             />
             <base-checkbox
-              *ngIf="column.inlineControl?.type === CONTROL_TYPE.BOOLEAN"
+              *ngIf="column.rowControl?.type === CONTROL_TYPE.BOOLEAN"
               [alias]="column.alias"
               [formGroup]="actions.getRowFormGroup(i)"
               [placeholder]="column.placeholder"
             />
             <base-date-picker
-              *ngIf="column.inlineControl?.type === CONTROL_TYPE.DATE_INPUT"
+              *ngIf="column.rowControl?.type === CONTROL_TYPE.DATE_INPUT"
               [alias]="column.alias"
               [formGroup]="actions.getRowFormGroup(i)"
               [placeholder]="column.placeholder"
             />
             <base-text-field
-              *ngIf="column.inlineControl?.type === CONTROL_TYPE.TEXT"
+              *ngIf="column.rowControl?.type === CONTROL_TYPE.TEXT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [formGroup]="actions.getRowFormGroup(i)"

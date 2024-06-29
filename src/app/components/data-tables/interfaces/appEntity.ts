@@ -13,12 +13,12 @@ export interface Control {
   ) => Observable<string[]>;
 }
 
-export interface AppColumn<T> {
+export interface AppEntity<T> {
   cell?: (model: T) => any;
   alias: string;
   placeholder: string;
-  headerControl?: Control;
-  inlineControl?: Control;
+  mainControl?: Control;
+  rowControl?: Control;
   isActionColumn?: boolean;
   notEditable?: boolean;
   width?: number;

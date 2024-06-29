@@ -1,18 +1,18 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { Student } from '../../../../models/student';
-import { AppColumn } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appColumn';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 
-export const studentColumns: AppColumn<Student>[] = [
+export const studentColumns: AppEntity<Student>[] = [
   {
     alias: 'id',
     placeholder: 'ID',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<number | null>(null),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.INPUT,
       getControl: () => new FormControl<number | null>(null),
     },
@@ -21,11 +21,11 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'firstName',
     placeholder: 'First Name',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string[]>([]),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.INPUT,
       getControl: () =>
         new FormControl<string | null>(null, [
@@ -37,11 +37,11 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'lastName',
     placeholder: 'Last Name',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string[]>([]),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.INPUT,
       getControl: () =>
         new FormControl<string | null>(null, [
@@ -53,11 +53,11 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'age',
     placeholder: 'Age',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<number | null>(null),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.INPUT,
       getControl: () =>
         new FormControl<number | null>(null, [
@@ -71,14 +71,14 @@ export const studentColumns: AppColumn<Student>[] = [
     alias: 'gender',
     placeholder: 'Gender',
     cell: (element: Student) => `${element.gender ? 'Male' : 'Female'}`,
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string[]>([]),
       filterLocalSource: () => {
         return of(['true', 'false']);
       },
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.BOOLEAN,
       getControl: () => new FormControl<boolean | null>(null),
     },
@@ -88,7 +88,7 @@ export const studentColumns: AppColumn<Student>[] = [
     placeholder: 'Enroll Date',
     cell: (element: Student) =>
       new Date(element.enrollDate).toISOString().split('T')[0],
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.DATE_RANGE,
       getControl: () =>
         new FormGroup({
@@ -96,7 +96,7 @@ export const studentColumns: AppColumn<Student>[] = [
           end: new FormControl<Date | null>(null),
         }),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.DATE_INPUT,
       getControl: () => new FormControl<boolean | null>(null),
     },
@@ -104,11 +104,11 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'about',
     placeholder: 'About',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.INPUT,
       getControl: () => new FormControl<string | null>(null),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.TEXT,
       getControl: () => new FormControl<string | null>(null),
     },
@@ -117,11 +117,11 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'country',
     placeholder: 'Country',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
     },
@@ -129,12 +129,12 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'state',
     placeholder: 'State',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country'],
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country'],
@@ -143,12 +143,12 @@ export const studentColumns: AppColumn<Student>[] = [
   {
     alias: 'city',
     placeholder: 'City',
-    headerControl: {
+    mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country', 'state'],
     },
-    inlineControl: {
+    rowControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country', 'state'],

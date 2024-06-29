@@ -1,12 +1,12 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { AppColumn } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appColumn';
 
 export class ColumnsOperations<T> {
-  public activeColumns: AppColumn<T>[];
+  public activeColumns: AppEntity<T>[];
 
-  constructor(private allColumns: AppColumn<T>[]) {
+  constructor(private allColumns: AppEntity<T>[]) {
     this.activeColumns = allColumns;
   }
 
@@ -18,20 +18,20 @@ export class ColumnsOperations<T> {
   };
 
   private getFromActiveCols(
-    getValueByField: (model: AppColumn<T>) => string
+    getValueByField: (model: AppEntity<T>) => string
   ): string[] {
     return this.getFromCols(this.activeColumns, getValueByField);
   }
 
   private getFromAllCols(
-    getValueByField: (model: AppColumn<T>) => string
+    getValueByField: (model: AppEntity<T>) => string
   ): string[] {
     return this.getFromCols(this.allColumns, getValueByField);
   }
 
   private getFromCols(
-    cols: AppColumn<T>[],
-    getValueByField: (model: AppColumn<T>) => string
+    cols: AppEntity<T>[],
+    getValueByField: (model: AppEntity<T>) => string
   ) {
     return cols.map(getValueByField);
   }
@@ -44,7 +44,7 @@ export class ColumnsOperations<T> {
     return this.getFromActiveCols((c) => c.placeholder || '');
   }
 
-  public getAllColumns(): AppColumn<T>[] {
+  public getAllColumns(): AppEntity<T>[] {
     return this.allColumns;
   }
 

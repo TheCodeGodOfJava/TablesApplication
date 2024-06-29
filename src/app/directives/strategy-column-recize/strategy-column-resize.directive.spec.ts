@@ -2,7 +2,7 @@ import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { AppColumn } from '../../components/data-tables/interfaces/appColumn';
+import { AppEntity } from '../../components/data-tables/interfaces/appColumn';
 import { Student } from '../../models/student';
 import { StrategyResizeDirective } from './strategy-column-resize.directive';
 
@@ -34,9 +34,9 @@ import { StrategyResizeDirective } from './strategy-column-resize.directive';
   `,
 })
 class TestComponent {
-  columns: AppColumn<any>[] = [
-    { alias: 'col1', width: 100 } as AppColumn<any>,
-    { alias: 'col2', width: 100 } as AppColumn<any>,
+  columns: AppEntity<any>[] = [
+    { alias: 'col1', width: 100 } as AppEntity<any>,
+    { alias: 'col2', width: 100 } as AppEntity<any>,
   ];
   tableConfigLoaded: boolean = false;
   dataSource = {
@@ -75,8 +75,8 @@ describe('StrategyResizeDirective', () => {
 
     // Mock necessary inputs or dependencies (if any)
     directive.columns = [
-      { alias: 'col1', width: 0 } as AppColumn<Student>,
-      { alias: 'col2', width: 0 } as AppColumn<Student>,
+      { alias: 'col1', width: 0 } as AppEntity<Student>,
+      { alias: 'col2', width: 0 } as AppEntity<Student>,
     ];
 
     // Act: Trigger initialization
@@ -96,8 +96,8 @@ describe('StrategyResizeDirective', () => {
 
     // Mock initial columns setup
     directive.columns = [
-      { alias: 'col1', width: 100 } as AppColumn<Student>,
-      { alias: 'col2', width: 100 } as AppColumn<Student>,
+      { alias: 'col1', width: 100 } as AppEntity<Student>,
+      { alias: 'col2', width: 100 } as AppEntity<Student>,
     ];
 
     // Trigger ngAfterViewInit to initialize

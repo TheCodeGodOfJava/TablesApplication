@@ -28,7 +28,7 @@ import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
 import { AbstractRowDetailDialogComponent } from '../../../row-detail-dialog/components/abstract/abstract-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
-import { AppColumn } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
@@ -53,7 +53,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   protected pageSize: number = 5;
   protected pageSizeOptions: number[] = [5, 10, 15];
 
-  protected columns!: AppColumn<T>[];
+  protected columns!: AppEntity<T>[];
   protected controllerPath!: string;
 
   dataSource!: GenericDataSource<T>;
@@ -101,7 +101,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.columns.forEach((c) =>
         this.formOps.addControlsToFormGroup(
           c.alias,
-          c.headerControl,
+          c.mainControl,
           this.formGroup
         )
       );
@@ -143,16 +143,16 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.tableName
     );
     if (tableConfigString) {
-      let tableConfigColumns: AppColumn<T>[] = JSON.parse(tableConfigString);
+      let tableConfigColumns: AppEntity<T>[] = JSON.parse(tableConfigString);
       if (tableConfigColumns.length) {
         const allColumns = this.colOps.getAllColumns();
-        const filteredColumns: AppColumn<T>[] = [];
+        const filteredColumns: AppEntity<T>[] = [];
         tableConfigColumns
           .filter((loadedColumn) =>
             allColumns.some((column) => column.alias === loadedColumn.alias)
           )
           .forEach((loadedColumn) => {
-            const column: AppColumn<T> | undefined = allColumns.find(
+            const column: AppEntity<T> | undefined = allColumns.find(
               (c) => c.alias === loadedColumn.alias
             );
             column &&
