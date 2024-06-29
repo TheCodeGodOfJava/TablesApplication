@@ -276,4 +276,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   ngOnDestroy(): void {
     this.reloadTableSubject.complete();
   }
+  goToRow(rowId: number) {
+    this.toastrService.success('Current row ID is ' + rowId);
+  }
 }
