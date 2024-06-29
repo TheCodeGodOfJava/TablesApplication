@@ -20,9 +20,9 @@ import {
     MatButtonModule,
     NgIf,
   ],
-  templateUrl: './confirm.component.html',
-  styleUrl: './confirm.component.scss',
+  templateUrl: './row-detail-dialog.component.html',
+  styleUrl: './row-detail-dialog.component.scss',
 })
-export class ConfirmComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { selectedRows: number[]; action: string }) {}
+export class RowDetailDialogComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { rowId: number}) {}
 }
