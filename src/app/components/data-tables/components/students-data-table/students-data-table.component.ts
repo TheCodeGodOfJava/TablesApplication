@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { AbstractDataTableComponent } from '../abstract/abstract-data-table.component';
 
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
+import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/components/studentRowDetailDialog/student-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { GenericDataSource } from '../abstract/genericDataSource';
 import { studentColumns } from './columns';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'customer-work-order-number-data-table',
@@ -23,6 +24,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class StudentTableComponent extends AbstractDataTableComponent<Student> {
   protected override columns = studentColumns;
+  protected override detailDialogComponent = StudentRowDetailDialogComponent;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;
   protected override allowedActions: ACTIONS[] = [

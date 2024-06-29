@@ -17,6 +17,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
+import { ComponentType } from '@angular/cdk/portal';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -25,7 +26,7 @@ import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
-import { RowDetailDialogComponent } from '../../../row-detail-dialog/row-detail-dialog.component';
+import { AbstractRowDetailDialogComponent } from '../../../row-detail-dialog/components/abstract/abstract-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
@@ -77,6 +78,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
   private _tableName!: string;
 
   tableConfigLoaded: boolean = false;
+
+  protected detailDialogComponent!: ComponentType<AbstractRowDetailDialogComponent>;
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -281,7 +284,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   goToRow(row: T) {
-    this.dialog.open(RowDetailDialogComponent, {
+    this.dialog.open(this.detailDialogComponent, {
       height: 'calc(100% - 30px)',
       width: 'calc(100% - 30px)',
       maxWidth: '100%',
