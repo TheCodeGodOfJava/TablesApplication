@@ -10,14 +10,17 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { CONTROLLER_PATHS } from '../../../../constants';
+import { CONTROLLER_PATHS, SELECT_SEARCH_PREFIX } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { FilterService } from '../../../../services/filter/filter.service';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
+import { AppColumn, Control } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
+import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
+import { FormOperations } from '../abstract/formOperations';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
 
@@ -231,4 +234,76 @@ describe('StudentTableComponent', () => {
     expect(component.colOps.activeColumns[0]).toEqual(studentColumns[1]);
     expect(component.colOps.activeColumns[1]).toEqual(studentColumns[0]);
   });
+});
+
+describe('FormOperations', () => {
+  let formOperations: FormOperations<any>;
+  let formBuilder: FormBuilder;
+  let columns: AppColumn<any>[];
+
+  beforeEach(() => {
+    formBuilder = new FormBuilder();
+    columns = [
+      {
+        alias: 'name',
+        placeholder: 'Name',
+        inlineControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl(''),
+        },
+        headerControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl(''),
+        },
+      },
+      {
+        alias: 'age',
+        placeholder: 'Age',
+        inlineControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl(''),
+        },
+        headerControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl(''),
+        },
+      },
+    ];
+    formOperations = new FormOperations(columns, formBuilder);
+  });
+
+  it('should add controls to form group', () => {
+    const formGroup = formBuilder.group({});
+    const control: Control = {
+      type: CONTROL_TYPE.INPUT,
+      getControl: () => new FormControl(''),
+    };
+
+    formOperations.addControlsToFormGroup('name', control, formGroup);
+
+    expect(formGroup.contains('name')).toBeTrue();
+  });
+
+  it('should add select search control if type is SELECT', () => {
+    const formGroup = formBuilder.group({});
+    const control: Control = {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () => new FormControl(''),
+    };
+
+    formOperations.addControlsToFormGroup('country', control, formGroup);
+
+    expect(formGroup.contains('country')).toBeTrue();
+    expect(formGroup.contains('country' + SELECT_SEARCH_PREFIX)).toBeTrue();
+  });
+
+  it('should create a new row group', () => {
+    const row = { name: 'John', age: 30 };
+    const rowGroup = formOperations.createNewRowGroup(row);
+
+    expect(rowGroup.contains('name')).toBeTrue();
+    expect(rowGroup.contains('age')).toBeTrue();
+    expect(rowGroup.get('name')?.value).toEqual('John');
+    expect(rowGroup.get('age')?.value).toEqual(30);
+  }); 
 });

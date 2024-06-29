@@ -20,17 +20,17 @@ import {
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
-import { SELECT_SEARCH_PREFIX } from '../../../../constants';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
 import { ACTIONS } from '../../interfaces/appAction';
-import { AppColumn, Control } from '../../interfaces/appColumn';
+import { AppColumn } from '../../interfaces/appColumn';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { DataTablesModule } from '../../module/data-tables.module';
 import { ColumnsOperations } from './columnsOperations';
+import { FormOperations } from './formOperations';
 import { GenericDataSource } from './genericDataSource';
 
 @Component({
@@ -68,6 +68,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   actions!: Actions<T>;
 
   colOps!: ColumnsOperations<T>;
+  formOps!: FormOperations<T>;
 
   protected performMassResize!: boolean;
 
@@ -89,9 +90,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   ngOnInit(): void {
     this.colOps = new ColumnsOperations(this.columns);
+    this.formOps = new FormOperations<T>(this.columns, this.fb);
     if (this.columns) {
       this.columns.forEach((c) =>
-        this.addControlsToFormGroup(c.alias, c.headerControl, this.formGroup)
+        this.formOps.addControlsToFormGroup(
+          c.alias,
+          c.headerControl,
+          this.formGroup
+        )
       );
     }
     this.actions = new Actions(
@@ -102,7 +108,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.toastrService
     );
     this.actions.convertActionToColumn(this.columns, this.allowedActions);
-    this.addControlsToFormGroup(
+    this.formOps.addControlsToFormGroup(
       this.columnsOnOffAlias,
       {
         type: CONTROL_TYPE.SELECT,
@@ -124,18 +130,6 @@ export abstract class AbstractDataTableComponent<T extends Id>
   @Input()
   set tableName(name: string) {
     this._tableName = name;
-  }
-
-  private addSelectSearchControl(
-    alias: string,
-    control: Control,
-    formGroup: FormGroup
-  ) {
-    control.type === CONTROL_TYPE.SELECT &&
-      formGroup.addControl(
-        alias + SELECT_SEARCH_PREFIX,
-        new FormControl<String>('')
-      );
   }
 
   loadTableConfig() {
@@ -214,41 +208,13 @@ export abstract class AbstractDataTableComponent<T extends Id>
       )
       .subscribe((output: DtOutput<T>) => {
         if (output.data) {
-          const rowsFormGroupArray = output.data.map(this.createNewRowGroup);
+          const rowsFormGroupArray = output.data.map(
+            this.formOps.createNewRowGroup
+          );
           const formArray = this.fb.array(rowsFormGroupArray);
           this.formGroup.setControl('rows', formArray);
         }
       });
-  }
-
-  private createNewRowGroup = (
-    row: (T & { [key: string]: any }) | null = null
-  ): FormGroup => {
-    const rowGroup = this.fb.group({});
-    if (this.columns) {
-      this.columns.forEach((c) =>
-        this.addControlsToFormGroup(c.alias, c.inlineControl, rowGroup, row)
-      );
-      rowGroup.markAllAsTouched();
-      return rowGroup;
-    }
-    throw new Error('Your columns are not defined!');
-  };
-
-  private addControlsToFormGroup(
-    alias: string,
-    control: Control | undefined,
-    formGroup: FormGroup,
-    row: (T & { [key: string]: any }) | null = null
-  ) {
-    if (control) {
-      const formControl = control.getControl();
-      if (formControl) {
-        row && formControl.setValue(row[alias]);
-        formControl && formGroup.addControl(alias, formControl);
-        this.addSelectSearchControl(alias, control, formGroup);
-      }
-    }
   }
 
   loadTableData(
@@ -293,7 +259,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   createNew() {
     const data = this.dataSource.modelSubject.getValue();
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    const rowGroup = this.createNewRowGroup();
+    const rowGroup = this.formOps.createNewRowGroup();
     const model = rowGroup.value as T;
     model.visible = true;
     data.push(model);
