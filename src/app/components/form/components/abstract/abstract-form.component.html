@@ -1,0 +1,130 @@
+<div *ngIf="detail">
+  <div class="form-constructor-control">
+    <div class="form-constructor-wrapper">
+      <div class="field-list">
+        <div class="tile-span">
+          @for (tileControl of tileControls; track tileControl.alias; let i =
+          $index){
+          <base-select
+            *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
+            [alias]="tileControl.alias"
+            [placeholder]="tileControl.placeholder"
+            [formGroup]="formBuilderFormGroup"
+            [uniqueFormGroupId]="formName + '_tile_control_form_group'"
+            [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
+            [action]="tileControl.action"
+          />
+          <base-input
+            *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
+            [alias]="tileControl.alias"
+            [formGroup]="formBuilderFormGroup"
+            [placeholder]="tileControl.placeholder"
+          />
+          }
+          <div class="button-group">
+            <button
+              mat-icon-button
+              matTooltip="Create tile"
+              matTooltipPosition="above"
+              (click)="
+                tileOps.createTile(
+                  tileColSpanAlias,
+                  tileRowSpanAlias,
+                  formBuilderFormGroup
+                )
+              "
+            >
+              <mat-icon class="success-color">add_circle_outline</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Clear all tiles"
+              matTooltipPosition="above"
+              (click)="clearAllTiles()"
+              [disabled]="!tileOps.tiles.length"
+            >
+              <mat-icon class="danger-color">delete_sweep</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              matTooltip="Remove last tile"
+              matTooltipPosition="above"
+              (click)="removeLast()"
+              [disabled]="!tileOps.tiles.length"
+            >
+              <mat-icon class="warning-color">clear</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="form-constructor-main">
+      <mat-grid-list
+        class="form-container"
+        [cols]="tileOps.columnQuantity"
+        [rowHeight]="tileOps.rowHeight.toString()"
+        [gutterSize]="tileOps.gutter.toString()"
+        style="margin-top: 5px"
+        cdkDropListGroup
+      >
+        @for (tile of tileOps.tiles; track tile) {
+        <mat-grid-tile
+          [colspan]="tile.colSpan"
+          [rowspan]="tile.rowSpan"
+          class="tile"
+          cdkDropListOrientation="horizontal"
+          cdkDropList
+          [cdkDropListData]="tile.cdkDropListData"
+          (cdkDropListDropped)="formOps.drop($event)"
+        >
+          @for (f of tile.cdkDropListData; track f) {
+          <div cdkDrag class="form-item">
+            <base-input
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [formGroup]="formGroup"
+            />
+            <base-select
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.SELECT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [controllerPath]="controllerPath"
+              [formGroup]="formGroup"
+              [dependentAliases]="f.mainControl?.dependentAliases || []"
+              [uniqueFormGroupId]="formName"
+            />
+            <base-checkbox
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+              [alias]="f.alias"
+              [formGroup]="formGroup"
+              [placeholder]="f.placeholder"
+            />
+            <base-date-picker
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
+              [alias]="f.alias"
+              [formGroup]="formGroup"
+              [placeholder]="f.placeholder"
+            />
+            <base-text-field
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.TEXT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [formGroup]="formGroup"
+            />
+          </div>
+          @if (!$last) {
+          <div class="form-item-separator"></div>
+          } }
+        </mat-grid-tile>
+        }
+      </mat-grid-list>
+    </div>
+  </div>
+</div>
