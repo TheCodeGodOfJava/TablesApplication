@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AbstractFormComponent } from '../abstract/abstractFormComponent';
+import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
 import { MatLabelScrollDirective } from '../../directives/mat-label-scroll/mat-label-scroll.directive';
 
 @Component({
@@ -19,4 +19,4 @@ import { MatLabelScrollDirective } from '../../directives/mat-label-scroll/mat-l
   templateUrl: './base-input.component.html',
   styleUrl: './base-input.component.scss',
 })
-export class BaseInputComponent extends AbstractFormComponent {}
+export class BaseInputComponent extends AbstractFormElementComponent {}

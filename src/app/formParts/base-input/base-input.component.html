@@ -8,5 +8,6 @@
       matInput
       [formControlName]="alias"
       [placeholder]="placeholder"
+      (blur)="action && action(alias, formGroup)"
     /> </mat-form-field
 ></ng-container>
