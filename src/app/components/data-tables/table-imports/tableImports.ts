@@ -1,6 +1,5 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,45 +15,23 @@ import { BaseSelectComponent } from '../../../formParts/base-select/base-select.
 import { BaseTextFieldComponent } from '../../../formParts/base-text-field/base-text-field.component';
 import { DateRangeInputComponent } from '../../../formParts/date-range-input/date-range-input.component';
 
-@NgModule({
-  declarations: [],
-  imports: [
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    CommonModule,
-    BaseSelectComponent,
-    BaseInputComponent,
-    BaseCheckboxComponent,
-    DateRangeInputComponent,
-    BaseDatePickerComponent,
-    BaseTextFieldComponent,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    CdkDropList,
-    CdkDrag,
-    StrategyResizeDirective,
-  ],
-  exports: [
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    CommonModule,
-    BaseSelectComponent,
-    BaseInputComponent,
-    BaseCheckboxComponent,
-    DateRangeInputComponent,
-    BaseDatePickerComponent,
-    BaseTextFieldComponent,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    CdkDropList,
-    CdkDrag,
-    StrategyResizeDirective,
-  ],
-})
-export class DataTablesModule {}
+export const tableImports = [
+  MatTableModule,
+  MatSortModule,
+  MatPaginatorModule,
+  CommonModule,
+  BaseSelectComponent,
+  BaseInputComponent,
+  BaseCheckboxComponent,
+  DateRangeInputComponent,
+  BaseDatePickerComponent,
+  BaseTextFieldComponent,
+  ReactiveFormsModule,
+  MatButtonModule,
+  MatIconModule,
+  MatTooltipModule,
+  CdkDropList,
+  CdkDrag,
+  StrategyResizeDirective,
+  MatTooltipModule,
+];

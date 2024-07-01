@@ -5,7 +5,7 @@ import { getValidationMessage } from '../validation/validation';
 @Component({
   template: '',
 })
-export abstract class AbstractFormComponent {
+export abstract class AbstractFormElementComponent {
   @Input()
   controllerPath!: string;
 
