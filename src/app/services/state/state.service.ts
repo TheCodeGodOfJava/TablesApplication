@@ -10,6 +10,11 @@ import { Id } from '../../models/id';
 export class StateService<T> {
   constructor(private hc: HttpClient) {}
 
+  public getModelById(controllerPath: string, id: number): Observable<T> {
+    const url = `${environment.API_BASE_URL}${controllerPath}/getOneById?id=${id}`;
+    return this.hc.get<T>(url);
+  }
+
   public save(path: string, model: Id): Observable<T> {
     return this.hc.post<T>(`${environment.API_BASE_URL}${path}/save`, model);
   }
