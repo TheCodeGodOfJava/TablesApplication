@@ -1,4 +1,4 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CONTROL_TYPE } from './inputTypes';
 
@@ -19,7 +19,8 @@ export interface AppEntity<T> {
   placeholder: string;
   mainControl?: Control;
   rowControl?: Control;
-  isActionColumn?: boolean;
+  action?: (alias: string, formGroup: FormGroup) => void;
+  isAction?: boolean;
   notEditable?: boolean;
   width?: number;
 }
