@@ -1,7 +1,7 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { AppEntity } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appEntity';
 
 export class ColumnsOperations<T> {
   public activeColumns: AppEntity<T>[];

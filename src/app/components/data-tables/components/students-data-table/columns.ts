@@ -1,7 +1,7 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { Student } from '../../../../models/student';
-import { AppEntity } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appEntity';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 
 export const studentColumns: AppEntity<Student>[] = [

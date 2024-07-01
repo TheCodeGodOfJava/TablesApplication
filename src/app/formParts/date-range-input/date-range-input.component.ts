@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { AbstractFormComponent } from '../abstract/abstractFormComponent';
+import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
 
 @Component({
   selector: 'date-range-input',
@@ -17,4 +17,4 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
     MatNativeDateModule,
   ],
 })
-export class DateRangeInputComponent extends AbstractFormComponent {}
+export class DateRangeInputComponent extends AbstractFormElementComponent {}

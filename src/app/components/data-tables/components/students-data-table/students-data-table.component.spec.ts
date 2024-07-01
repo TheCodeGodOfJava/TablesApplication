@@ -16,11 +16,11 @@ import { FilterService } from '../../../../services/filter/filter.service';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
-import { AppColumn, Control } from '../../interfaces/appColumn';
+import { AppEntity, Control } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
-import { DataTablesModule } from '../../module/data-tables.module';
-import { FormOperations } from '../abstract/formOperations';
+import { DataTablesModule } from '../../table-imports/tableImports';
+import { TableFormOperations } from '../abstract/tableFormOperations';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
 
@@ -237,9 +237,9 @@ describe('StudentTableComponent', () => {
 });
 
 describe('FormOperations', () => {
-  let formOperations: FormOperations<any>;
+  let formOperations: TableFormOperations<any>;
   let formBuilder: FormBuilder;
-  let columns: AppColumn<any>[];
+  let columns: AppEntity<any>[];
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -247,11 +247,11 @@ describe('FormOperations', () => {
       {
         alias: 'name',
         placeholder: 'Name',
-        inlineControl: {
+        rowControl: {
           type: CONTROL_TYPE.INPUT,
           getControl: () => new FormControl(''),
         },
-        headerControl: {
+        mainControl: {
           type: CONTROL_TYPE.INPUT,
           getControl: () => new FormControl(''),
         },
@@ -259,17 +259,17 @@ describe('FormOperations', () => {
       {
         alias: 'age',
         placeholder: 'Age',
-        inlineControl: {
+        rowControl: {
           type: CONTROL_TYPE.INPUT,
           getControl: () => new FormControl(''),
         },
-        headerControl: {
+        mainControl: {
           type: CONTROL_TYPE.INPUT,
           getControl: () => new FormControl(''),
         },
       },
     ];
-    formOperations = new FormOperations(columns, formBuilder);
+    formOperations = new TableFormOperations(columns, formBuilder);
   });
 
   it('should add controls to form group', () => {
@@ -305,5 +305,5 @@ describe('FormOperations', () => {
     expect(rowGroup.contains('age')).toBeTrue();
     expect(rowGroup.get('name')?.value).toEqual('John');
     expect(rowGroup.get('age')?.value).toEqual(30);
-  }); 
+  });
 });

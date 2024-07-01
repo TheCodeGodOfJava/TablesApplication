@@ -2,7 +2,7 @@ import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { AppEntity } from '../../components/data-tables/interfaces/appColumn';
+import { AppEntity } from '../../components/data-tables/interfaces/appEntity';
 import { Student } from '../../models/student';
 import { StrategyResizeDirective } from './strategy-column-resize.directive';
 

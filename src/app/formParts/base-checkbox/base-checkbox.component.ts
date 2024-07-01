@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatLabelScrollDirective } from '../../directives/mat-label-scroll/mat-label-scroll.directive';
-import { AbstractFormComponent } from '../abstract/abstractFormComponent';
+import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
 
 @Component({
   selector: 'base-checkbox',
@@ -19,4 +19,4 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
   templateUrl: './base-checkbox.component.html',
   styleUrl: './base-checkbox.component.scss',
 })
-export class BaseCheckboxComponent extends AbstractFormComponent {}
+export class BaseCheckboxComponent extends AbstractFormElementComponent {}

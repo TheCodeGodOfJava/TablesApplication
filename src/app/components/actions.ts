@@ -4,7 +4,7 @@ import { Id } from '../models/id';
 import { StateService } from '../services/state/state.service';
 import { GenericDataSource } from './data-tables/components/abstract/genericDataSource';
 import { ACTIONS, AppAction } from './data-tables/interfaces/appAction';
-import { AppEntity } from './data-tables/interfaces/appColumn';
+import { AppEntity } from './data-tables/interfaces/appEntity';
 
 export class Actions<T extends Id> {
   constructor(
@@ -102,7 +102,7 @@ export class Actions<T extends Id> {
       const actionsColumn: AppEntity<T> = {
         alias: 'actions',
         placeholder: 'Actions',
-        isActionColumn: true,
+        isAction: true,
       };
       columns.push(actionsColumn);
     }

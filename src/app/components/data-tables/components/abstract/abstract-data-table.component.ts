@@ -7,7 +7,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   Observable,
   Subject,
@@ -28,19 +27,19 @@ import { StateService } from '../../../../services/state/state.service';
 import { Actions } from '../../../actions';
 import { AbstractRowDetailDialogComponent } from '../../../row-detail-dialog/components/abstract/abstract-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
-import { AppEntity } from '../../interfaces/appColumn';
+import { AppEntity } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
-import { DataTablesModule } from '../../module/data-tables.module';
+import { tableImports } from '../../table-imports/tableImports';
 import { ColumnsOperations } from './columnsOperations';
-import { FormOperations } from './formOperations';
 import { GenericDataSource } from './genericDataSource';
+import { TableFormOperations } from './tableFormOperations';
 
 @Component({
   standalone: true,
   templateUrl: './abstract-data-table.component.html',
   styleUrl: './abstract-data-table.component.scss',
-  imports: [DataTablesModule, MatTooltip],
+  imports: [tableImports],
 })
 export abstract class AbstractDataTableComponent<T extends Id>
   implements OnInit, AfterViewInit, OnDestroy
@@ -71,7 +70,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   actions!: Actions<T>;
 
   colOps!: ColumnsOperations<T>;
-  formOps!: FormOperations<T>;
+  tableFormOps!: TableFormOperations<T>;
 
   protected performMassResize!: boolean;
 
@@ -96,10 +95,10 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   ngOnInit(): void {
     this.colOps = new ColumnsOperations(this.columns);
-    this.formOps = new FormOperations<T>(this.columns, this.fb);
+    this.tableFormOps = new TableFormOperations<T>(this.columns, this.fb);
     if (this.columns) {
       this.columns.forEach((c) =>
-        this.formOps.addControlsToFormGroup(
+        this.tableFormOps.addControlsToFormGroup(
           c.alias,
           c.mainControl,
           this.formGroup
@@ -114,7 +113,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       this.toastrService
     );
     this.actions.convertActionToColumn(this.columns, this.allowedActions);
-    this.formOps.addControlsToFormGroup(
+    this.tableFormOps.addControlsToFormGroup(
       this.columnsOnOffAlias,
       {
         type: CONTROL_TYPE.SELECT,
@@ -215,7 +214,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       .subscribe((output: DtOutput<T>) => {
         if (output.data) {
           const rowsFormGroupArray = output.data.map(
-            this.formOps.createNewRowGroup
+            this.tableFormOps.createNewRowGroup
           );
           const formArray = this.fb.array(rowsFormGroupArray);
           this.formGroup.setControl('rows', formArray);
@@ -265,7 +264,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   createNew() {
     const data = this.dataSource.modelSubject.getValue();
     const rowsFormGroupArray = this.formGroup.get('rows') as FormArray;
-    const rowGroup = this.formOps.createNewRowGroup();
+    const rowGroup = this.tableFormOps.createNewRowGroup();
     const model = rowGroup.value as T;
     model.visible = true;
     data.push(model);

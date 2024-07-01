@@ -26,7 +26,7 @@
           style="background-color: #f0f0f0; height: 100%"
         >
           <div class="table-header" cdkDrag>
-            @if(column.isActionColumn){
+            @if(column.isAction){
             <div class="action-column">
               <span> {{ column.placeholder }}</span>
             </div>
@@ -78,7 +78,7 @@
         </th>
         <td mat-cell *matCellDef="let row; let i = index" (click)="goToRow(row)">
           <div>
-            @if(column.isActionColumn) {
+            @if(column.isAction) {
             <div class="action-column">
               @for (action of actions.allActions; track action) {
               @if(allowedActions.includes(action.type) &&
@@ -179,7 +179,7 @@
         placeholder="Columns on/off"
         [alias]="columnsOnOffAlias"
         [formGroup]="tableControlFormGroup"
-        [action]="this.colOps.enableDisableTableColumns"
+        [action]="colOps.enableDisableTableColumns"
         [filterLocalSource]="colOps.getSortedActiveHeaders"
       />
     </div>

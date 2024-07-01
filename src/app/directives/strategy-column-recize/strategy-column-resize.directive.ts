@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
-import { AppEntity } from '../../components/data-tables/interfaces/appColumn';
+import { AppEntity } from '../../components/data-tables/interfaces/appEntity';
 import { LocalStorageService } from '../../services/local-storage/local-storage.service';
 
 @Directive({

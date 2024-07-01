@@ -1,10 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,7 +15,7 @@ import {
 } from 'rxjs';
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
-import { AbstractFormComponent } from '../abstract/abstractFormComponent';
+import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
 
 @Component({
   selector: 'base-select',
@@ -36,7 +31,7 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
   styleUrl: './base-select.component.scss',
 })
 export class BaseSelectComponent
-  extends AbstractFormComponent
+  extends AbstractFormElementComponent
   implements OnInit, AfterViewInit
 {
   constructor(protected filterService: FilterService) {

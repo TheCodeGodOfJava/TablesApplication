@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatLabelScrollDirective } from '../../directives/mat-label-scroll/mat-label-scroll.directive';
-import { AbstractFormComponent } from '../abstract/abstractFormComponent';
+import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
 
 @Component({
   selector: 'base-date-picker',
@@ -28,4 +28,4 @@ import { AbstractFormComponent } from '../abstract/abstractFormComponent';
   templateUrl: './base-date-picker.component.html',
   styleUrl: './base-date-picker.component.scss',
 })
-export class BaseDatePickerComponent extends AbstractFormComponent {}
+export class BaseDatePickerComponent extends AbstractFormElementComponent {}

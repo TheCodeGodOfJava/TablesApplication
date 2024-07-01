@@ -11,7 +11,7 @@ import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
 import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/components/studentRowDetailDialog/student-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
-import { DataTablesModule } from '../../module/data-tables.module';
+import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
 import { studentColumns } from './columns';
 
@@ -20,7 +20,7 @@ import { studentColumns } from './columns';
   standalone: true,
   templateUrl: './../abstract/abstract-data-table.component.html',
   styleUrl: './../abstract/abstract-data-table.component.scss',
-  imports: [DataTablesModule],
+  imports: [tableImports],
 })
 export class StudentTableComponent extends AbstractDataTableComponent<Student> {
   protected override columns = studentColumns;
