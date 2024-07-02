@@ -3,11 +3,12 @@ import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Id } from '../../../../models/id';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { formImports } from '../../form-imports/formImports';
-import { FormOperations } from './form-operations';
+import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
 
 @Component({
@@ -26,7 +27,6 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   protected allFields!: AppEntity<T>[];
 
-  protected formOps!: FormOperations<T>;
   protected tileOps!: TileOperations<T>;
 
   @Input() controllerPath!: string;
@@ -43,6 +43,8 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   private _formName!: string;
 
+  protected tiles: Tile<T>[] = [];
+
   get formName(): string {
     if (!this._formName) {
       throw new Error('The name of the form is not set!');
@@ -58,19 +60,31 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   constructor(
     protected fb: FormBuilder,
     protected stateService: StateService<T>,
+    protected localStorageService: LocalStorageService,
     protected toastrService: ToastrService
   ) {
     this.formGroup = this.fb.group({});
   }
 
   ngOnInit(): void {
-    this.tileOps = new TileOperations(this.toastrService);
-    this.formOps = new FormOperations<T>(
+    const tilesStr = this.localStorageService.getItem(this.formName);
+    if (tilesStr) {
+      this.tiles = JSON.parse(tilesStr);
+    }
+    const activeFormElements = this.tiles
+      .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
+      .flat()
+      .filter((a) => this.allFields.find((f) => f.placeholder === a));
+
+    this.tileOps = new TileOperations<T>(
       this.allFields,
-      this.tileOps.tiles,
+      this.formName,
+      this.tiles,
       this.fb,
+      this.localStorageService,
       this.toastrService
     );
+
     if (this.allFields) {
       this.stateService
         .getModelById(this.controllerPath, this.detailId)
@@ -78,7 +92,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
           next: (detail: T) => {
             this.detail = detail;
             this.allFields.forEach((c) =>
-              this.formOps.addControlsToFormGroup(
+              this.tileOps.addControlsToFormGroup(
                 c.alias,
                 c.mainControl,
                 this.formGroup,
@@ -100,10 +114,10 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
         placeholder: 'Form fields on/off',
         mainControl: {
           type: CONTROL_TYPE.SELECT,
-          getControl: () => new FormControl<string[]>([]),
-          filterLocalSource: this.formOps.getSortedActiveFormElements,
+          getControl: () => new FormControl<string[]>(activeFormElements),
+          filterLocalSource: this.tileOps.getSortedActiveFormElements,
         },
-        action: this.formOps.enableDisableFormElements,
+        action: this.tileOps.enableDisableFormElements,
       },
       {
         alias: this.tileColSpanAlias,
@@ -124,7 +138,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     ];
     this.formBuilderFormGroup = this.fb.group({});
     this.tileControls.forEach((c) =>
-      this.formOps.addControlsToFormGroup(
+      this.tileOps.addControlsToFormGroup(
         c.alias,
         c.mainControl,
         this.formBuilderFormGroup
@@ -133,24 +147,14 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   clearAllTiles() {
-    this.formOps.activeFormElements = [];
     this.formBuilderFormGroup.get(this.formFieldsOnOffAlias)?.reset();
     this.tileOps.clearAllTiles();
   }
 
   removeLast() {
-    const removeCallback = (newActiveFormElements: string[] | null) => {
-      this.formOps.activeFormElements =
-        newActiveFormElements === null
-          ? []
-          : this.formOps.activeFormElements.filter(
-              (item) => !newActiveFormElements.includes(item)
-            );
-    };
     this.tileOps.removeLast(
       this.formFieldsOnOffAlias,
-      this.formBuilderFormGroup,
-      removeCallback
+      this.formBuilderFormGroup
     );
   }
 }

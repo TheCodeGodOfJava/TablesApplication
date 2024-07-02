@@ -1,15 +1,28 @@
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
+import { AppEntity } from '../../../data-tables/interfaces/appEntity';
+import { callFunction } from '../../decorators/callFunction';
 import { Tile } from '../../interfaces/tile';
+import { FormOperations } from './form-operations';
 
-export class TileOperations<T> {
-  tiles: Tile<T>[] = [];
+export class TileOperations<T> extends FormOperations<T> {
   columnQuantity: number = 8;
   rowHeight: number = 85;
   gutter: number = 6;
 
-  constructor(private toastrService: ToastrService) {}
+  constructor(
+    public override allFields: AppEntity<T>[],
+    protected override formName: string,
+    protected override tiles: Tile<T>[],
+    protected override fb: FormBuilder,
+    protected override localStorageService: LocalStorageService,
+    protected override toastrService: ToastrService
+  ) {
+    super(allFields, formName, tiles, fb, localStorageService, toastrService);
+  }
 
+  @callFunction('saveFormTemplate')
   createTile(
     tileColSpanAlias: string,
     tileRowSpanAlias: string,
@@ -34,21 +47,18 @@ export class TileOperations<T> {
     );
   }
 
+  @callFunction('saveFormTemplate')
   clearAllTiles() {
     this.tiles.length = 0;
     this.toastrService.success(`Cleared!`);
   }
 
-  removeLast(
-    formFieldsOnOffAlias: string,
-    formBuilderFormGroup: FormGroup,
-    removeCallback: (newActiveFormElements: string[] | null) => void
-  ) {
+  @callFunction('saveFormTemplate')
+  removeLast(formFieldsOnOffAlias: string, formBuilderFormGroup: FormGroup) {
     const formControl = formBuilderFormGroup.get(formFieldsOnOffAlias);
     if (this.tiles.length === 1) {
       this.tiles.length = 0;
       formControl?.reset();
-      removeCallback(null);
     } else {
       const lastTile = this.tiles.pop();
       const elementsInTheLastTile = (
@@ -56,7 +66,11 @@ export class TileOperations<T> {
           (tileElement) => tileElement.placeholder
         ) || []
       ).filter((el) => !!el) as string[];
-      removeCallback(elementsInTheLastTile);
+      let activeFormElements: string[] = formControl?.value;
+      activeFormElements = activeFormElements.filter(
+        (item) => !elementsInTheLastTile.includes(item)
+      );
+      formControl?.setValue(activeFormElements);
     }
     this.toastrService.success(`Last tile removed!`);
   }

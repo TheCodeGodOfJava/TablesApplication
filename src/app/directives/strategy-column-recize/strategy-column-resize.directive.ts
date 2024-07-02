@@ -9,6 +9,7 @@ import {
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { GenericDataSource } from '../../components/data-tables/components/abstract/genericDataSource';
 import { AppEntity } from '../../components/data-tables/interfaces/appEntity';
@@ -44,7 +45,8 @@ export class StrategyResizeDirective<T>
   constructor(
     private renderer: Renderer2,
     private el: ElementRef,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private toastrService: ToastrService
   ) {}
 
   ngOnChanges(sc: SimpleChanges) {
@@ -90,9 +92,10 @@ export class StrategyResizeDirective<T>
         JSON.stringify(this.columns)
       );
     } else {
-      throw Error(
-        'Error saving table configuration, the table name is not set!'
-      );
+      const errorMsg: string =
+        'Error saving table configuration, the table name is not set!';
+      this.toastrService.error(errorMsg);
+      throw Error(errorMsg);
     }
   }
 

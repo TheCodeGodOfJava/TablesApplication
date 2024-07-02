@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
+import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { formImports } from '../../form-imports/formImports';
 import { AbstractFormComponent } from '../abstract/abstract-form.component';
@@ -23,9 +24,10 @@ export class StudentFromComponent extends AbstractFormComponent<Student> {
   constructor(
     protected override fb: FormBuilder,
     protected override stateService: StateService<Student>,
+    protected override localStorageService: LocalStorageService,
     protected override toastrService: ToastrService
   ) {
-    super(fb, stateService, toastrService);
-    this.formName = 'Students_table';
+    super(fb, stateService, localStorageService, toastrService);
+    this.formName = 'Students_main_form';
   }
 }

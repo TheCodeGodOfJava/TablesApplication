@@ -43,7 +43,7 @@
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
               (click)="clearAllTiles()"
-              [disabled]="!tileOps.tiles.length"
+              [disabled]="!tiles.length"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
             </button>
@@ -53,7 +53,7 @@
               matTooltip="Remove last tile"
               matTooltipPosition="above"
               (click)="removeLast()"
-              [disabled]="!tileOps.tiles.length"
+              [disabled]="!tiles.length"
             >
               <mat-icon class="warning-color">clear</mat-icon>
             </button>
@@ -73,7 +73,7 @@
         style="margin-top: 5px"
         cdkDropListGroup
       >
-        @for (tile of tileOps.tiles; track tile) {
+        @for (tile of tiles; track tile) {
         <mat-grid-tile
           [colspan]="tile.colSpan"
           [rowspan]="tile.rowSpan"
@@ -81,7 +81,7 @@
           cdkDropListOrientation="horizontal"
           cdkDropList
           [cdkDropListData]="tile.cdkDropListData"
-          (cdkDropListDropped)="formOps.drop($event)"
+          (cdkDropListDropped)="tileOps.drop($event)"
         >
           @for (f of tile.cdkDropListData; track f) {
           <div cdkDrag class="form-item">
