@@ -53,9 +53,7 @@
                 [formGroup]="formGroup"
                 [uniqueFormGroupId]="tableName + '_headerFormGroup'"
                 [filterLocalSource]="column.mainControl?.filterLocalSource"
-                [dependentAliases]="
-                  column.mainControl?.dependentAliases || []
-                "
+                [dependentAliases]="column.mainControl?.dependentAliases || []"
               />
               <date-range-input
                 *ngIf="column.mainControl?.type === CONTROL_TYPE.DATE_RANGE"
@@ -76,7 +74,11 @@
             }
           </div>
         </th>
-        <td mat-cell *matCellDef="let row; let i = index" (click)="goToRow(row)">
+        <td
+          mat-cell
+          *matCellDef="let row; let i = index"
+          (click)="!column.isAction && goToRow(row)"
+        >
           <div>
             @if(column.isAction) {
             <div class="action-column">
