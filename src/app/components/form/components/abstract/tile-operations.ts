@@ -2,7 +2,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { callFunction } from '../../decorators/callFunction';
 import { Tile } from '../../interfaces/tile';
 import { FormOperations } from './form-operations';
 
@@ -22,7 +21,6 @@ export class TileOperations<T> extends FormOperations<T> {
     super(allFields, formName, tiles, fb, localStorageService, toastrService);
   }
 
-  @callFunction('saveFormTemplate')
   createTile(
     tileColSpanAlias: string,
     tileRowSpanAlias: string,
@@ -45,15 +43,15 @@ export class TileOperations<T> extends FormOperations<T> {
     this.toastrService.success(
       `A tile ${tileColSpan}x${tileRowSpan} succesfully created!`
     );
+    this.saveFormTemplate();
   }
 
-  @callFunction('saveFormTemplate')
   clearAllTiles() {
     this.tiles.length = 0;
+    this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }
 
-  @callFunction('saveFormTemplate')
   removeLast(formFieldsOnOffAlias: string, formBuilderFormGroup: FormGroup) {
     const formControl = formBuilderFormGroup.get(formFieldsOnOffAlias);
     if (this.tiles.length === 1) {
@@ -73,5 +71,6 @@ export class TileOperations<T> extends FormOperations<T> {
       formControl?.setValue(activeFormElements);
     }
     this.toastrService.success(`Last tile removed!`);
+    this.saveFormTemplate();
   }
 }

@@ -9,7 +9,6 @@ import { Observable, of } from 'rxjs';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { TableFormOperations } from '../../../data-tables/components/abstract/tableFormOperations';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { callFunction } from '../../decorators/callFunction';
 import { Tile } from '../../interfaces/tile';
 
 export class FormOperations<T> extends TableFormOperations<T> {
@@ -24,7 +23,6 @@ export class FormOperations<T> extends TableFormOperations<T> {
     super(allFields, fb);
   }
 
-  @callFunction('saveFormTemplate')
   public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
     const formControl = formGroup.get(alias);
     console.log(this.tiles);
@@ -45,6 +43,7 @@ export class FormOperations<T> extends TableFormOperations<T> {
         'No form containers found! Please add at least one form container!'
       );
     }
+    this.saveFormTemplate();
   };
 
   private enableFormElements(
@@ -82,7 +81,6 @@ export class FormOperations<T> extends TableFormOperations<T> {
     }
   }
 
-  @callFunction('saveFormTemplate')
   public drop(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -98,6 +96,7 @@ export class FormOperations<T> extends TableFormOperations<T> {
         event.currentIndex
       );
     }
+    this.saveFormTemplate();
   }
 
   public getSortedActiveFormElements = (
@@ -117,7 +116,6 @@ export class FormOperations<T> extends TableFormOperations<T> {
         this.formName,
         JSON.stringify(this.tiles)
       );
-      this.toastrService.success('Form template successfully saved!');
     } else {
       const errorMsg: string =
         'Error saving form template configuration, the form name is not set!';
