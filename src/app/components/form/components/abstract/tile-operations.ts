@@ -13,7 +13,7 @@ export class TileOperations<T> extends FormOperations<T> {
   constructor(
     public override allFields: AppEntity<T>[],
     protected override formName: string,
-    protected override tiles: Tile<T>[],
+    public override tiles: Tile<T>[],
     protected override fb: FormBuilder,
     protected override localStorageService: LocalStorageService,
     protected override toastrService: ToastrService

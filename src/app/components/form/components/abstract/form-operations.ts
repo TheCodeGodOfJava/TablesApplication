@@ -15,7 +15,7 @@ export class FormOperations<T> extends TableFormOperations<T> {
   constructor(
     protected allFields: AppEntity<T>[],
     protected formName: string,
-    protected tiles: Tile<T>[],
+    public tiles: Tile<T>[],
     protected override fb: FormBuilder,
     protected localStorageService: LocalStorageService,
     protected toastrService: ToastrService

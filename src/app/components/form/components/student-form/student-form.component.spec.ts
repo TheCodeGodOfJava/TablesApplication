@@ -8,15 +8,16 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { FilterService } from '../../../../services/filter/filter.service';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
+import { Tile } from '../../interfaces/tile';
+import { FormOperations } from '../abstract/form-operations';
+import { TileOperations } from '../abstract/tile-operations';
 import { studentFormFields } from './student-form-fields';
 import { StudentFromComponent } from './student-form.component';
-import { FormOperations } from '../abstract/form-operations';
-import { Tile } from '../../interfaces/tile';
 
 class MockStateService {
   getModelById(controllerPath: string, id: number) {
@@ -123,23 +124,135 @@ describe('FormOperations', () => {
     );
   });
 
-  it('should enable and disable form elements correctly', () => {   
+  it('should enable and disable form elements correctly', () => {
     spyOn(formOperations, 'saveFormTemplate');
 
     const formGroup = formBuilder.group({
       formFieldsOnOffAlias: formBuilder.control(['field1']),
     });
 
-    formOperations.enableDisableFormElements('formFieldsOnOffAlias', formGroup);    
-   
+    formOperations.enableDisableFormElements('formFieldsOnOffAlias', formGroup);
+
     expect(formOperations.saveFormTemplate).toHaveBeenCalled();
   });
 
-  it('should return sorted active form elements', (done: DoneFn) => {  
-    spyOn(formOperations, 'getSortedActiveFormElements').and.returnValue(of(['Field1', 'Field2']));  
-    formOperations.getSortedActiveFormElements('field', 'F').subscribe((result) => {
-      expect(result).toEqual(['Field1', 'Field2']);
-      done();
+  it('should return sorted active form elements', (done: DoneFn) => {
+    spyOn(formOperations, 'getSortedActiveFormElements').and.returnValue(
+      of(['Field1', 'Field2'])
+    );
+    formOperations
+      .getSortedActiveFormElements('field', 'F')
+      .subscribe((result) => {
+        expect(result).toEqual(['Field1', 'Field2']);
+        done();
+      });
+  });
+});
+
+describe('TileOperations', () => {
+  let tileOperations: TileOperations<any>;
+  let formBuilder: FormBuilder;
+  let toastrService: ToastrService;
+  let localStorageService: LocalStorageService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule, ToastrModule.forRoot()],
+      providers: [FormBuilder, ToastrService, LocalStorageService],
+    }).compileComponents();
+
+    formBuilder = TestBed.inject(FormBuilder);
+    toastrService = TestBed.inject(ToastrService);
+    localStorageService = TestBed.inject(LocalStorageService);
+
+    const allFields: AppEntity<any>[] = [];
+    const tiles: Tile<any>[] = [];
+    tileOperations = new TileOperations(
+      allFields,
+      'testForm',
+      tiles,
+      formBuilder,
+      localStorageService,
+      toastrService
+    );
+  });
+
+  it('should create TileOperations instance', () => {
+    expect(tileOperations).toBeTruthy();
+    expect(tileOperations.allFields).toEqual([]);
+    expect(tileOperations.columnQuantity).toBe(8);
+    expect(tileOperations.rowHeight).toBe(85);
+    expect(tileOperations.gutter).toBe(6);
+  });
+
+  it('should create a tile with valid dimensions', () => {
+    spyOn(tileOperations, 'saveFormTemplate');
+
+    const formGroup = formBuilder.group({
+      tileColSpanAlias: formBuilder.control(4),
+      tileRowSpanAlias: formBuilder.control(2),
     });
+
+    tileOperations.createTile(
+      'tileColSpanAlias',
+      'tileRowSpanAlias',
+      formGroup
+    );
+
+    expect(tileOperations.tiles.length).toBe(1);
+    expect(tileOperations.tiles[0].colSpan).toBe(4);
+    expect(tileOperations.tiles[0].rowSpan).toBe(2);
+    expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
+  });
+
+  it('should limit tile column span to column quantity', () => {
+    spyOn(tileOperations, 'saveFormTemplate');
+
+    const formGroup = formBuilder.group({
+      tileColSpanAlias: formBuilder.control(10),
+      tileRowSpanAlias: formBuilder.control(2),
+    });
+
+    tileOperations.createTile(
+      'tileColSpanAlias',
+      'tileRowSpanAlias',
+      formGroup
+    );
+
+    expect(tileOperations.tiles.length).toBe(1);
+    expect(tileOperations.tiles[0].colSpan).toBe(8); // Should reset to column quantity
+    expect(tileOperations.tiles[0].rowSpan).toBe(2);
+    expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
+  });
+
+  it('should clear all tiles', () => {
+    spyOn(tileOperations, 'saveFormTemplate');
+
+    tileOperations.clearAllTiles();
+
+    expect(tileOperations.tiles.length).toBe(0);
+    expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
+  });
+
+  it('should remove the last tile', () => {
+    const formGroup = formBuilder.group({
+      formFieldsOnOffAlias: formBuilder.control(['field1', 'field2']),
+    });
+
+    tileOperations.tiles.push({
+      rowSpan: 2,
+      colSpan: 4,
+      cdkDropListData: [
+        { alias: 'alias1', placeholder: 'field1' },
+        { alias: 'alias2', placeholder: 'field2' },
+      ],
+    });
+
+    spyOn(tileOperations, 'saveFormTemplate');
+
+    tileOperations.removeLast('formFieldsOnOffAlias', formGroup);
+
+    expect(tileOperations.tiles.length).toBe(0);
+    expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
   });
 });
