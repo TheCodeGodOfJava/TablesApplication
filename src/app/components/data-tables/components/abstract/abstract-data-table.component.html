@@ -77,12 +77,12 @@
         <td
           mat-cell
           *matCellDef="let row; let i = index"
-          (click)="!column.isAction && goToRow(row)"
+          (click)="!column.isAction && !row.visible && goToRow(row)"
         >
           <div>
             @if(column.isAction) {
             <div class="action-column">
-              @for (action of actions.allActions; track action) {
+              @for (action of tableActions.allActions; track action) {
               @if(allowedActions.includes(action.type) &&
               action.getShowCondition(row) ){
 
@@ -101,34 +101,34 @@
               *ngIf="column.rowControl?.type === CONTROL_TYPE.INPUT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
-              [formGroup]="actions.getRowFormGroup(i)"
+              [formGroup]="tableActions.getRowFormGroup(i)"
             />
             <base-select
               *ngIf="column.rowControl?.type === CONTROL_TYPE.SELECT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
               [controllerPath]="controllerPath"
-              [formGroup]="actions.getRowFormGroup(i)"
+              [formGroup]="tableActions.getRowFormGroup(i)"
               [dependentAliases]="column.rowControl?.dependentAliases || []"
               [uniqueFormGroupId]="tableName + '_rowFormGroup_' + i"
             />
             <base-checkbox
               *ngIf="column.rowControl?.type === CONTROL_TYPE.BOOLEAN"
               [alias]="column.alias"
-              [formGroup]="actions.getRowFormGroup(i)"
+              [formGroup]="tableActions.getRowFormGroup(i)"
               [placeholder]="column.placeholder"
             />
             <base-date-picker
               *ngIf="column.rowControl?.type === CONTROL_TYPE.DATE_INPUT"
               [alias]="column.alias"
-              [formGroup]="actions.getRowFormGroup(i)"
+              [formGroup]="tableActions.getRowFormGroup(i)"
               [placeholder]="column.placeholder"
             />
             <base-text-field
               *ngIf="column.rowControl?.type === CONTROL_TYPE.TEXT"
               [alias]="column.alias"
               [placeholder]="column.placeholder"
-              [formGroup]="actions.getRowFormGroup(i)"
+              [formGroup]="tableActions.getRowFormGroup(i)"
             />
             }@else{
             <span class="overflow-ellipsis" style="display: inline-block">{{

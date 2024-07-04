@@ -24,13 +24,13 @@ import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
-import { Actions } from '../../../actions';
 import { AbstractRowDetailDialogComponent } from '../../../row-detail-dialog/components/abstract/abstract-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppEntity } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { tableImports } from '../../table-imports/tableImports';
+import { TableActions } from '../../tableActions';
 import { ColumnsOperations } from './columnsOperations';
 import { GenericDataSource } from './genericDataSource';
 import { TableFormOperations } from './tableFormOperations';
@@ -67,7 +67,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected allowedActions: ACTIONS[] = [];
 
-  actions!: Actions<T>;
+  tableActions!: TableActions<T>;
 
   colOps!: ColumnsOperations<T>;
   tableFormOps!: TableFormOperations<T>;
@@ -105,14 +105,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
         )
       );
     }
-    this.actions = new Actions(
+    this.tableActions = new TableActions(
       this.controllerPath,
       this.formGroup,
       this.dataSource,
       this.stateService,
       this.toastrService
     );
-    this.actions.convertActionToColumn(this.columns, this.allowedActions);
+    this.tableActions.convertActionToColumn(this.columns, this.allowedActions);
     this.tableFormOps.addControlsToFormGroup(
       this.columnsOnOffAlias,
       {
@@ -270,7 +270,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     data.push(model);
     rowsFormGroupArray.push(rowGroup);
     this.dataSource.modelSubject.next(data);
-    this.actions.changeVisibilityForUnselectedRows(
+    this.tableActions.changeVisibilityForUnselectedRows(
       rowsFormGroupArray.length - 1
     );
     this.toastrService.success(
@@ -283,7 +283,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   goToRow(row: T) {
-    this.dialog.open(this.detailDialogComponent, {
+    const dialogRef = this.dialog.open(this.detailDialogComponent, {
       height: 'calc(100% - 30px)',
       width: 'calc(100% - 30px)',
       maxWidth: '100%',
@@ -291,6 +291,9 @@ export abstract class AbstractDataTableComponent<T extends Id>
       data: {
         rowId: row.id,
       },
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.reloadTable();
     });
   }
 }
