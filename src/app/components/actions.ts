@@ -13,7 +13,7 @@ export abstract class AbstractActions<T extends Id> {
     this.stateService.save(this.controllerPath, model).subscribe({
       next: (returnedModel: T) => {
         model.id = returnedModel.id;
-        this.toastrService.success('Row data successfully updated!');
+        this.toastrService.success('Data successfully updated!');
       },
       error: (error) => {
         console.error('error:', error);

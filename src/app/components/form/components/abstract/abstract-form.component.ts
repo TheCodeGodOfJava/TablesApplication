@@ -8,6 +8,7 @@ import { StateService } from '../../../../services/state/state.service';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { formImports } from '../../form-imports/formImports';
+import { FormActions } from '../../formActions';
 import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
 
@@ -52,6 +53,8 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     return this._formName;
   }
 
+  formActions!: FormActions<T>;
+
   @Input()
   set formName(name: string) {
     this._formName = name;
@@ -67,6 +70,12 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   ngOnInit(): void {
+    this.formActions = new FormActions(
+      this.controllerPath,
+      this.formGroup,
+      this.stateService,
+      this.toastrService
+    );
     const tilesStr = this.localStorageService.getItem(this.formName);
     if (tilesStr) {
       this.tiles = JSON.parse(tilesStr);

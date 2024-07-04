@@ -18,7 +18,7 @@ export class FormActions<T extends Id> extends AbstractActions<T> {
     if (this.formGroup.invalid) {
       this.toastrService.error('Your form is invalid. Validate it first!');
     } else {
-      super.saveAction(this.formGroup.value);
+      super.saveAction(this.formGroup.getRawValue());
     }
   }
 }
