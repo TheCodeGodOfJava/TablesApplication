@@ -5,6 +5,15 @@ import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 
 export const studentFormFields: AppEntity<Student>[] = [
   {
+    alias: 'id',
+    placeholder: 'ID',
+    mainControl: {
+      type: CONTROL_TYPE.SELECT,
+      getControl: () =>
+        new FormControl<number | null>({ value: null, disabled: true }),
+    }
+  },
+  {
     alias: 'firstName',
     placeholder: 'First Name',
     mainControl: {
