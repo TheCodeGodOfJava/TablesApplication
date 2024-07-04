@@ -26,6 +26,7 @@
               mat-icon-button
               matTooltip="Create tile"
               matTooltipPosition="above"
+              [disabled]="!enableFormConstructor"
               (click)="
                 tileOps.createTile(
                   tileColSpanAlias,
@@ -43,7 +44,7 @@
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
               (click)="clearAllTiles()"
-              [disabled]="!tiles.length"
+              [disabled]="!tiles.length || !enableFormConstructor"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
             </button>
@@ -53,12 +54,22 @@
               matTooltip="Remove last tile"
               matTooltipPosition="above"
               (click)="removeLast()"
-              [disabled]="!tiles.length"
+              [disabled]="!tiles.length || !enableFormConstructor"
             >
               <mat-icon class="warning-color">clear</mat-icon>
             </button>
           </div>
         </div>
+      </div>
+      <div>
+        <mat-slide-toggle
+          matTooltip="Turn form constructor on/off"
+          matTooltipPosition="above"
+          [checked]="enableFormConstructor"
+          (change)="toggleFormConstructor($event)"
+        >
+          Toggle form constructor state
+        </mat-slide-toggle>
       </div>
     </div>
 
@@ -77,14 +88,18 @@
         <mat-grid-tile
           [colspan]="tile.colSpan"
           [rowspan]="tile.rowSpan"
-          class="tile"
+          [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
           cdkDropListOrientation="horizontal"
           cdkDropList
           [cdkDropListData]="tile.cdkDropListData"
           (cdkDropListDropped)="tileOps.drop($event)"
         >
           @for (f of tile.cdkDropListData; track f) {
-          <div cdkDrag class="form-item">
+          <div
+            cdkDrag
+            [cdkDragDisabled]="!enableFormConstructor"
+            class="form-item"
+          >
             <base-input
               *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
               [alias]="f.alias"
@@ -126,7 +141,7 @@
         }
       </mat-grid-list>
     </div>
-    <div class="form-control-elements">
+    <div *ngIf="!enableFormConstructor" class="form-control-elements">
       <button mat-fab extended (click)="formActions.saveAction()">
         <mat-icon>save_as</mat-icon>
         UPDATE FORM

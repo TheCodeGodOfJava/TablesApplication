@@ -8,6 +8,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BaseCheckboxComponent } from '../../../formParts/base-checkbox/base-checkbox.component';
 import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/base-date-picker.component';
@@ -34,4 +35,5 @@ export const formImports = [
   BaseDatePickerComponent,
   BaseTextFieldComponent,
   MatInputModule,
+  MatSlideToggleModule,
 ];

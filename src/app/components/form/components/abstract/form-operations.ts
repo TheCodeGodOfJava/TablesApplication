@@ -110,11 +110,11 @@ export class FormOperations<T> extends TableFormOperations<T> {
     );
   };
 
-  public saveFormTemplate() {
+  public saveFormTemplate(nameSuffix: string = '', json: string = '') {
     if (this.formName) {
       this.localStorageService.setItem(
-        this.formName,
-        JSON.stringify(this.tiles)
+        this.formName + nameSuffix,
+        json || JSON.stringify(this.tiles)
       );
     } else {
       const errorMsg: string =

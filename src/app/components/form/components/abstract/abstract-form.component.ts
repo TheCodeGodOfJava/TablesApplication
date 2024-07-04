@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
@@ -39,6 +40,9 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   tileColSpanAlias: string = 'tile-col-span';
   tileRowSpanAlias: string = 'tile-row-span';
   formFieldsOnOffAlias: string = 'formFieldsOnOff';
+
+  protected enableFormConstructor: boolean = true;
+  protected enabelFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
 
@@ -80,6 +84,14 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     if (tilesStr) {
       this.tiles = JSON.parse(tilesStr);
     }
+
+    const enableFormStr = this.localStorageService.getItem(
+      this.formName + this.enabelFormStringSuffix
+    );
+    if (enableFormStr) {
+      this.enableFormConstructor = JSON.parse(enableFormStr);
+    }
+
     const activeFormElements = this.tiles
       .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
       .flat()
@@ -153,6 +165,18 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
         this.formBuilderFormGroup
       )
     );
+    this.enableDisableFormConstructor();
+  }
+
+  enableDisableFormConstructor(): void {
+    this.enableFormConstructor
+      ? this.formBuilderFormGroup.enable()
+      : this.formBuilderFormGroup.disable();
+
+    this.tileOps.saveFormTemplate(
+      this.enabelFormStringSuffix,
+      JSON.stringify(this.enableFormConstructor)
+    );
   }
 
   clearAllTiles() {
@@ -165,5 +189,10 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.formFieldsOnOffAlias,
       this.formBuilderFormGroup
     );
+  }
+
+  toggleFormConstructor(event: MatSlideToggleChange) {
+    this.enableFormConstructor = event.checked;
+    this.enableDisableFormConstructor();
   }
 }

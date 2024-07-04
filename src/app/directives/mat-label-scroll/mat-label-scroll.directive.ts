@@ -47,9 +47,9 @@ export class MatLabelScrollDirective implements AfterViewInit {
   }
 
   startMarquee() {
-    const labelWidth = this.labelElement.getBoundingClientRect().width;
+    const labelWidth = this.labelElement?.getBoundingClientRect()?.width || 0;
     const labelWrapperWidth =
-      this.el.nativeElement.getBoundingClientRect().width;
+      this.el?.nativeElement?.getBoundingClientRect()?.width || 0;
 
     if (labelWrapperWidth > labelWidth) {
       return;
