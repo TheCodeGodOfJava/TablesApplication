@@ -1,8 +1,11 @@
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { StateService } from './state.service';
 import { environment } from '../../../environments/environment';
 import { Id } from '../../models/id';
+import { StateService } from './state.service';
 
 describe('StateService', () => {
   let service: StateService<Id>;
@@ -11,7 +14,7 @@ describe('StateService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [StateService]
+      providers: [StateService],
     });
 
     service = TestBed.inject(StateService);
@@ -49,11 +52,37 @@ describe('StateService', () => {
         expect(response).toBeNull(); // change from undefined to null to match the flush response
       });
 
-      const req = httpMock.expectOne(`${environment.API_BASE_URL}${controllerPath}/remove`);
+      const req = httpMock.expectOne(
+        `${environment.API_BASE_URL}${controllerPath}/remove`
+      );
       expect(req.request.method).toBe('DELETE');
       expect(req.request.body).toEqual(ids);
 
       req.flush(null); // Ensure the response matches the test expectation
+    });
+  });
+
+  describe('#fetch', () => {
+    it('should fetch model by id via GET request', () => {
+      const controllerPath = 'examplePath';
+      const id = 1;
+      const mockResponse = { id: 1, name: 'Test Model' };
+
+      // Call the service method
+      service.getModelById(controllerPath, id).subscribe((data) => {
+        expect(data).toEqual(mockResponse);
+      });
+
+      // Expect a single HTTP GET request
+      const req = httpMock.expectOne(
+        `${environment.API_BASE_URL}${controllerPath}/getOneById?id=${id}`
+      );
+
+      // Respond with mock data
+      req.flush(mockResponse);
+
+      // Assert that there are no outstanding requests
+      httpMock.verify();
     });
   });
 });

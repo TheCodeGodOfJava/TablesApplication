@@ -17,7 +17,7 @@ import { studentFormFields } from './student-form-fields';
   styleUrl: './../abstract/abstract-form.component.scss',
 })
 export class StudentFromComponent extends AbstractFormComponent<Student> {
-  protected override allFields = studentFormFields;
+  override allFields = studentFormFields;
 
   override controllerPath: string = CONTROLLER_PATHS.students;
 

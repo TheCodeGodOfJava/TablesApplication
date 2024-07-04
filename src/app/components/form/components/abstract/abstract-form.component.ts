@@ -27,7 +27,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   detail!: T;
 
-  protected allFields!: AppEntity<T>[];
+  allFields!: AppEntity<T>[];
 
   protected tileOps!: TileOperations<T>;
 
@@ -41,7 +41,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   tileRowSpanAlias: string = 'tile-row-span';
   formFieldsOnOffAlias: string = 'formFieldsOnOff';
 
-  protected enableFormConstructor: boolean = true;
+  enableFormConstructor: boolean = true;
   protected enabelFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
