@@ -11,7 +11,7 @@ export const studentFormFields: AppEntity<Student>[] = [
       type: CONTROL_TYPE.SELECT,
       getControl: () =>
         new FormControl<number | null>({ value: null, disabled: true }),
-    }
+    },
   },
   {
     alias: 'firstName',
@@ -105,6 +105,22 @@ export const studentFormFields: AppEntity<Student>[] = [
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country', 'state'],
+    },
+  },
+  {
+    alias: 'phone',
+    placeholder: 'Phone',
+    mainControl: {
+      type: CONTROL_TYPE.INPUT,
+      getControl: () => new FormControl<string | null>(null),
+    },
+  },
+  {
+    alias: 'email',
+    placeholder: 'Email',
+    mainControl: {
+      type: CONTROL_TYPE.INPUT,
+      getControl: () => new FormControl<string | null>(null),
     },
   },
 ];
