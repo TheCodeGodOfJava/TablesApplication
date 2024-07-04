@@ -19,10 +19,10 @@ import { TableService } from '../../../../services/table/table.service';
 import { AppEntity, Control } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
-import { DataTablesModule } from '../../table-imports/tableImports';
 import { TableFormOperations } from '../abstract/tableFormOperations';
 import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
+import { tableImports } from '../../table-imports/tableImports';
 
 class MockLocalStorageService {
   private store: { [key: string]: string } = {};
@@ -96,7 +96,7 @@ describe('StudentTableComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        DataTablesModule,
+        tableImports,
         BrowserAnimationsModule,
         MatSortModule,
         MatPaginatorModule,

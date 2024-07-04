@@ -1,10 +1,19 @@
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AppEntity } from '../../components/data-tables/interfaces/appEntity';
 import { Student } from '../../models/student';
 import { StrategyResizeDirective } from './strategy-column-resize.directive';
+
+class MockToastrService {
+  success(message?: string, title?: string): void {}
+  error(message?: string, title?: string): void {}
+  warning(message?: string, title?: string): void {}
+  info(message?: string, title?: string): void {}
+  clear(): void {}
+}
 
 @Component({
   template: `
@@ -49,11 +58,14 @@ describe('StrategyResizeDirective', () => {
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
   let directiveEl: DebugElement;
+  let mockToastrService: MockToastrService;
 
   beforeEach(() => {
+    mockToastrService = new MockToastrService();
     TestBed.configureTestingModule({
       imports: [StrategyResizeDirective],
       declarations: [TestComponent],
+      providers: [{ provide: ToastrService, useValue: mockToastrService }],
     });
 
     fixture = TestBed.createComponent(TestComponent);
