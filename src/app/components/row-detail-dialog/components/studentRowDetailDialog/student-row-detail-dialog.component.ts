@@ -10,6 +10,7 @@ import {
 } from '@angular/material/dialog';
 import { StudentTabGroupComponent } from '../../../detail-tabs/student-tab-group/student-tab-group.component';
 import { AbstractRowDetailDialogComponent } from '../abstract/abstract-row-detail-dialog.component';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'student-detail-dialog',
@@ -24,6 +25,10 @@ import { AbstractRowDetailDialogComponent } from '../abstract/abstract-row-detai
     MatButtonModule,
     CommonModule,
     StudentTabGroupComponent,
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },
   ],
 })
 export class StudentRowDetailDialogComponent extends AbstractRowDetailDialogComponent {

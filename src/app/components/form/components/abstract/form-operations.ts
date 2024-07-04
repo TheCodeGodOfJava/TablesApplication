@@ -25,7 +25,6 @@ export class FormOperations<T> extends TableFormOperations<T> {
 
   public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
     const formControl = formGroup.get(alias);
-    console.log(this.tiles);
     if (this.tiles.length) {
       if (formControl && formControl.value.length) {
         const activePlaceHolders = formControl.value;
