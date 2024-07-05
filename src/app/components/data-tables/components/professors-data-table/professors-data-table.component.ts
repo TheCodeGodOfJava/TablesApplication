@@ -13,18 +13,19 @@ import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/comp
 import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
-import { studentColumns } from './columns';
+import { professorsColumns } from './columns';
+import { Professor } from '../../../../models/professor';
 
 @Component({
-  selector: 'students-data-table',
+  selector: 'professors-data-table',
   standalone: true,
   templateUrl: './../abstract/abstract-data-table.component.html',
   styleUrl: './../abstract/abstract-data-table.component.scss',
   imports: [tableImports],
 })
-export class StudentTableComponent extends AbstractDataTableComponent<Student> {
-  protected override columns = studentColumns;
-  protected override detailDialogComponent = StudentRowDetailDialogComponent;
+export class ProfessorTableComponent extends AbstractDataTableComponent<Professor> {
+  protected override columns = professorsColumns;
+  protected override detailDialogComponent = ProfessorRowDetailDialogComponent;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;
   protected override allowedActions: ACTIONS[] = [
