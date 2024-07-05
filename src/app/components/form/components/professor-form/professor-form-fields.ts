@@ -3,7 +3,7 @@ import { Professor } from '../../../../models/professor';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 
-export const studentFormFields: AppEntity<Professor>[] = [
+export const professorFormFields: AppEntity<Professor>[] = [
   {
     alias: 'id',
     placeholder: 'ID',

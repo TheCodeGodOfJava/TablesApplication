@@ -5,16 +5,15 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { CONTROLLER_PATHS } from '../../../../constants';
-import { Student } from '../../../../models/student';
+import { Professor } from '../../../../models/professor';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
-import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/components/studentRowDetailDialog/student-row-detail-dialog.component';
+import { ProfessorRowDetailDialogComponent } from '../../../row-detail-dialog/components/professorRowDetailDialog/professor-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
 import { professorsColumns } from './columns';
-import { Professor } from '../../../../models/professor';
 
 @Component({
   selector: 'professors-data-table',
@@ -27,7 +26,7 @@ export class ProfessorTableComponent extends AbstractDataTableComponent<Professo
   protected override columns = professorsColumns;
   protected override detailDialogComponent = ProfessorRowDetailDialogComponent;
 
-  protected override controllerPath: string = CONTROLLER_PATHS.students;
+  protected override controllerPath: string = CONTROLLER_PATHS.professors;
   protected override allowedActions: ACTIONS[] = [
     ACTIONS.EDIT,
     ACTIONS.SAVE,
@@ -36,21 +35,21 @@ export class ProfessorTableComponent extends AbstractDataTableComponent<Professo
   ];
 
   constructor(
-    private tableService: TableService<Student>,
-    protected override stateService: StateService<Student>,
+    private tableService: TableService<Professor>,
+    protected override stateService: StateService<Professor>,
     protected override toastrService: ToastrService,
     protected override localStorageService: LocalStorageService,
     protected override fb: FormBuilder,
     protected override dialog: MatDialog
   ) {
     super(
-      new GenericDataSource<Student>(tableService),
+      new GenericDataSource<Professor>(tableService),
       stateService,
       toastrService,
       localStorageService,
       fb,
       dialog
     );
-    this.tableName = 'Students_table';
+    this.tableName = 'Professors_table';
   }
 }
