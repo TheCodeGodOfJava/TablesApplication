@@ -27,7 +27,7 @@ export class ProfessorTableComponent extends AbstractDataTableComponent<Professo
   protected override detailDialogComponent = ProfessorRowDetailDialogComponent;
 
   protected override controllerPath: string = CONTROLLER_PATHS.professors;
-  protected override allowedActions: ACTIONS[] = [
+  override allowedActions: ACTIONS[] = [
     ACTIONS.EDIT,
     ACTIONS.SAVE,
     ACTIONS.REMOVE,
