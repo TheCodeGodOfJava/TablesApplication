@@ -6,7 +6,7 @@ export interface LoadTableDataInterface<T> {
   loadTableData(
     controllerPath: string,
     dataTablesParameters: DtParam | null,
-    masterId: string,
-    masterType: string
+    masterId?: number,
+    masterType?: string
   ): Observable<DtOutput<T>>;
 }

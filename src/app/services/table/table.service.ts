@@ -15,17 +15,23 @@ export class TableService<T> {
 
   public loadTableData(
     controllerPath: string,
-    dataTablesParameters: DtParam
+    dataTablesParameters: DtParam,
+    masterId?: number,
+    masterType?: string
   ): Observable<DtOutput<T>> {
     let serverParams: DtInput =
       this.transformDataTablesParameters(dataTablesParameters);
     const url =
       `${environment.API_BASE_URL}${controllerPath}/all` +
-      this.getSearchString(serverParams);
+      this.getSearchString(serverParams, masterId, masterType);
     return this.httpClient.get<DtOutput<T>>(url);
   }
 
-  protected getSearchString(serverParams: DtInput): string {
+  protected getSearchString(
+    serverParams: DtInput,
+    masterId?: number,
+    masterType?: string
+  ): string {
     const startString =
       serverParams.start === 0 || serverParams.start
         ? `&start=${serverParams.start}`
@@ -33,9 +39,16 @@ export class TableService<T> {
     const lengthString = serverParams.length
       ? `&length=${serverParams.length}`
       : '';
+    const masterIdString =
+      masterId === 0 || masterId ? `&masterId=${masterId}` : '';
+    const masterTypeString = masterType ? `&masterType=${masterType}` : '';
     const searchString = this.mapColumnsToQueryString(serverParams.columns);
 
-    const str = `${startString}${lengthString}${searchString}`.replace('&', '');
+    const str =
+      `${startString}${lengthString}${searchString}${masterIdString}${masterTypeString}`.replace(
+        '&',
+        ''
+      );
     return str ? '?' + str : '';
   }
 

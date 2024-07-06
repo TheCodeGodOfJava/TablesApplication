@@ -1,13 +1,11 @@
 import { DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable, finalize, tap } from 'rxjs';
+import { TableService } from '../../../../services/table/table.service';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { DtParam } from '../../interfaces/dtParam';
-import { TableService } from '../../../../services/table/table.service';
 import { LoadTableDataInterface } from './loadTableDataInterface';
 
-export class GenericDataSource<T>
-  implements DataSource<T>, LoadTableDataInterface<T>
-{
+export class GenericDataSource<T> implements DataSource<T>, LoadTableDataInterface<T> {
   public modelSubject = new BehaviorSubject<T[]>([]);
   public loadingSubject = new BehaviorSubject<boolean>(true);
 
@@ -31,11 +29,13 @@ export class GenericDataSource<T>
 
   loadTableData(
     controllerPath: string,
-    dataTablesParameters: DtParam
+    dataTablesParameters: DtParam,
+    masterId?: number,
+    masterType?: string
   ): Observable<DtOutput<T>> {
     this.loadingSubject.next(true);
     return this.tableDataService
-      .loadTableData(controllerPath, dataTablesParameters)
+      .loadTableData(controllerPath, dataTablesParameters, masterId, masterType)
       .pipe(
         tap({
           next: (dtOutput: DtOutput<T>) => {

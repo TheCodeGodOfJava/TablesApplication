@@ -65,7 +65,14 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   columnsOnOffAlias: string = 'colsOnOff';
 
-  protected allowedActions: ACTIONS[] = [];
+  @Input()
+  allowedActions: ACTIONS[] = [];
+
+  @Input()
+  masterId?: number;
+
+  @Input()
+  masterType?: string;
 
   tableActions!: TableActions<T>;
 
@@ -227,17 +234,24 @@ export abstract class AbstractDataTableComponent<T extends Id>
     sort: Sort | null = null,
     pageStart: number,
     pageOffset: number,
-    filters: Map<string, string>
+    filters: Map<string, string>,
+    masterId?: number,
+    masterType?: string
   ): Observable<DtOutput<T>> {
     const aliases = this.colOps.getActiveColsAliases();
-    return this.dataSource.loadTableData(controllerPath, {
-      sortAlias: sort ? sort?.active : aliases[0],
-      sortDir: sort ? sort?.direction : 'asc',
-      pageStart: pageStart,
-      pageOffset: pageOffset,
-      aliases: aliases,
-      filters: filters,
-    });
+    return this.dataSource.loadTableData(
+      controllerPath,
+      {
+        sortAlias: sort ? sort?.active : aliases[0],
+        sortDir: sort ? sort?.direction : 'asc',
+        pageStart: pageStart,
+        pageOffset: pageOffset,
+        aliases: aliases,
+        filters: filters,
+      },
+      masterId,
+      masterType
+    );
   }
 
   pageEvent(event: PageEvent): void {
