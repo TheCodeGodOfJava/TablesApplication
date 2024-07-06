@@ -72,8 +72,9 @@ export class StrategyResizeDirective<T>
   }
 
   private calculateDefaultWidth() {
-    const screenWidth = window.innerWidth;
-    const width = (screenWidth - this.minWidth) / this.columns.length;
+    const parentElement = this.tableRef.parentElement;
+    const maxWidth = parentElement?.getBoundingClientRect()?.width || 0;
+    const width = (maxWidth - this.minWidth) / this.columns.length;
     this.columns.forEach((c) => (c.width = width));
   }
 
