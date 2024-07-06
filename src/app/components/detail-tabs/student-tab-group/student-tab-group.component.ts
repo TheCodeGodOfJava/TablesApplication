@@ -8,7 +8,7 @@ import { StudentFromComponent } from '../../form/components/student-form/student
   selector: 'student-tab-group',
   standalone: true,
   templateUrl: './student-tab-group.component.html',
-  styleUrl: './student-tab-group.component.scss',
+  styleUrl: './../abstract/abstract-tab-group.component.scss',
   imports: [MatTabsModule, StudentFromComponent, ProfessorTableComponent],
 })
 export class StudentTabGroupComponent {

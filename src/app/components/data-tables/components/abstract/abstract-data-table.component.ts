@@ -50,7 +50,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
   CONTROL_TYPE = CONTROL_TYPE;
 
   protected pageSize: number = 5;
-  protected pageSizeOptions: number[] = [5, 10, 15];
+  protected pageSizeOptions: number[] = [5, 10];
 
   protected columns!: AppEntity<T>[];
   protected controllerPath!: string;
