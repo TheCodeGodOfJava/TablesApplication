@@ -4,7 +4,7 @@ import { Student } from '../../../../models/student';
 import { AppEntity } from '../../interfaces/appEntity';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 
-export const studentColumns: AppEntity<Student>[] = [
+export const studentsColumns: AppEntity<Student>[] = [
   {
     alias: 'id',
     placeholder: 'ID',

@@ -13,7 +13,7 @@ import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/comp
 import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
-import { studentColumns } from './columns';
+import { studentsColumns } from './columns';
 
 @Component({
   selector: 'students-data-table',
@@ -23,7 +23,7 @@ import { studentColumns } from './columns';
   imports: [tableImports],
 })
 export class StudentTableComponent extends AbstractDataTableComponent<Student> {
-  protected override columns = studentColumns;
+  protected override columns = studentsColumns;
   protected override detailDialogComponent = StudentRowDetailDialogComponent;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;

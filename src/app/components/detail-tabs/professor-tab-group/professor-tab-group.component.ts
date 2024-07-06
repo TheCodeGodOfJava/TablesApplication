@@ -12,7 +12,7 @@ import { ProfessorFromComponent } from '../../form/components/professor-form/pro
   imports: [MatTabsModule, ProfessorFromComponent, StudentTableComponent],
 })
 export class ProfessorTabGroupComponent {
-  protected masterType: string = MASTER_TYPES.student;
+  protected masterType: string = MASTER_TYPES.professor;
 
   @Input()
   detailId!: number;
