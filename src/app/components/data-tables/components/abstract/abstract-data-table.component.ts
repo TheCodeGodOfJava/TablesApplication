@@ -214,7 +214,9 @@ export abstract class AbstractDataTableComponent<T extends Id>
             sort,
             pageStart,
             pageOffset,
-            filters
+            filters,
+            this.masterId,
+            this.masterType
           );
         })
       )

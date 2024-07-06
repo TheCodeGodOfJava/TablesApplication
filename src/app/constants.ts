@@ -12,8 +12,8 @@ export const CONTROLLER_PATHS = {
 };
 
 export const MASTER_TYPES = {
-  student: 'student',
-  professor: 'professor',
+  student: 'STUDENT',
+  professor: 'PROFESSOR',
 };
 
 export const SELECT_SEARCH_PREFIX: string = 'SelectSearch';
