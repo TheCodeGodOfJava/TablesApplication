@@ -27,7 +27,7 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
   protected override detailDialogComponent = StudentRowDetailDialogComponent;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;
-  protected override allowedActions: ACTIONS[] = [
+  override allowedActions: ACTIONS[] = [
     ACTIONS.EDIT,
     ACTIONS.SAVE,
     ACTIONS.REMOVE,

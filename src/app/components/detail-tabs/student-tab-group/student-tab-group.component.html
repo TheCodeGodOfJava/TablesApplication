@@ -4,4 +4,13 @@
       <student-form [detailId]="detailId" />
     </ng-template>
   </mat-tab>
+  <mat-tab label="Assosiated professors">
+    <ng-template matTabContent>
+      <professors-data-table
+        [masterId]="detailId"
+        [masterType]="masterType"
+        tableName="professors_table_in_students"
+      />
+    </ng-template>
+  </mat-tab>
 </mat-tab-group>
