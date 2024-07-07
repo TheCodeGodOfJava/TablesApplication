@@ -26,4 +26,16 @@ export class StateService<T> {
       { body: ids }
     );
   }
+
+  public unbind(
+    controllerPath: string,
+    ids: number[],
+    masterId: number
+  ): Observable<void> {
+    return this.hc.request<void>(
+      'delete',
+      `${environment.API_BASE_URL}${controllerPath}/unbind&masterId=${masterId}`,
+      { body: ids }
+    );
+  }
 }

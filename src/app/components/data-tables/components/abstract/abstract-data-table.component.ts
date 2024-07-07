@@ -112,6 +112,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     }
     this.tableActions = new TableActions(
       this.controllerPath,
+      this.masterId,
       this.formGroup,
       this.dataSource,
       this.stateService,

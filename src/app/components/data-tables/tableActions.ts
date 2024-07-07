@@ -12,6 +12,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
 
   constructor(
     protected override controllerPath: string,
+    protected masterId: number | undefined,
     protected formGroup: FormGroup,
     protected dataSource: GenericDataSource<T>,
     protected override stateService: StateService<T>,
@@ -58,15 +59,35 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
         type: ACTIONS.REMOVE,
         icon: 'remove',
         getAction: (model: T, index: number) => {
-          if (!model.id) {
-            this.removeRow(index);
-          } else {
-            this.removeRow(index);
+          this.removeRow(index);
+          if (model.id) {
             this.stateService
               .remove(this.controllerPath, [model.id])
               .subscribe({
                 next: () =>
                   this.toastrService.success('Row data successfully deleted!'),
+                error: (error) => {
+                  console.error('error:', error);
+                  this.toastrService.error(
+                    'Error occured! See console log for details!'
+                  );
+                },
+              });
+          }
+        },
+        getShowCondition: (model: T) => !model.visible,
+      },
+      {
+        type: ACTIONS.UNBIND,
+        icon: 'playlist_remove',
+        getAction: (model: T, index: number) => {
+          this.removeRow(index);
+          if (model.id && this.masterId) {
+            this.stateService
+              .unbind(this.controllerPath, [model.id], this.masterId)
+              .subscribe({
+                next: () =>
+                  this.toastrService.success('Row data successfully unbound!'),
                 error: (error) => {
                   console.error('error:', error);
                   this.toastrService.error(
