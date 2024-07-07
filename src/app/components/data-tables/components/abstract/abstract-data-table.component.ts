@@ -16,15 +16,13 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { ComponentType } from '@angular/cdk/portal';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
-import { AbstractRowDetailDialogComponent } from '../../../row-detail-dialog/components/abstract/abstract-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { AppEntity } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
@@ -85,7 +83,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   tableConfigLoaded: boolean = false;
 
-  protected detailDialogComponent!: ComponentType<AbstractRowDetailDialogComponent>;
+  protected rowDetailRoute!: string;
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -93,7 +91,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
     protected toastrService: ToastrService,
     protected localStorageService: LocalStorageService,
     protected fb: FormBuilder,
-    protected dialog: MatDialog
+    protected router: Router
   ) {
     this.dataSource = ds;
     this.formGroup = this.fb.group({});
@@ -299,17 +297,6 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   goToRow(row: T) {
-    const dialogRef = this.dialog.open(this.detailDialogComponent, {
-      height: 'calc(100% - 30px)',
-      width: 'calc(100% - 30px)',
-      maxWidth: '100%',
-      maxHeight: '100%',
-      data: {
-        rowId: row.id,
-      },
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.reloadTable();
-    });
+    this.router.navigate([this.rowDetailRoute, row.id]);
   }
 }

@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="500ms">
+<mat-tab-group animationDuration="500ms" *ngIf="!!detailId">
   <mat-tab label="Student Form Data">
     <ng-template matTabContent>
       <student-form [detailId]="detailId" />

@@ -3,7 +3,9 @@ export const APPLICATION_ROUTES = {
   base: '',
   landing: 'landing',
   studentsTable: 'studentsTable',
+  studentsTabGroup: 'studentsTabGroup',
   professorsTable: 'professorsTable',
+  professorsTabGroup: 'professorsTabGroup',
 };
 
 export const CONTROLLER_PATHS = {

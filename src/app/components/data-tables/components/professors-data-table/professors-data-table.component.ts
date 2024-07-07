@@ -2,14 +2,13 @@ import { Component } from '@angular/core';
 import { AbstractDataTableComponent } from '../abstract/abstract-data-table.component';
 
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { CONTROLLER_PATHS } from '../../../../constants';
+import { APPLICATION_ROUTES, CONTROLLER_PATHS } from '../../../../constants';
 import { Professor } from '../../../../models/professor';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
-import { ProfessorRowDetailDialogComponent } from '../../../row-detail-dialog/components/professorRowDetailDialog/professor-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
@@ -24,7 +23,7 @@ import { professorsColumns } from './columns';
 })
 export class ProfessorTableComponent extends AbstractDataTableComponent<Professor> {
   protected override columns = professorsColumns;
-  protected override detailDialogComponent = ProfessorRowDetailDialogComponent;
+  protected override rowDetailRoute = APPLICATION_ROUTES.professorsTabGroup;
 
   protected override controllerPath: string = CONTROLLER_PATHS.professors;
   override allowedActions: ACTIONS[] = [
@@ -40,7 +39,7 @@ export class ProfessorTableComponent extends AbstractDataTableComponent<Professo
     protected override toastrService: ToastrService,
     protected override localStorageService: LocalStorageService,
     protected override fb: FormBuilder,
-    protected override dialog: MatDialog
+    protected override router: Router
   ) {
     super(
       new GenericDataSource<Professor>(tableService),
@@ -48,7 +47,7 @@ export class ProfessorTableComponent extends AbstractDataTableComponent<Professo
       toastrService,
       localStorageService,
       fb,
-      dialog
+      router
     );
     this.tableName = 'Professors_table';
   }

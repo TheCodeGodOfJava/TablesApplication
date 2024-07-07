@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="500ms">
+<mat-tab-group animationDuration="500ms" *ngIf="!!detailId">
   <mat-tab label="Professor Form Data">
     <ng-template matTabContent>
       <professor-form [detailId]="detailId" />
@@ -6,7 +6,11 @@
   </mat-tab>
   <mat-tab label="Assosiated students">
     <ng-template matTabContent>
-      <students-data-table [masterId]="detailId" [masterType]="masterType" tableName="students_table_in_professors" />
+      <students-data-table
+        [masterId]="detailId"
+        [masterType]="masterType"
+        tableName="students_table_in_professors"
+      />
     </ng-template>
   </mat-tab>
 </mat-tab-group>

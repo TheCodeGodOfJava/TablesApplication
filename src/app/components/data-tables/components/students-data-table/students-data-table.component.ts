@@ -2,14 +2,13 @@ import { Component } from '@angular/core';
 import { AbstractDataTableComponent } from '../abstract/abstract-data-table.component';
 
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { CONTROLLER_PATHS } from '../../../../constants';
+import { APPLICATION_ROUTES, CONTROLLER_PATHS } from '../../../../constants';
 import { Student } from '../../../../models/student';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
-import { StudentRowDetailDialogComponent } from '../../../row-detail-dialog/components/studentRowDetailDialog/student-row-detail-dialog.component';
 import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
@@ -24,7 +23,7 @@ import { studentsColumns } from './columns';
 })
 export class StudentTableComponent extends AbstractDataTableComponent<Student> {
   protected override columns = studentsColumns;
-  protected override detailDialogComponent = StudentRowDetailDialogComponent;
+  protected override rowDetailRoute = APPLICATION_ROUTES.studentsTabGroup;
 
   protected override controllerPath: string = CONTROLLER_PATHS.students;
   override allowedActions: ACTIONS[] = [
@@ -40,7 +39,7 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
     protected override toastrService: ToastrService,
     protected override localStorageService: LocalStorageService,
     protected override fb: FormBuilder,
-    protected override dialog: MatDialog
+    protected override router: Router
   ) {
     super(
       new GenericDataSource<Student>(tableService),
@@ -48,7 +47,7 @@ export class StudentTableComponent extends AbstractDataTableComponent<Student> {
       toastrService,
       localStorageService,
       fb,
-      dialog
+      router
     );
     this.tableName = 'Students_table';
   }

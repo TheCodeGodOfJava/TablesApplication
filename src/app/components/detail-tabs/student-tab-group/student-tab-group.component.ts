@@ -1,19 +1,15 @@
-import { Component, Input } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
+import { Component } from '@angular/core';
 import { MASTER_TYPES } from '../../../constants';
-import { ProfessorTableComponent } from '../../data-tables/components/professors-data-table/professors-data-table.component';
-import { StudentFromComponent } from '../../form/components/student-form/student-form.component';
+import { AbstractTabGroupComponent } from '../abstract/abstract-tab-group.component';
+import { tabImports } from '../imports/tabImports';
 
 @Component({
   selector: 'student-tab-group',
   standalone: true,
   templateUrl: './student-tab-group.component.html',
   styleUrl: './../abstract/abstract-tab-group.component.scss',
-  imports: [MatTabsModule, StudentFromComponent, ProfessorTableComponent],
+  imports: [tabImports],
 })
-export class StudentTabGroupComponent {
-  protected masterType: string = MASTER_TYPES.student;
-
-  @Input()
-  detailId!: number;
+export class StudentTabGroupComponent extends AbstractTabGroupComponent {
+  protected override masterType: string = MASTER_TYPES.student;
 }
