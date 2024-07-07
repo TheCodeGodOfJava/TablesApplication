@@ -34,7 +34,7 @@ export class StateService<T> {
   ): Observable<void> {
     return this.hc.request<void>(
       'delete',
-      `${environment.API_BASE_URL}${controllerPath}/unbind&masterId=${masterId}`,
+      `${environment.API_BASE_URL}${controllerPath}/unbind?masterId=${masterId}`,
       { body: ids }
     );
   }

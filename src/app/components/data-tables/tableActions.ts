@@ -97,7 +97,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
               });
           }
         },
-        getShowCondition: (model: T) => !model.visible,
+        getShowCondition: (model: T) => !model.visible && !!this.masterId,
       },
     ];
   }
