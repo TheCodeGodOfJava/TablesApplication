@@ -5,14 +5,14 @@ import { Subscription } from 'rxjs';
 @Directive({
   standalone: true,
 })
-export class AbstractTabGroupComponent implements OnInit, OnDestroy {
+export class AbstractTabGroupComponent implements OnInit, OnDestroy{
   constructor(protected route: ActivatedRoute) {}
 
   protected detailId!: number;
 
   private idSubscription!: Subscription;
 
-  protected masterType!: string;
+  protected masterType!: string
 
   ngOnInit(): void {
     this.idSubscription = this.route.params.subscribe((params: Params) => {
