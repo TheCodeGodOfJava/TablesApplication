@@ -22,7 +22,7 @@ export class FilterService {
       environment.API_BASE_URL
     }${controllerPath}/filter?${depAlias}${dep}field=${encodeURIComponent(
       field
-    )}&term=${encodeURIComponent(term)}`;
+    )}&term=${encodeURIComponent(term || '')}`;
     return this.hc.get<string[]>(url);
   };
 }
