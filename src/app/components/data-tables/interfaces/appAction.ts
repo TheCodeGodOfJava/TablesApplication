@@ -3,6 +3,7 @@ export interface AppAction<T> {
   icon: string;
   getAction: (model: T, index: number) => void;
   getShowCondition: (model: T) => boolean;
+  description: string;
 }
 
 export enum ACTIONS {

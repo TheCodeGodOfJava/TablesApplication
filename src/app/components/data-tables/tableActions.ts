@@ -28,6 +28,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
           this.changeVisibilityForUnselectedRows(index);
         },
         getShowCondition: (model: T) => !model.visible,
+        description: 'Edit',
       },
       {
         type: ACTIONS.SAVE,
@@ -48,12 +49,14 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
           }
         },
         getShowCondition: (model: T) => !!model.visible,
+        description: 'Save',
       },
       {
         type: ACTIONS.CANCEL,
         icon: 'cancel',
         getAction: (model: T, index: number) => (model.visible = false),
         getShowCondition: (model: T) => !!model.visible,
+        description: 'Cancel',
       },
       {
         type: ACTIONS.REMOVE,
@@ -76,6 +79,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
           }
         },
         getShowCondition: (model: T) => !model.visible,
+        description: 'Remove',
       },
       {
         type: ACTIONS.UNBIND,
@@ -98,6 +102,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
           }
         },
         getShowCondition: (model: T) => !model.visible && !!this.masterId,
+        description: 'Unbind',
       },
     ];
   }

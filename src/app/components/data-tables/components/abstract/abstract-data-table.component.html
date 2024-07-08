@@ -90,6 +90,7 @@
                 mat-mini-fab
                 (click)="action.getAction(row, i)"
                 style="margin-right: 10px"
+                [matTooltip]="action.description"
               >
                 <mat-icon>{{ action.icon }}</mat-icon>
               </button>
