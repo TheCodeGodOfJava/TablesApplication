@@ -32,6 +32,7 @@ import { TableActions } from '../../tableActions';
 import { ColumnsOperations } from './columnsOperations';
 import { GenericDataSource } from './genericDataSource';
 import { TableFormOperations } from './tableFormOperations';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   standalone: true,
@@ -302,5 +303,11 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   goToRow(row: T) {
     this.router.navigate([this.rowDetailRoute, row.id]);
+  }
+
+  onToggleChanged(event: MatSlideToggleChange) {
+    this.tableData.toggled = event.checked;
+    this.clearAllFilters();
+    this.reloadTable();
   }
 }

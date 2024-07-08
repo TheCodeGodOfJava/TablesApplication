@@ -203,6 +203,17 @@
         >
         </mat-paginator>
       </div>
+      <div>
+        <mat-slide-toggle
+          *ngIf="masterId"
+          matTooltip="Switch mode: add or remove entities"
+          matTooltipPosition="above"
+          [checked]="false"
+          (change)="onToggleChanged($event)"
+        >
+          Table mode
+        </mat-slide-toggle>
+      </div>
     </div>
   </div>
 </div>
