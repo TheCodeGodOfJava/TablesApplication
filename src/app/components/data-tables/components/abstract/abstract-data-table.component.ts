@@ -85,6 +85,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected rowDetailRoute!: string;
 
+  protected tableData: { toggled: boolean } = { toggled: false };
+
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
@@ -111,6 +113,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
       );
     }
     this.tableActions = new TableActions(
+      this.tableData,
       this.controllerPath,
       this.masterId,
       this.formGroup,

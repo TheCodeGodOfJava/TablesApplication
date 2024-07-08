@@ -11,6 +11,7 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
   allActions!: AppAction<T>[];
 
   constructor(
+    protected tableData: { toggled: boolean },
     protected override controllerPath: string,
     protected masterId: number | undefined,
     protected formGroup: FormGroup,
@@ -102,6 +103,30 @@ export class TableActions<T extends Id> extends AbstractActions<T> {
           }
         },
         getShowCondition: (model: T) => !model.visible && !!this.masterId,
+        description: 'Unbind',
+      },
+      {
+        type: ACTIONS.BIND,
+        icon: 'playlist_add',
+        getAction: (model: T, index: number) => {
+          this.removeRow(index);
+          if (model.id && this.masterId) {
+            this.stateService
+              .bind(this.controllerPath, [model.id], this.masterId)
+              .subscribe({
+                next: () =>
+                  this.toastrService.success('Row data successfully bound!'),
+                error: (error) => {
+                  console.error('error:', error);
+                  this.toastrService.error(
+                    'Error occured! See console log for details!'
+                  );
+                },
+              });
+          }
+        },
+        getShowCondition: (model: T) =>
+          !model.visible && !!this.masterId && this.tableData.toggled,
         description: 'Unbind',
       },
     ];

@@ -38,4 +38,15 @@ export class StateService<T> {
       { body: ids }
     );
   }
+
+  public bind(
+    controllerPath: string,
+    ids: number[],
+    masterId: number
+  ): Observable<void> {
+    return this.hc.post<void>(
+      `${environment.API_BASE_URL}${controllerPath}/bind?masterId=${masterId}`,
+      { body: ids }
+    );
+  }
 }
