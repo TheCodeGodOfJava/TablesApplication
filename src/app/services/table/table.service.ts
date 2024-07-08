@@ -17,20 +17,22 @@ export class TableService<T> {
     controllerPath: string,
     dataTablesParameters: DtParam,
     masterId?: number,
-    masterType?: string
+    masterType?: string,
+    tableToggle = false
   ): Observable<DtOutput<T>> {
     let serverParams: DtInput =
       this.transformDataTablesParameters(dataTablesParameters);
     const url =
       `${environment.API_BASE_URL}${controllerPath}/all` +
-      this.getSearchString(serverParams, masterId, masterType);
+      this.getSearchString(serverParams, masterId, masterType, tableToggle);
     return this.httpClient.get<DtOutput<T>>(url);
   }
 
   protected getSearchString(
     serverParams: DtInput,
     masterId?: number,
-    masterType?: string
+    masterType?: string,
+    tableToggle = false
   ): string {
     const startString =
       serverParams.start === 0 || serverParams.start
@@ -42,10 +44,11 @@ export class TableService<T> {
     const masterIdString =
       masterId === 0 || masterId ? `&masterId=${masterId}` : '';
     const masterTypeString = masterType ? `&masterType=${masterType}` : '';
+    const tableToggleString = `&tableToggle=${tableToggle}`;
     const searchString = this.mapColumnsToQueryString(serverParams.columns);
 
     const str =
-      `${startString}${lengthString}${searchString}${masterIdString}${masterTypeString}`.replace(
+      `${startString}${lengthString}${searchString}${masterIdString}${masterTypeString}${tableToggleString}`.replace(
         '&',
         ''
       );

@@ -18,6 +18,7 @@ import {
 
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
@@ -32,7 +33,6 @@ import { TableActions } from '../../tableActions';
 import { ColumnsOperations } from './columnsOperations';
 import { GenericDataSource } from './genericDataSource';
 import { TableFormOperations } from './tableFormOperations';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   standalone: true,
@@ -255,7 +255,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
         filters: filters,
       },
       masterId,
-      masterType
+      masterType,
+      this.tableData.toggled
     );
   }
 

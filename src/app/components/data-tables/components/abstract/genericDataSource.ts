@@ -31,11 +31,12 @@ export class GenericDataSource<T> implements DataSource<T>, LoadTableDataInterfa
     controllerPath: string,
     dataTablesParameters: DtParam,
     masterId?: number,
-    masterType?: string
+    masterType?: string,
+    tableToggle = false
   ): Observable<DtOutput<T>> {
     this.loadingSubject.next(true);
     return this.tableDataService
-      .loadTableData(controllerPath, dataTablesParameters, masterId, masterType)
+      .loadTableData(controllerPath, dataTablesParameters, masterId, masterType, tableToggle)
       .pipe(
         tap({
           next: (dtOutput: DtOutput<T>) => {

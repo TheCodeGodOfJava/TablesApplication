@@ -19,5 +19,6 @@ export class ProfessorTabGroupComponent extends AbstractTabGroupComponent {
     ACTIONS.SAVE,
     ACTIONS.CANCEL,
     ACTIONS.UNBIND,
+    ACTIONS.BIND,
   ];
 }

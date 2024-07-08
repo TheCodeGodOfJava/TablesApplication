@@ -46,7 +46,7 @@ export class StateService<T> {
   ): Observable<void> {
     return this.hc.post<void>(
       `${environment.API_BASE_URL}${controllerPath}/bind?masterId=${masterId}`,
-      { body: ids }
+      ids
     );
   }
 }
