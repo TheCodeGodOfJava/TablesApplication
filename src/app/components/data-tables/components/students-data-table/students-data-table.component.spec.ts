@@ -20,9 +20,9 @@ import { AppEntity, Control } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
 import { TableFormOperations } from '../abstract/tableFormOperations';
-import { studentColumns } from './columns';
 import { StudentTableComponent } from './students-data-table.component';
 import { tableImports } from '../../table-imports/tableImports';
+import { studentsColumns } from './columns';
 
 class MockLocalStorageService {
   private store: { [key: string]: string } = {};
@@ -41,7 +41,13 @@ class MockLocalStorageService {
 }
 
 class MockTableService {
-  loadTableData(controllerPath: string, params: any) {
+  loadTableData(
+    controllerPath: string,
+    params: any,
+    masterId?: number,
+    masterType?: string,
+    tableToggle = false
+  ) {
     return of({} as DtOutput<Student>);
   }
 }
@@ -136,7 +142,7 @@ describe('StudentTableComponent', () => {
 
   it('should get displayed columns', () => {
     expect(component.colOps.getActiveColsAliases()).toEqual(
-      studentColumns.map((c) => c.alias)
+      studentsColumns.map((c) => c.alias)
     );
   });
 
@@ -156,9 +162,12 @@ describe('StudentTableComponent', () => {
         sortDir: 'asc',
         pageStart: 0,
         pageOffset: -1,
-        aliases: studentColumns.map((c) => c.alias),
+        aliases: studentsColumns.map((c) => c.alias),
         filters: new Map(),
-      }
+      },
+      undefined,
+      undefined,
+      false
     );
   }));
 
@@ -199,40 +208,40 @@ describe('StudentTableComponent', () => {
   });
 
   it('should get active column aliases', () => {
-    component.colOps.activeColumns = studentColumns;
+    component.colOps.activeColumns = studentsColumns;
     expect(component.colOps.getActiveColsAliases()).toEqual(
-      studentColumns.map((c) => c.alias)
+      studentsColumns.map((c) => c.alias)
     );
   });
 
   it('should get active headers', () => {
-    component.colOps.activeColumns = studentColumns;
+    component.colOps.activeColumns = studentsColumns;
     expect(component.colOps.getActiveHeaders()).toEqual(
-      studentColumns.map((c) => c.placeholder)
+      studentsColumns.map((c) => c.placeholder)
     );
   });
 
   it('should sort active headers', fakeAsync(() => {
-    component.colOps.activeColumns = studentColumns;
+    component.colOps.activeColumns = studentsColumns;
     component.colOps
       .getSortedActiveHeaders('', '')
       .subscribe((sortedHeaders) => {
         expect(sortedHeaders).toEqual(
-          studentColumns.map((c) => c.placeholder).sort()
+          studentsColumns.map((c) => c.placeholder).sort()
         );
       });
     tick();
   }));
 
   it('should drop columns and reorder them', () => {
-    component.colOps.activeColumns = studentColumns.slice();
+    component.colOps.activeColumns = studentsColumns.slice();
     const event = {
       previousIndex: 0,
       currentIndex: 1,
     } as any;
     component.colOps.drop(event);
-    expect(component.colOps.activeColumns[0]).toEqual(studentColumns[1]);
-    expect(component.colOps.activeColumns[1]).toEqual(studentColumns[0]);
+    expect(component.colOps.activeColumns[0]).toEqual(studentsColumns[1]);
+    expect(component.colOps.activeColumns[1]).toEqual(studentsColumns[0]);
   });
 });
 

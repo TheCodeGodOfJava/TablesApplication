@@ -50,7 +50,7 @@ describe('TableService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const expectedUrl = `${environment.API_BASE_URL}students/all?start=0&length=10&columns%5B0%5D.orderDirection=asc&columns%5B0%5D.search=John&columns%5B0%5D.alias=name&columns%5B1%5D.alias=age`;
+      const expectedUrl = `${environment.API_BASE_URL}students/all?start=0&length=10&columns%5B0%5D.orderDirection=asc&columns%5B0%5D.search=John&columns%5B0%5D.alias=name&columns%5B1%5D.alias=age&tableToggle=false`;
       const req = httpMock.expectOne(expectedUrl);
 
       expect(req.request.method).toBe('GET');
@@ -71,7 +71,7 @@ describe('TableService', () => {
 
       const result = service['getSearchString'](serverParams);
       const expected =
-        '?start=0&length=10&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age';
+        '?start=0&length=10&columns[0].orderDirection=asc&columns[0].search=John&columns[0].alias=name&columns[1].alias=age&tableToggle=false';
       expect(decodeURIComponent(result)).toBe(expected);
     });
   });
