@@ -15,6 +15,8 @@ import { BaseInputComponent } from '../../../formParts/base-input/base-input.com
 import { BaseSelectComponent } from '../../../formParts/base-select/base-select.component';
 import { BaseTextFieldComponent } from '../../../formParts/base-text-field/base-text-field.component';
 import { DateRangeInputComponent } from '../../../formParts/date-range-input/date-range-input.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { ContextMenuTriggerDirective } from '../../../directives/context-menu/context-menu.directive';
 
 export const tableImports = [
   MatTableModule,
@@ -36,4 +38,6 @@ export const tableImports = [
   StrategyResizeDirective,
   MatTooltipModule,
   MatSlideToggleModule,
+  MatMenuModule,
+  ContextMenuTriggerDirective
 ];

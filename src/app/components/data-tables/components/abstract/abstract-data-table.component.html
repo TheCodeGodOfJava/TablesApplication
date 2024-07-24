@@ -78,24 +78,19 @@
           mat-cell
           *matCellDef="let row; let i = index"
           (click)="!column.isAction && !row.visible && goToRow(row)"
+          [contextMenuTriggerFor]="menu"
+          [contextMenuTriggerData]="{ row: row, index: i }"
         >
           <div>
             @if(column.isAction) {
             <div class="action-column">
-              @for (action of tableActions.allActions; track action) {
-              @if(allowedActions.includes(action.type) &&
-              action.getShowCondition(row) ){
-
-              <button
-                mat-mini-fab
-                (click)="action.getAction(row, i)"
-                style="margin-right: 10px"
-                [matTooltip]="action.description"
-              >
-                <mat-icon>{{ action.icon }}</mat-icon>
-              </button>
-
-              } }
+              <ng-container
+                [ngTemplateOutlet]="actions"
+                [ngTemplateOutletContext]="{
+                  row: row,
+                  index: i
+                }"
+              ></ng-container>
             </div>
             }@else{ @if(row.visible && !column.notEditable){
             <base-input
@@ -217,3 +212,40 @@
     </div>
   </div>
 </div>
+
+<mat-menu #menu>
+  <ng-template matMenuContent let-row="row" let-index="index">
+    <ng-container
+      [ngTemplateOutlet]="actions"
+      [ngTemplateOutletContext]="{
+        row: row,
+        index: index,
+        menu: true
+      }"
+    ></ng-container>
+  </ng-template>
+</mat-menu>
+
+<ng-template #actions let-row="row" let-index="index" let-menu="menu">
+  @for (action of tableActions.allActions; track action) {
+  @if(allowedActions.includes(action.type) && action.getShowCondition(row) ){
+  @if(!!menu){
+  <button
+    mat-menu-item
+    (click)="action.getAction(row, index)"
+    style="margin-right: 10px"
+  >
+    <mat-icon>{{ action.icon }}</mat-icon>
+    <span>{{ action.description }}</span>
+  </button>
+  }@else{
+  <button
+    mat-mini-fab
+    (click)="action.getAction(row, index)"
+    style="margin-right: 10px"
+    [matTooltip]="action.description"
+  >
+    <mat-icon>{{ action.icon }}</mat-icon>
+  </button>
+  } } }
+</ng-template>
