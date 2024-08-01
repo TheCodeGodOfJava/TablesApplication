@@ -67,6 +67,12 @@ export class BaseSelectComponent
 
   private currentDep!: string;
   private currentDepValue!: string;
+  
+  @Input()
+  masterId?: number;
+
+  @Input()
+  masterType?: string;
 
   static toggledTables: Set<string> = new Set();
 
@@ -108,6 +114,8 @@ export class BaseSelectComponent
           term,
           this.currentDep,
           this.currentDepValue,
+          this.masterId, 
+          this.masterType,
           BaseSelectComponent.toggledTables.has(this.tableName)
         );
   }

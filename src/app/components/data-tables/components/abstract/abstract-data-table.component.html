@@ -51,6 +51,8 @@
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
+                [masterId]="masterId"
+                [masterType]="masterType"
                 [tableName]="tableName"
                 [filterLocalSource]="column.mainControl?.filterLocalSource"
                 [dependentAliases]="column.mainControl?.dependentAliases || []"
@@ -106,6 +108,8 @@
               [controllerPath]="controllerPath"
               [formGroup]="tableActions.getRowFormGroup(i)"
               [dependentAliases]="column.rowControl?.dependentAliases || []"
+              [masterId]="masterId"
+              [masterType]="masterType"
               [tableName]="tableName"
             />
             <base-checkbox
