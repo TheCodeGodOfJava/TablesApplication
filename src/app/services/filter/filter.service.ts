@@ -19,7 +19,7 @@ export class FilterService {
   ): Observable<string[]> => {
     depAlias && (depAlias = `depAlias=${depAlias}&`);
     dep && (dep = `dep=${dep}&`);
-    const tableToggleStr = tableToggle && `tableToggle=true&`;
+    const tableToggleStr: string = tableToggle ? 'tableToggle=true&' : '';
     const url = `${
       environment.API_BASE_URL
     }${controllerPath}/filter?${depAlias}${dep}${tableToggleStr}field=${encodeURIComponent(

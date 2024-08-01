@@ -13,7 +13,6 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { AbstractDataTableComponent } from '../../components/data-tables/components/abstract/abstract-data-table.component';
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
@@ -69,6 +68,8 @@ export class BaseSelectComponent
   private currentDep!: string;
   private currentDepValue!: string;
 
+  static toggledTables: Set<string> = new Set();
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.initSelect();
@@ -107,7 +108,7 @@ export class BaseSelectComponent
           term,
           this.currentDep,
           this.currentDepValue,
-          AbstractDataTableComponent.toggledTables.has(this.tableName)
+          BaseSelectComponent.toggledTables.has(this.tableName)
         );
   }
 

@@ -21,6 +21,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { BaseSelectComponent } from '../../../../formParts/base-select/base-select.component';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
@@ -87,8 +88,6 @@ export abstract class AbstractDataTableComponent<T extends Id>
   protected rowDetailRoute!: string;
 
   protected tableData: { toggled: boolean } = { toggled: false };
-
-  static toggledTables: Set<string> = new Set();
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -310,7 +309,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   onToggleChanged(event: MatSlideToggleChange) {
     const tableToggled = event.checked;
-    const toggledTables = AbstractDataTableComponent.toggledTables;
+    const toggledTables = BaseSelectComponent.toggledTables;
     tableToggled
       ? toggledTables.add(this._tableName)
       : toggledTables.delete(this._tableName);
