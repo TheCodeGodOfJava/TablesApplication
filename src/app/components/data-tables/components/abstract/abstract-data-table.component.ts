@@ -88,6 +88,8 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected tableData: { toggled: boolean } = { toggled: false };
 
+  static toggledTables: Set<string> = new Set();
+
   constructor(
     protected ds: GenericDataSource<T>,
     protected stateService: StateService<T>,
@@ -307,7 +309,12 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   onToggleChanged(event: MatSlideToggleChange) {
-    this.tableData.toggled = event.checked;
+    const tableToggled = event.checked;
+    const toggledTables = AbstractDataTableComponent.toggledTables;
+    tableToggled
+      ? toggledTables.add(this._tableName)
+      : toggledTables.delete(this._tableName);
+    this.tableData.toggled = tableToggled;
     this.clearAllFilters();
     this.reloadTable();
   }

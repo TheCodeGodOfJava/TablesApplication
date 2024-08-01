@@ -10,7 +10,6 @@
             [alias]="tileControl.alias"
             [placeholder]="tileControl.placeholder"
             [formGroup]="formBuilderFormGroup"
-            [uniqueFormGroupId]="formName + '_tile_control_form_group'"
             [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
             [action]="tileControl.action"
           />
@@ -113,7 +112,6 @@
               [controllerPath]="controllerPath"
               [formGroup]="formGroup"
               [dependentAliases]="f.mainControl?.dependentAliases || []"
-              [uniqueFormGroupId]="formName"
             />
             <base-checkbox
               *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"

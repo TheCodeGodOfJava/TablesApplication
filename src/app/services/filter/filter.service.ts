@@ -14,13 +14,15 @@ export class FilterService {
     field: string,
     term: string,
     depAlias: string = '',
-    dep: string = ''
+    dep: string = '',
+    tableToggle: boolean = false
   ): Observable<string[]> => {
     depAlias && (depAlias = `depAlias=${depAlias}&`);
     dep && (dep = `dep=${dep}&`);
+    const tableToggleStr = tableToggle && `tableToggle=true&`;
     const url = `${
       environment.API_BASE_URL
-    }${controllerPath}/filter?${depAlias}${dep}field=${encodeURIComponent(
+    }${controllerPath}/filter?${depAlias}${dep}${tableToggleStr}field=${encodeURIComponent(
       field
     )}&term=${encodeURIComponent(term || '')}`;
     return this.hc.get<string[]>(url);

@@ -51,7 +51,7 @@
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
-                [uniqueFormGroupId]="tableName + '_headerFormGroup'"
+                [tableName]="tableName"
                 [filterLocalSource]="column.mainControl?.filterLocalSource"
                 [dependentAliases]="column.mainControl?.dependentAliases || []"
               />
@@ -106,7 +106,7 @@
               [controllerPath]="controllerPath"
               [formGroup]="tableActions.getRowFormGroup(i)"
               [dependentAliases]="column.rowControl?.dependentAliases || []"
-              [uniqueFormGroupId]="tableName + '_rowFormGroup_' + i"
+              [tableName]="tableName"
             />
             <base-checkbox
               *ngIf="column.rowControl?.type === CONTROL_TYPE.BOOLEAN"
