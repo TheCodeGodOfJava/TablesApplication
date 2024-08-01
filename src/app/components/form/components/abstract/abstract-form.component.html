@@ -67,7 +67,7 @@
           [checked]="enableFormConstructor"
           (change)="toggleFormConstructor($event)"
         >
-          Toggle form constructor state
+          {{ "Form Constructor " + (enableFormConstructor ? "ON" : "OFF") }}
         </mat-slide-toggle>
       </div>
     </div>

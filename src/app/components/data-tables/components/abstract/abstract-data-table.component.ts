@@ -87,7 +87,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected rowDetailRoute!: string;
 
-  protected tableData: { toggled: boolean } = { toggled: false };
+  protected tableData!: { toggled: boolean };
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -103,6 +103,9 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   ngOnInit(): void {
+    this.tableData = {
+      toggled: BaseSelectComponent.toggledTables.has(this.tableName),
+    };
     this.colOps = new ColumnsOperations(this.columns);
     this.tableFormOps = new TableFormOperations<T>(this.columns, this.fb);
     if (this.columns) {
