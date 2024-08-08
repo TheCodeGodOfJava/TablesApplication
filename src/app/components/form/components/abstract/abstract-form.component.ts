@@ -97,6 +97,16 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       .flat()
       .filter((a) => this.allFields.find((f) => f.placeholder === a));
 
+    this.tiles
+      .map((el) => el.cdkDropListData)
+      .flat()
+      .forEach((source) => {
+        const target = this.allFields.find(
+          (f) => f.placeholder === source.placeholder
+        );
+        target && this.copyMatchingFields(source, target);
+      });
+
     this.tileOps = new TileOperations<T>(
       this.allFields,
       this.formName,
@@ -166,6 +176,14 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       )
     );
     this.enableDisableFormConstructor();
+  }
+
+  copyMatchingFields<T extends object>(source: T, target: T): void {
+    for (const key in source) {
+      if (key in target && typeof source[key] === typeof target[key]) {
+        target[key] = source[key];
+      }
+    }
   }
 
   enableDisableFormConstructor(): void {

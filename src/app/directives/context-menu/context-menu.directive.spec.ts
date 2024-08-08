@@ -31,7 +31,11 @@ describe('ContextMenuTriggerDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatMenuModule, NoopAnimationsModule, ContextMenuTriggerDirective],
+      imports: [
+        MatMenuModule,
+        NoopAnimationsModule,
+        ContextMenuTriggerDirective,
+      ],
       declarations: [TestComponent],
     }).compileComponents();
 
@@ -56,7 +60,9 @@ describe('ContextMenuTriggerDirective', () => {
     div.nativeElement.dispatchEvent(event);
     fixture.detectChanges();
 
-    const menuPanel = document.querySelector('.mat-mdc-menu-panel') as HTMLElement;
+    const menuPanel = document.querySelector(
+      '.mat-mdc-menu-panel'
+    ) as HTMLElement;
     expect(menuPanel).toBeTruthy();
   });
 

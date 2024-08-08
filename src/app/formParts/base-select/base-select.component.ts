@@ -55,8 +55,6 @@ export class BaseSelectComponent
     dep?: string
   ) => Observable<string[]>;
 
-  protected static optionsDataMap: Map<string, string> = new Map();
-
   subscriptions$: Subject<any> = new Subject<any>();
 
   isMulti: boolean | null = null;
