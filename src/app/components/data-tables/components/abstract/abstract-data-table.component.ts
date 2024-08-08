@@ -21,6 +21,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { BaseSelectComponent } from '../../../../formParts/base-select/base-select.component';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
@@ -86,7 +87,7 @@ export abstract class AbstractDataTableComponent<T extends Id>
 
   protected rowDetailRoute!: string;
 
-  protected tableData: { toggled: boolean } = { toggled: false };
+  protected tableData!: { toggled: boolean };
 
   constructor(
     protected ds: GenericDataSource<T>,
@@ -102,6 +103,9 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   ngOnInit(): void {
+    this.tableData = {
+      toggled: BaseSelectComponent.toggledTables.has(this.tableName),
+    };
     this.colOps = new ColumnsOperations(this.columns);
     this.tableFormOps = new TableFormOperations<T>(this.columns, this.fb);
     if (this.columns) {
@@ -307,7 +311,12 @@ export abstract class AbstractDataTableComponent<T extends Id>
   }
 
   onToggleChanged(event: MatSlideToggleChange) {
-    this.tableData.toggled = event.checked;
+    const tableToggled = event.checked;
+    const toggledTables = BaseSelectComponent.toggledTables;
+    tableToggled
+      ? toggledTables.add(this._tableName)
+      : toggledTables.delete(this._tableName);
+    this.tableData.toggled = tableToggled;
     this.clearAllFilters();
     this.reloadTable();
   }

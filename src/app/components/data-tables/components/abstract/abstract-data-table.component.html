@@ -51,7 +51,9 @@
                 [placeholder]="column.placeholder"
                 [controllerPath]="controllerPath"
                 [formGroup]="formGroup"
-                [uniqueFormGroupId]="tableName + '_headerFormGroup'"
+                [masterId]="masterId"
+                [masterType]="masterType"
+                [tableName]="tableName"
                 [filterLocalSource]="column.mainControl?.filterLocalSource"
                 [dependentAliases]="column.mainControl?.dependentAliases || []"
               />
@@ -106,7 +108,9 @@
               [controllerPath]="controllerPath"
               [formGroup]="tableActions.getRowFormGroup(i)"
               [dependentAliases]="column.rowControl?.dependentAliases || []"
-              [uniqueFormGroupId]="tableName + '_rowFormGroup_' + i"
+              [masterId]="masterId"
+              [masterType]="masterType"
+              [tableName]="tableName"
             />
             <base-checkbox
               *ngIf="column.rowControl?.type === CONTROL_TYPE.BOOLEAN"
@@ -198,15 +202,15 @@
         >
         </mat-paginator>
       </div>
-      <div>
+      <div style="width: 205px">
         <mat-slide-toggle
           *ngIf="masterId"
           matTooltip="Switch mode: add or remove entities"
           matTooltipPosition="above"
-          [checked]="false"
+          [checked]="tableData.toggled"
           (change)="onToggleChanged($event)"
         >
-          Table mode
+          {{ "Table mode (" + (tableData.toggled ? "ADD" : "REMOVE") + ")" }}
         </mat-slide-toggle>
       </div>
     </div>

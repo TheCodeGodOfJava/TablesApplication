@@ -46,7 +46,7 @@ export class BaseSelectComponent
   dependentAliases: string[] = [];
 
   @Input()
-  uniqueFormGroupId!: string;
+  tableName: string = '';
 
   @Input()
   filterLocalSource?: (
@@ -65,6 +65,16 @@ export class BaseSelectComponent
 
   private currentDep!: string;
   private currentDepValue!: string;
+
+  @Input()
+  masterId?: number;
+
+  @Input()
+  masterType?: string;
+
+  static toggledTables: Set<string> = new Set();
+
+  protected loading: boolean = false;
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -96,6 +106,7 @@ export class BaseSelectComponent
   }
 
   loadOptionsForSelect(term: string = ''): void {
+    this.loading = true;
     this.options = this.filterLocalSource
       ? this.filterLocalSource(this.alias, term)
       : this.filterService.getDataForFilter(
@@ -103,8 +114,16 @@ export class BaseSelectComponent
           this.alias,
           term,
           this.currentDep,
-          this.currentDepValue
+          this.currentDepValue,
+          this.masterId,
+          this.masterType,
+          BaseSelectComponent.toggledTables.has(this.tableName)
         );
+    this.loading = false;
+  }
+
+  startLoadingOptions() {
+    this.loadOptionsForSelect();
   }
 
   ngOnDestroy(): void {
