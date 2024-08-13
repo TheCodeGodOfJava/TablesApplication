@@ -100,11 +100,11 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     this.tiles
       .map((el) => el.cdkDropListData)
       .flat()
-      .forEach((source) => {
-        const target = this.allFields.find(
-          (f) => f.placeholder === source.placeholder
+      .forEach((target) => {
+        const source: AppEntity<T> | undefined = this.allFields.find(
+          (f) => f.placeholder === target.placeholder
         );
-        target && this.copyMatchingFields(source, target);
+        source && this.copyMatchingFields(source, target);
       });
 
     this.tileOps = new TileOperations<T>(
@@ -180,7 +180,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   copyMatchingFields<T extends object>(source: T, target: T): void {
     for (const key in source) {
-      if (key in target && typeof source[key] === typeof target[key]) {
+      if (!(key in target) || key === 'mainControl') {
         target[key] = source[key];
       }
     }

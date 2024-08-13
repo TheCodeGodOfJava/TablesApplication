@@ -118,6 +118,7 @@
               [alias]="f.alias"
               [formGroup]="formGroup"
               [placeholder]="f.placeholder"
+              [outputStringValue]="f.cell && f.cell(detail)"
             />
             <base-date-picker
               *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
