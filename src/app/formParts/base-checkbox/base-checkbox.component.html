@@ -1,5 +1,7 @@
 <ng-container [formGroup]="formGroup">
-  <div appMatLabelScroll>
-    <mat-checkbox [formControlName]="alias"> {{ placeholder }}</mat-checkbox>
+  <div>
+    <mat-checkbox [formControlName]="alias">
+      {{ placeholder + "  (" + outputStringValue + ")" }}</mat-checkbox
+    >
   </div>
 </ng-container>
