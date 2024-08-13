@@ -63,8 +63,6 @@ export const studentFormFields: AppEntity<Student>[] = [
   {
     alias: 'enrollDate',
     placeholder: 'Enroll Date',
-    cell: (element: Student) =>
-      new Date(element.enrollDate).toISOString().split('T')[0],
 
     mainControl: {
       type: CONTROL_TYPE.DATE_INPUT,
