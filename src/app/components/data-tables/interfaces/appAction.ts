@@ -13,5 +13,5 @@ export enum ACTIONS {
   REMOVE = 'REMOVE',
   UNBIND = 'UNBIND',
   BIND = 'BIND',
-  DISABLE = 'DISABLE',
+  STATE = 'STATE',
 }
