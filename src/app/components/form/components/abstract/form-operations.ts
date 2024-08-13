@@ -111,10 +111,8 @@ export class FormOperations<T> extends TableFormOperations<T> {
 
   public saveFormTemplate(nameSuffix: string = '', json: string = '') {
     if (this.formName) {
-      this.localStorageService.setItem(
-        this.formName + nameSuffix,
-        json || JSON.stringify(this.tiles)
-      );
+      json = json || JSON.stringify(this.tiles);
+      this.localStorageService.setItem(this.formName + nameSuffix, json);
     } else {
       const errorMsg: string =
         'Error saving form template configuration, the form name is not set!';
