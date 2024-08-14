@@ -9,14 +9,14 @@
             *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
             [alias]="tileControl.alias"
             [placeholder]="tileControl.placeholder"
-            [formGroup]="formBuilderFormGroup"
+            [formGroup]="tileOps.tileFormGroup"
             [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
             [action]="tileControl.action"
           />
           <base-input
             *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
             [alias]="tileControl.alias"
-            [formGroup]="formBuilderFormGroup"
+            [formGroup]="tileOps.tileFormGroup"
             [placeholder]="tileControl.placeholder"
           />
           }
@@ -26,13 +26,7 @@
               matTooltip="Create tile"
               matTooltipPosition="above"
               [disabled]="!enableFormConstructor"
-              (click)="
-                tileOps.createTile(
-                  tileColSpanAlias,
-                  tileRowSpanAlias,
-                  formBuilderFormGroup
-                )
-              "
+              (click)="tileOps.createTile()"
             >
               <mat-icon class="success-color">add_circle_outline</mat-icon>
             </button>
@@ -42,7 +36,7 @@
               color="warn"
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
-              (click)="clearAllTiles()"
+              (click)="tileOps.clearAllTiles()"
               [disabled]="!tiles.length || !enableFormConstructor"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
@@ -52,7 +46,7 @@
               mat-icon-button
               matTooltip="Remove last tile"
               matTooltipPosition="above"
-              (click)="removeLast()"
+              (click)="tileOps.removeLast()"
               [disabled]="!tiles.length || !enableFormConstructor"
             >
               <mat-icon class="warning-color">clear</mat-icon>
@@ -98,6 +92,8 @@
             cdkDrag
             [cdkDragDisabled]="!enableFormConstructor"
             class="form-item"
+            [contextMenuTriggerFor]="menu"
+            (contextmenu)="setCurrentFormElementForContextMenu(f)"
           >
             <base-input
               *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
@@ -148,3 +144,28 @@
     </div>
   </div>
 </div>
+
+<mat-menu #menu>
+  <ng-template matMenuContent let-element="element">
+    <ng-container
+      [ngTemplateOutlet]="actions"
+      [ngTemplateOutletContext]="{
+        element: element
+      }"
+    ></ng-container>
+  </ng-template>
+</mat-menu>
+
+<ng-template #actions>
+  @for (action of formContextMenuActions.allActions; track action; ) {
+  @if(action.getShowCondition(formContextMenuActions.currentFormElementForContextMenu)
+  ){
+  <base-checkbox
+    *ngIf="action.type == ACTIONS.STATE"
+    [alias]="action.appEntity?.alias || ''"
+    [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+    [placeholder]="action.description"
+    [action]="action.appEntity?.action"
+  />
+  } }
+</ng-template>

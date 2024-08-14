@@ -1,14 +1,25 @@
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { Tile } from '../../interfaces/tile';
 import { FormOperations } from './form-operations';
+import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 
 export class TileOperations<T> extends FormOperations<T> {
+  CONTROL_TYPE = CONTROL_TYPE;
+
   columnQuantity: number = 8;
   rowHeight: number = 85;
   gutter: number = 6;
+
+  formFieldsOnOffAlias: string = 'formFieldsOnOff';
+  tileColSpanAlias: string = 'tile-col-span';
+  tileRowSpanAlias: string = 'tile-row-span';
+
+  tileFormGroup!: FormGroup;
+
+  tileFormFields!: AppEntity<T>[];
 
   constructor(
     public override allFields: AppEntity<T>[],
@@ -19,16 +30,51 @@ export class TileOperations<T> extends FormOperations<T> {
     protected override toastrService: ToastrService
   ) {
     super(allFields, formName, tiles, fb, localStorageService, toastrService);
+    const activeFormElements = this.tiles
+      .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
+      .flat()
+      .filter((a) => this.allFields.find((f) => f.placeholder === a));
+    this.tileFormFields = [
+      {
+        alias: this.formFieldsOnOffAlias,
+        placeholder: 'Form fields on/off',
+        mainControl: {
+          type: CONTROL_TYPE.SELECT,
+          getControl: () => new FormControl<string[]>(activeFormElements),
+          filterLocalSource: this.getSortedActiveFormElements,
+        },
+        action: this.enableDisableFormElements,
+      },
+      {
+        alias: this.tileColSpanAlias,
+        placeholder: 'Col span',
+        mainControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl<number>(2),
+        },
+      },
+      {
+        alias: this.tileRowSpanAlias,
+        placeholder: 'Row span',
+        mainControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl<number>(1),
+        },
+      },
+    ];
+    this.tileFormGroup = this.fb.group({});
+    this.tileFormFields.forEach((c) =>
+      this.addControlsToFormGroup(c.alias, c.mainControl, this.tileFormGroup)
+    );
   }
 
-  createTile(
-    tileColSpanAlias: string,
-    tileRowSpanAlias: string,
-    formBuilderFormGroup: FormGroup
-  ) {
-    const tileRowSpan: number =
-      formBuilderFormGroup.get(tileRowSpanAlias)?.value;
-    let tileColSpan: number = formBuilderFormGroup.get(tileColSpanAlias)?.value;
+  createTile() {
+    const tileRowSpan: number = this.tileFormGroup.get(
+      this.tileRowSpanAlias
+    )?.value;
+    let tileColSpan: number = this.tileFormGroup.get(
+      this.tileColSpanAlias
+    )?.value;
     if (tileColSpan > this.columnQuantity) {
       this.toastrService.error(
         'Tile column span exceeds the column quauntity! Reset to column quantity'
@@ -47,13 +93,14 @@ export class TileOperations<T> extends FormOperations<T> {
   }
 
   clearAllTiles() {
+    this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
     this.tiles.length = 0;
     this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }
 
-  removeLast(formFieldsOnOffAlias: string, formBuilderFormGroup: FormGroup) {
-    const formControl = formBuilderFormGroup.get(formFieldsOnOffAlias);
+  removeLast() {
+    const formControl = this.tileFormGroup.get(this.formFieldsOnOffAlias);
     if (this.tiles.length === 1) {
       this.tiles.length = 0;
       formControl?.reset();

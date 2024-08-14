@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
@@ -12,6 +12,8 @@ import { formImports } from '../../form-imports/formImports';
 import { FormActions } from '../../formActions';
 import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
+import { FormContextMenuActions } from '../../formContextMenuActions';
+import { ACTIONS } from '../../../data-tables/interfaces/appAction';
 
 @Component({
   standalone: true,
@@ -21,6 +23,7 @@ import { TileOperations } from './tile-operations';
 })
 export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   CONTROL_TYPE = CONTROL_TYPE;
+  ACTIONS = ACTIONS;
 
   @Input()
   detailId!: number;
@@ -34,12 +37,6 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   @Input() controllerPath!: string;
 
   formGroup!: FormGroup;
-
-  formBuilderFormGroup!: FormGroup;
-
-  tileColSpanAlias: string = 'tile-col-span';
-  tileRowSpanAlias: string = 'tile-row-span';
-  formFieldsOnOffAlias: string = 'formFieldsOnOff';
 
   enableFormConstructor: boolean = true;
   protected enabelFormStringSuffix: string = '_state';
@@ -58,6 +55,8 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   formActions!: FormActions<T>;
+
+  formContextMenuActions!: FormContextMenuActions<T>;
 
   @Input()
   set formName(name: string) {
@@ -92,11 +91,6 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.enableFormConstructor = JSON.parse(enableFormStr);
     }
 
-    const activeFormElements = this.tiles
-      .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
-      .flat()
-      .filter((a) => this.allFields.find((f) => f.placeholder === a));
-
     this.tiles
       .map((el) => el.cdkDropListData)
       .flat()
@@ -116,20 +110,29 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.toastrService
     );
 
+    this.formContextMenuActions = new FormContextMenuActions(
+      this.fb,
+      this.formGroup,
+      this.tileOps,
+      this.toastrService
+    );
+
     if (this.allFields) {
       this.stateService
         .getModelById(this.controllerPath, this.detailId)
         .subscribe({
           next: (detail: T) => {
             this.detail = detail;
-            this.allFields.forEach((c) =>
+            this.allFields.forEach((c) => {
               this.tileOps.addControlsToFormGroup(
                 c.alias,
                 c.mainControl,
                 this.formGroup,
                 this.detail
-              )
-            );
+              );
+              const formControl = this.formGroup.get(c.alias);
+              c.disabled ? formControl?.disable() : formControl?.enable();
+            });
           },
           error: (error) => {
             console.error('error:', error);
@@ -139,42 +142,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
           },
         });
     }
-    this.tileControls = [
-      {
-        alias: this.formFieldsOnOffAlias,
-        placeholder: 'Form fields on/off',
-        mainControl: {
-          type: CONTROL_TYPE.SELECT,
-          getControl: () => new FormControl<string[]>(activeFormElements),
-          filterLocalSource: this.tileOps.getSortedActiveFormElements,
-        },
-        action: this.tileOps.enableDisableFormElements,
-      },
-      {
-        alias: this.tileColSpanAlias,
-        placeholder: 'Col span',
-        mainControl: {
-          type: CONTROL_TYPE.INPUT,
-          getControl: () => new FormControl<number>(2),
-        },
-      },
-      {
-        alias: this.tileRowSpanAlias,
-        placeholder: 'Row span',
-        mainControl: {
-          type: CONTROL_TYPE.INPUT,
-          getControl: () => new FormControl<number>(1),
-        },
-      },
-    ];
-    this.formBuilderFormGroup = this.fb.group({});
-    this.tileControls.forEach((c) =>
-      this.tileOps.addControlsToFormGroup(
-        c.alias,
-        c.mainControl,
-        this.formBuilderFormGroup
-      )
-    );
+
     this.enableDisableFormConstructor();
   }
 
@@ -184,12 +152,16 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
         target[key] = source[key];
       }
     }
+    for (const key in target) {
+      if (!(key in source)) {
+      }
+    }
   }
 
   enableDisableFormConstructor(): void {
     this.enableFormConstructor
-      ? this.formBuilderFormGroup.enable()
-      : this.formBuilderFormGroup.disable();
+      ? this.tileOps.tileFormGroup.enable()
+      : this.tileOps.tileFormGroup.disable();
 
     this.tileOps.saveFormTemplate(
       this.enabelFormStringSuffix,
@@ -197,20 +169,26 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     );
   }
 
-  clearAllTiles() {
-    this.formBuilderFormGroup.get(this.formFieldsOnOffAlias)?.reset();
-    this.tileOps.clearAllTiles();
-  }
-
-  removeLast() {
-    this.tileOps.removeLast(
-      this.formFieldsOnOffAlias,
-      this.formBuilderFormGroup
-    );
-  }
-
   toggleFormConstructor(event: MatSlideToggleChange) {
     this.enableFormConstructor = event.checked;
     this.enableDisableFormConstructor();
+  }
+
+  setCurrentFormElementForContextMenu(
+    currentFormElementForContextMenu: AppEntity<T>
+  ) {
+    this.formContextMenuActions.currentFormElementForContextMenu =
+      currentFormElementForContextMenu;
+    const changeStateAction = this.formContextMenuActions.allActions.find(
+      (a) => (a.type = ACTIONS.STATE)
+    );
+
+    const changeStateActionControl =
+      this.formContextMenuActions.formContextMenuFormGroup.get(
+        changeStateAction?.appEntity?.alias || ''
+      );
+    changeStateActionControl?.setValue(
+      !currentFormElementForContextMenu.disabled
+    );
   }
 }
