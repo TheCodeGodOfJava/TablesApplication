@@ -15,6 +15,8 @@ import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/bas
 import { BaseInputComponent } from '../../../formParts/base-input/base-input.component';
 import { BaseSelectComponent } from '../../../formParts/base-select/base-select.component';
 import { BaseTextFieldComponent } from '../../../formParts/base-text-field/base-text-field.component';
+import { ContextMenuTriggerDirective } from '../../../directives/context-menu/context-menu.directive';
+import { MatMenuModule } from '@angular/material/menu';
 
 export const formImports = [
   MatDividerModule,
@@ -36,4 +38,6 @@ export const formImports = [
   BaseTextFieldComponent,
   MatInputModule,
   MatSlideToggleModule,
+  MatMenuModule,
+  ContextMenuTriggerDirective,
 ];
