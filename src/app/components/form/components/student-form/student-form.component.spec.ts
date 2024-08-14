@@ -188,16 +188,14 @@ describe('TileOperations', () => {
   it('should create a tile with valid dimensions', () => {
     spyOn(tileOperations, 'saveFormTemplate');
 
-    const formGroup = formBuilder.group({
-      tileColSpanAlias: formBuilder.control(4),
-      tileRowSpanAlias: formBuilder.control(2),
-    });
+    tileOperations.tileFormGroup
+      .get(tileOperations.tileRowSpanAlias)
+      ?.setValue(2);
+    tileOperations.tileFormGroup
+      .get(tileOperations.tileColSpanAlias)
+      ?.setValue(4);
 
-    tileOperations.createTile(
-      'tileColSpanAlias',
-      'tileRowSpanAlias',
-      formGroup
-    );
+    tileOperations.createTile();
 
     expect(tileOperations.tiles.length).toBe(1);
     expect(tileOperations.tiles[0].colSpan).toBe(4);
@@ -208,16 +206,14 @@ describe('TileOperations', () => {
   it('should limit tile column span to column quantity', () => {
     spyOn(tileOperations, 'saveFormTemplate');
 
-    const formGroup = formBuilder.group({
-      tileColSpanAlias: formBuilder.control(10),
-      tileRowSpanAlias: formBuilder.control(2),
-    });
+    tileOperations.tileFormGroup
+      .get(tileOperations.tileRowSpanAlias)
+      ?.setValue(2);
+    tileOperations.tileFormGroup
+      .get(tileOperations.tileColSpanAlias)
+      ?.setValue(10);
 
-    tileOperations.createTile(
-      'tileColSpanAlias',
-      'tileRowSpanAlias',
-      formGroup
-    );
+    tileOperations.createTile();
 
     expect(tileOperations.tiles.length).toBe(1);
     expect(tileOperations.tiles[0].colSpan).toBe(8); // Should reset to column quantity
@@ -235,10 +231,6 @@ describe('TileOperations', () => {
   });
 
   it('should remove the last tile', () => {
-    const formGroup = formBuilder.group({
-      formFieldsOnOffAlias: formBuilder.control(['field1', 'field2']),
-    });
-
     tileOperations.tiles.push({
       rowSpan: 2,
       colSpan: 4,
@@ -250,7 +242,7 @@ describe('TileOperations', () => {
 
     spyOn(tileOperations, 'saveFormTemplate');
 
-    tileOperations.removeLast('formFieldsOnOffAlias', formGroup);
+    tileOperations.removeLast();
 
     expect(tileOperations.tiles.length).toBe(0);
     expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
