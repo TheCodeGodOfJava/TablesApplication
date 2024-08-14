@@ -9,9 +9,9 @@ export const studentFormFields: AppEntity<Student>[] = [
     placeholder: 'ID',
     mainControl: {
       type: CONTROL_TYPE.SELECT,
-      getControl: () =>
-        new FormControl<number | null>({ value: null, disabled: true }),
+      getControl: () => new FormControl<number | null>(null),
     },
+    disabled: true,
   },
   {
     alias: 'firstName',
