@@ -154,6 +154,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     }
     for (const key in target) {
       if (!(key in source)) {
+        source[key] = target[key];
       }
     }
   }

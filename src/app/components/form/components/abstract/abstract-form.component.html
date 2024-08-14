@@ -160,12 +160,14 @@
   @for (action of formContextMenuActions.allActions; track action; ) {
   @if(action.getShowCondition(formContextMenuActions.currentFormElementForContextMenu)
   ){
-  <base-checkbox
-    *ngIf="action.type == ACTIONS.STATE"
-    [alias]="action.appEntity?.alias || ''"
-    [formGroup]="formContextMenuActions.formContextMenuFormGroup"
-    [placeholder]="action.description"
-    [action]="action.appEntity?.action"
-  />
+  <div style="padding-right: 20px; padding-left: 15px">
+    <base-checkbox
+      *ngIf="action.type == ACTIONS.STATE"
+      [alias]="action.appEntity?.alias || ''"
+      [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+      [placeholder]="action.description"
+      [action]="action.appEntity?.action"
+    />
+  </div>
   } }
 </ng-template>
