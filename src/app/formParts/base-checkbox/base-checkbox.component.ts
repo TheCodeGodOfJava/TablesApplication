@@ -19,5 +19,5 @@ import { AbstractFormElementComponent } from '../abstract/abstractFormElementCom
 })
 export class BaseCheckboxComponent extends AbstractFormElementComponent {
   @Input()
-  outputStringValue!: string;
+  outputStringValue: string = '';
 }

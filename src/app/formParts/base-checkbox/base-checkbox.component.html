@@ -1,7 +1,13 @@
 <ng-container [formGroup]="formGroup">
   <div>
-    <mat-checkbox [formControlName]="alias">
-      {{ placeholder + "  (" + outputStringValue + ")" }}</mat-checkbox
+    <mat-checkbox
+      [formControlName]="alias"
+      (click)="action && action(alias, formGroup)"
+    >
+      {{
+        placeholder +
+          (outputStringValue ? "  (" + outputStringValue + ")" : " ")
+      }}</mat-checkbox
     >
   </div>
 </ng-container>
