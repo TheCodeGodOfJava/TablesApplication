@@ -175,21 +175,19 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     this.enableDisableFormConstructor();
   }
 
-  setCurrentFormElementForContextMenu(
-    currentFormElementForContextMenu: AppEntity<T>
-  ) {
-    this.formContextMenuActions.currentFormElementForContextMenu =
-      currentFormElementForContextMenu;
-    const changeStateAction = this.formContextMenuActions.allActions.find(
-      (a) => (a.type = ACTIONS.STATE)
-    );
+  setCurrentFormElementForContextMenu(current: AppEntity<T>) {
+    this.formContextMenuActions.currentFormElementForContextMenu = current;
+    this.setActionControlValue<boolean>(!current.disabled, ACTIONS.STATE);
+    this.setActionControlValue<string>(current.color || '', ACTIONS.COLOR);
+  }
 
-    const changeStateActionControl =
-      this.formContextMenuActions.formContextMenuFormGroup.get(
-        changeStateAction?.appEntity?.alias || ''
-      );
-    changeStateActionControl?.setValue(
-      !currentFormElementForContextMenu.disabled
+  setActionControlValue<V>(value: V, actionType: ACTIONS) {
+    const action = this.formContextMenuActions.allActions.find(
+      (a) => (a.type === actionType)
     );
+    const control = this.formContextMenuActions.formContextMenuFormGroup.get(
+      action?.appEntity?.alias || ''
+    );
+    control?.setValue(value);
   }
 }

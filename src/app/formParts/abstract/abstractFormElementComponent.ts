@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { getValidationMessage } from '../validation/validation';
 
@@ -19,6 +19,8 @@ export abstract class AbstractFormElementComponent {
   placeholder!: string;
 
   @Input() formGroup!: FormGroup;
+
+  @Input() formFieldColor: string = '';
 
   @Input() action?: (alias: string, formGroup: FormGroup) => void;
 
