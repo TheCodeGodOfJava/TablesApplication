@@ -1,5 +1,14 @@
 <ng-container [formGroup]="formGroup">
-  <mat-form-field *ngIf="alias" appMatLabelScroll (click)="picker.open()">
+  <mat-form-field
+    *ngIf="alias"
+    appMatLabelScroll
+    (click)="picker.open()"
+    [ngStyle]="
+      formFieldColor
+        ? { '--mdc-filled-text-field-container-color': formFieldColor }
+        : {}
+    "
+  >
     <mat-label *ngIf="formGroup.get(alias)?.valid">{{ placeholder }}</mat-label>
     <mat-label *ngIf="formGroup.get(alias)?.invalid">{{
       getError()

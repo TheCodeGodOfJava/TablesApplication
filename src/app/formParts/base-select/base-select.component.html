@@ -1,12 +1,21 @@
 <ng-container *ngIf="isMulti !== null && !loading" [formGroup]="formGroup">
-  <mat-form-field floatLabel="always" [class]="className" style="width: auto">
+  <mat-form-field
+    floatLabel="always"
+    [class]="className"
+    style="width: auto"
+    [ngStyle]="
+      formFieldColor
+        ? { '--mdc-filled-text-field-container-color': formFieldColor }
+        : {}
+    "
+  >
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select
       [formControlName]="alias"
       placeholder="search"
       [multiple]="isMulti"
       (closed)="action && action(alias, formGroup)"
-      (click) = "startLoadingOptions()"
+      (click)="startLoadingOptions()"
     >
       <mat-option>
         <ngx-mat-select-search
