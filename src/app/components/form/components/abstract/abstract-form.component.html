@@ -3,8 +3,8 @@
     <div class="form-constructor-wrapper">
       <div class="field-list">
         <div class="tile-span">
-          @for (tileControl of tileControls; track tileControl.alias; let i =
-          $index){
+          @for (tileControl of tileOps.tileFormFields; track tileControl.alias;
+          let i = $index){
           <base-select
             *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
             [alias]="tileControl.alias"
