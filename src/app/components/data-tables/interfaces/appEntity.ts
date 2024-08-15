@@ -24,4 +24,5 @@ export interface AppEntity<T> {
   notEditable?: boolean;
   width?: number;
   disabled?: boolean;
+  color?: string;
 }

@@ -39,6 +39,25 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         },
       },
     },
+    {
+      type: ACTIONS.COLOR,
+      icon: 'color_lens',
+      getShowCondition: (model: AppEntity<T>) => true,
+      description: 'Set color',
+      appEntity: {
+        alias: 'setColorAction',
+        placeholder: '',
+        mainControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl<string | null>(null),
+        },
+        action: (alias: string, fromGroup: FormGroup) => {
+          const value: string = fromGroup.get(alias)?.value;
+          this.currentFormElementForContextMenu.color = value;
+          this.tileOps.saveFormTemplate();
+        },
+      },
+    },
   ];
 
   formContextMenuFormGroup!: FormGroup;
