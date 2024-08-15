@@ -92,7 +92,7 @@
             cdkDrag
             [cdkDragDisabled]="!enableFormConstructor"
             class="form-item"
-            [contextMenuTriggerFor]="menu"
+            [contextMenuTriggerFor]="enableFormConstructor ? menu : null"
             (contextmenu)="setCurrentFormElementForContextMenu(f)"
           >
             <base-input
