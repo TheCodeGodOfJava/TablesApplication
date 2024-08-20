@@ -18,4 +18,5 @@ export enum ACTIONS {
   BIND = 'BIND',
   STATE = 'STATE',
   COLOR = 'COLOR',
+  LABEL = 'LABEL',
 }

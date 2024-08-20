@@ -58,6 +58,25 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         },
       },
     },
+    {
+      type: ACTIONS.LABEL,
+      icon: 'label',
+      getShowCondition: (model: AppEntity<T>) => true,
+      description: 'Set label',
+      appEntity: {
+        alias: 'setLabelAction',
+        placeholder: '',
+        mainControl: {
+          type: CONTROL_TYPE.INPUT,
+          getControl: () => new FormControl<string | null>(null),
+        },
+        action: (alias: string, fromGroup: FormGroup) => {
+          const value: string = fromGroup.get(alias)?.value;
+          this.currentFormElementForContextMenu.placeholder = value;
+          this.tileOps.saveFormTemplate();
+        },
+      },
+    },
   ];
 
   formContextMenuFormGroup!: FormGroup;

@@ -179,6 +179,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     this.formContextMenuActions.currentFormElementForContextMenu = current;
     this.setActionControlValue<boolean>(!current.disabled, ACTIONS.STATE);
     this.setActionControlValue<string>(current.color || '', ACTIONS.COLOR);
+    this.setActionControlValue<string>(current.placeholder || '', ACTIONS.LABEL);
   }
 
   setActionControlValue<V>(value: V, actionType: ACTIONS) {
