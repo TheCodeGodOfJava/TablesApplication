@@ -107,16 +107,6 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       tile.cdkDropListData = updatedData;
     });
 
-    // this.tiles
-    //   .map((el) => el.cdkDropListData)
-    //   .flat()
-    //   .forEach((target) => {
-    //     const source: AppEntity<T> | undefined = this.allFields.find(
-    //       (f) => f.placeholder === target.placeholder
-    //     );
-    //     source && this.copyMatchingFields(source, target);
-    //   });
-
     this.tileOps = new TileOperations<T>(
       this.allFields,
       this.formName,
