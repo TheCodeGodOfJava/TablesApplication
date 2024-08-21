@@ -1,11 +1,11 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../models/id';
 import { ACTIONS, AppAction } from '../data-tables/interfaces/appAction';
 import { AppEntity } from '../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../data-tables/interfaces/inputTypes';
 import { ProtoActions } from '../protoActions';
 import { TileOperations } from './components/abstract/tile-operations';
-import { ToastrService } from 'ngx-toastr';
 
 export class FormContextMenuActions<T extends Id> extends ProtoActions<
   AppEntity<T>
@@ -73,6 +73,20 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         action: (alias: string, fromGroup: FormGroup) => {
           const value: string = fromGroup.get(alias)?.value;
           this.currentFormElementForContextMenu.placeholder = value;
+
+          const fc = this.tileOps.tileFormGroup.get(
+            this.tileOps.formFieldsOnOffAlias
+          );
+
+          let selectedFormElements: string[] = fc?.value;
+          const placeHolder = this.currentFormElementForContextMenu.placeholder;
+          selectedFormElements = selectedFormElements.filter(
+            (item) => item !== placeHolder
+          );
+          selectedFormElements.push(value);
+
+          fc?.setValue(selectedFormElements);
+          
           this.tileOps.saveFormTemplate();
         },
       },

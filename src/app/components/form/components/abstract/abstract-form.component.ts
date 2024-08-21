@@ -6,14 +6,14 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
+import { ACTIONS } from '../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { formImports } from '../../form-imports/formImports';
 import { FormActions } from '../../formActions';
+import { FormContextMenuActions } from '../../formContextMenuActions';
 import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
-import { FormContextMenuActions } from '../../formContextMenuActions';
-import { ACTIONS } from '../../../data-tables/interfaces/appAction';
 
 @Component({
   standalone: true,
@@ -91,15 +91,31 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.enableFormConstructor = JSON.parse(enableFormStr);
     }
 
-    this.tiles
-      .map((el) => el.cdkDropListData)
-      .flat()
-      .forEach((target) => {
-        const source: AppEntity<T> | undefined = this.allFields.find(
-          (f) => f.placeholder === target.placeholder
-        );
-        source && this.copyMatchingFields(source, target);
-      });
+    this.tiles.forEach((tile) => {
+      const updatedData = tile.cdkDropListData
+        .map((source) => {
+          const target: AppEntity<T> | undefined = this.allFields.find(
+            (f) => f.alias === source.alias
+          );
+          if (target) {
+            this.copyMatchingFields(source, target);
+            return target;
+          }
+          return undefined;
+        })
+        .filter((item): item is AppEntity<T> => item !== undefined);
+      tile.cdkDropListData = updatedData;
+    });
+
+    // this.tiles
+    //   .map((el) => el.cdkDropListData)
+    //   .flat()
+    //   .forEach((target) => {
+    //     const source: AppEntity<T> | undefined = this.allFields.find(
+    //       (f) => f.placeholder === target.placeholder
+    //     );
+    //     source && this.copyMatchingFields(source, target);
+    //   });
 
     this.tileOps = new TileOperations<T>(
       this.allFields,
@@ -146,17 +162,17 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     this.enableDisableFormConstructor();
   }
 
-  copyMatchingFields<T extends object>(source: T, target: T): void {
-    for (const key in source) {
-      if (!(key in target) || key === 'mainControl') {
-        target[key] = source[key];
-      }
-    }
-    for (const key in target) {
-      if (!(key in source)) {
-        source[key] = target[key];
-      }
-    }
+  copyMatchingFields<T extends Record<string, any>>(
+    source: T,
+    target: T
+  ): void {
+    const fields: string[] = Object.keys(target).filter(
+      (key) => typeof target[key] !== 'object'
+    );
+    fields.forEach((field) => {
+      const sourceValue = source[field];
+      sourceValue && ((target as Record<string, any>)[field] = sourceValue);
+    });
   }
 
   enableDisableFormConstructor(): void {
@@ -179,12 +195,15 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     this.formContextMenuActions.currentFormElementForContextMenu = current;
     this.setActionControlValue<boolean>(!current.disabled, ACTIONS.STATE);
     this.setActionControlValue<string>(current.color || '', ACTIONS.COLOR);
-    this.setActionControlValue<string>(current.placeholder || '', ACTIONS.LABEL);
+    this.setActionControlValue<string>(
+      current.placeholder || '',
+      ACTIONS.LABEL
+    );
   }
 
   setActionControlValue<V>(value: V, actionType: ACTIONS) {
     const action = this.formContextMenuActions.allActions.find(
-      (a) => (a.type === actionType)
+      (a) => a.type === actionType
     );
     const control = this.formContextMenuActions.formContextMenuFormGroup.get(
       action?.appEntity?.alias || ''
