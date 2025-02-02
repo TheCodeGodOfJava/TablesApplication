@@ -8,11 +8,17 @@
 .center-content {
   display: flex;
   align-items: center;
-  justify-content: left;
+}
+
+.pagin-block {
+  justify-content: space-between;
+  width: 45%;
+  @extend .center-content;
 }
 
 .control-buttons {
-  margin-left: 2%;
+  margin-left: 2px;
+  width: 8%;
 }
 
 .container {
@@ -66,7 +72,7 @@
     }
   }
 
-  table { 
+  table {
     border-collapse: collapse;
     border: 1px solid gainsboro;
     th,
@@ -124,7 +130,7 @@
 
 .columns-on-off-container {
   @extend .mat-form-field-fixer;
-  width: 50%;
+  width: 47%;
 }
 
 .mat-mdc-cell {
@@ -181,4 +187,12 @@
   .mat-mdc-form-field {
     width: 150px !important;
   }
+}
+
+.tableToggle {
+  justify-content: space-between;
+  flex-direction: column;
+  font-size: 14px;
+  margin-left: 6%;
+  @extend .center-content;
 }

@@ -185,11 +185,27 @@
         [filterLocalSource]="colOps.getSortedActiveHeaders"
       />
     </div>
-    <div class="center-content">
-      <div *ngIf="!masterId" style="margin-right: 25px">
+    <div class="pagin-block">
+      <div *ngIf="!masterId" style="margin-left: 6%">
         <button mat-mini-fab matTooltip="Create NEW" (click)="createNew()">
           <mat-icon>post_add</mat-icon>
         </button>
+      </div>
+      <div class="tableToggle">
+        <div>
+          <span> Table mode </span>
+        </div>
+        <div style="display: flex; justify-content: center">
+          <mat-slide-toggle
+            *ngIf="masterId"
+            matTooltip="Switch mode: add or remove entities"
+            matTooltipPosition="above"
+            [checked]="tableData.toggled"
+            (change)="onToggleChanged($event)"
+          >
+            {{ "(" + (tableData.toggled ? "ADD" : "REMOVE") + ")" }}
+          </mat-slide-toggle>
+        </div>
       </div>
       <div class="paginator">
         <mat-paginator
@@ -201,17 +217,6 @@
           [pageIndex]="0"
         >
         </mat-paginator>
-      </div>
-      <div style="width: 205px">
-        <mat-slide-toggle
-          *ngIf="masterId"
-          matTooltip="Switch mode: add or remove entities"
-          matTooltipPosition="above"
-          [checked]="tableData.toggled"
-          (change)="onToggleChanged($event)"
-        >
-          {{ "Table mode (" + (tableData.toggled ? "ADD" : "REMOVE") + ")" }}
-        </mat-slide-toggle>
       </div>
     </div>
   </div>
