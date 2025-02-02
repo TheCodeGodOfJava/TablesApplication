@@ -1,10 +1,10 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../interfaces/tile';
 import { FormOperations } from './form-operations';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { Tile } from '../../../interfaces/tile';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 
 export class TileOperations<T> extends FormOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;

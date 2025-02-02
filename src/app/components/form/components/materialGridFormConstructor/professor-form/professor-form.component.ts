@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { CONTROLLER_PATHS } from '../../../../constants';
-import { Professor } from '../../../../models/professor';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { StateService } from '../../../../services/state/state.service';
-import { formImports } from '../../form-imports/formImports';
 import { AbstractFormComponent } from '../abstract/abstract-form.component';
 import {
   professorFormFields
 } from './professor-form-fields';
+import { CONTROLLER_PATHS } from '../../../../../constants';
+import { Professor } from '../../../../../models/professor';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { StateService } from '../../../../../services/state/state.service';
+import { formImports } from '../../../form-imports/formImports';
 
 @Component({
   selector: 'professor-form',

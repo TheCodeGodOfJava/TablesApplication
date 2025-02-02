@@ -1,7 +1,7 @@
 import { FormControl, Validators } from '@angular/forms';
-import { Student } from '../../../../models/student';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
+import { Student } from '../../../../../models/student';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 
 export const studentFormFields: AppEntity<Student>[] = [
   {

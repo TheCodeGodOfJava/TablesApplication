@@ -5,7 +5,7 @@ import { ACTIONS, AppAction } from '../data-tables/interfaces/appAction';
 import { AppEntity } from '../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../data-tables/interfaces/inputTypes';
 import { ProtoActions } from '../protoActions';
-import { TileOperations } from './components/abstract/tile-operations';
+import { TileOperations } from './components/materialGridFormConstructor/abstract/tile-operations';
 
 export class FormContextMenuActions<T extends Id> extends ProtoActions<
   AppEntity<T>

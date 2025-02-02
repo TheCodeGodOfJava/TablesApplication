@@ -3,17 +3,17 @@ import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { Id } from '../../../../models/id';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { StateService } from '../../../../services/state/state.service';
-import { ACTIONS } from '../../../data-tables/interfaces/appAction';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
-import { formImports } from '../../form-imports/formImports';
-import { FormActions } from '../../formActions';
-import { FormContextMenuActions } from '../../formContextMenuActions';
-import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
+import { Id } from '../../../../../models/id';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { StateService } from '../../../../../services/state/state.service';
+import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { formImports } from '../../../form-imports/formImports';
+import { FormActions } from '../../../formActions';
+import { FormContextMenuActions } from '../../../formContextMenuActions';
+import { Tile } from '../../../interfaces/tile';
 
 @Component({
   standalone: true,
