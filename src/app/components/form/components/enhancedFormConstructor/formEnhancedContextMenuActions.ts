@@ -1,13 +1,13 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Id } from '../../models/id';
-import { ACTIONS, AppAction } from '../data-tables/interfaces/appAction';
-import { AppEntity } from '../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../data-tables/interfaces/inputTypes';
-import { ProtoActions } from '../protoActions';
-import { TileOperations } from './components/materialGridFormConstructor/abstract/tile-operations';
+import { Id } from '../../../../models/id';
+import { ACTIONS, AppAction } from '../../../data-tables/interfaces/appAction';
+import { AppEntity } from '../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
+import { ProtoActions } from '../../../protoActions';
+import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
 
-export class FormContextMenuActions<T extends Id> extends ProtoActions<
+export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions<
   AppEntity<T>
 > {
   currentFormElementForContextMenu!: AppEntity<T>;
@@ -86,7 +86,7 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
           selectedFormElements.push(value);
 
           fc?.setValue(selectedFormElements);
-          
+
           this.tileOps.saveFormTemplate();
         },
       },
@@ -98,7 +98,7 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
   constructor(
     protected fb: FormBuilder,
     protected mainFormGroup: FormGroup,
-    protected tileOps: TileOperations<T>,
+    protected tileOps: TileEnhancedOperations<T>,
     protected toastrService: ToastrService
   ) {
     super();

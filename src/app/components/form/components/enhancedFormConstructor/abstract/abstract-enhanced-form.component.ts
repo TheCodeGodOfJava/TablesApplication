@@ -3,25 +3,27 @@ import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { TileOperations } from './tile-operations';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
 import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
-import { formImports } from '../form-imports/formImports';
-import { FormContextMenuActions } from '../formContextMenuActions';
 import { Tile } from '../../../interfaces/tile';
-import { FormActions } from '../formActions';
+import { formEnhancedImports } from '../form-imports/formEnhancedImports';
+import { FormEnhancedActions } from '../formEnhancedActions';
+import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
+import { TileEnhancedOperations } from './tile-enhanced-operations';
 
 @Component({
   standalone: true,
-  templateUrl: './abstract-form.component.html',
-  styleUrl: './abstract-form.component.scss',
-  imports: [formImports],
+  templateUrl: './abstract-enhanced-form.component.html',
+  styleUrl: './abstract-enhanced-form.component.scss',
+  imports: [formEnhancedImports],
 })
-export abstract class AbstractFormComponent<T extends Id> implements OnInit {
+export abstract class AbstractEnhancedFormComponent<T extends Id>
+  implements OnInit
+{
   CONTROL_TYPE = CONTROL_TYPE;
   ACTIONS = ACTIONS;
 
@@ -32,7 +34,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   allFields!: AppEntity<T>[];
 
-  protected tileOps!: TileOperations<T>;
+  protected tileOps!: TileEnhancedOperations<T>;
 
   @Input() controllerPath!: string;
 
@@ -54,9 +56,9 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     return this._formName;
   }
 
-  formActions!: FormActions<T>;
+  formActions!: FormEnhancedActions<T>;
 
-  formContextMenuActions!: FormContextMenuActions<T>;
+  formContextMenuActions!: FormEnhancedContextMenuActions<T>;
 
   @Input()
   set formName(name: string) {
@@ -73,7 +75,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.formActions = new FormActions(
+    this.formActions = new FormEnhancedActions(
       this.controllerPath,
       this.formGroup,
       this.stateService,
@@ -107,7 +109,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       tile.cdkDropListData = updatedData;
     });
 
-    this.tileOps = new TileOperations<T>(
+    this.tileOps = new TileEnhancedOperations<T>(
       this.allFields,
       this.formName,
       this.tiles,
@@ -116,7 +118,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.toastrService
     );
 
-    this.formContextMenuActions = new FormContextMenuActions(
+    this.formContextMenuActions = new FormEnhancedContextMenuActions(
       this.fb,
       this.formGroup,
       this.tileOps,

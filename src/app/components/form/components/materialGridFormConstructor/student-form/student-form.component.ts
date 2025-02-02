@@ -5,7 +5,7 @@ import { CONTROLLER_PATHS } from '../../../../../constants';
 import { StudentForm } from '../../../../../models/studentForm';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
-import { formImports } from '../../../form-imports/formImports';
+import { formImports } from '../form-imports/formImports';
 import { AbstractFormComponent } from '../abstract/abstract-form.component';
 import { studentFormFields } from './student-form-fields';
 

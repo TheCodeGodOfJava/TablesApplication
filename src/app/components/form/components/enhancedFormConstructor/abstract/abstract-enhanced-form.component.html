@@ -1,0 +1,184 @@
+<div *ngIf="detail">
+  <div class="form-constructor-control">
+    <div class="form-constructor-wrapper">
+      <div class="field-list">
+        <div class="tile-span">
+          @for (tileControl of tileOps.tileFormFields; track tileControl.alias;
+          let i = $index){
+          <base-select
+            *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
+            [alias]="tileControl.alias"
+            [placeholder]="tileControl.placeholder"
+            [formGroup]="tileOps.tileFormGroup"
+            [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
+            [action]="tileControl.action"
+          />
+          <base-input
+            *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
+            [alias]="tileControl.alias"
+            [formGroup]="tileOps.tileFormGroup"
+            [placeholder]="tileControl.placeholder"
+          />
+          }
+          <div class="button-group">
+            <button
+              mat-icon-button
+              matTooltip="Create tile"
+              matTooltipPosition="above"
+              [disabled]="!enableFormConstructor"
+              (click)="tileOps.createTile()"
+            >
+              <mat-icon class="success-color">add_circle_outline</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Clear all tiles"
+              matTooltipPosition="above"
+              (click)="tileOps.clearAllTiles()"
+              [disabled]="!tiles.length || !enableFormConstructor"
+            >
+              <mat-icon class="danger-color">delete_sweep</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              matTooltip="Remove last tile"
+              matTooltipPosition="above"
+              (click)="tileOps.removeLast()"
+              [disabled]="!tiles.length || !enableFormConstructor"
+            >
+              <mat-icon class="warning-color">clear</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <mat-slide-toggle
+          matTooltip="Turn form constructor on/off"
+          matTooltipPosition="above"
+          [checked]="enableFormConstructor"
+          (change)="toggleFormConstructor($event)"
+        >
+          {{ "Form Constructor " + (enableFormConstructor ? "ON" : "OFF") }}
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="form-constructor-main">
+      <mat-grid-list
+        class="form-container"
+        [cols]="tileOps.columnQuantity"
+        [rowHeight]="tileOps.rowHeight.toString()"
+        [gutterSize]="tileOps.gutter.toString()"
+        style="margin-top: 5px"
+        cdkDropListGroup
+      >
+        @for (tile of tiles; track tile) {
+        <mat-grid-tile
+          [colspan]="tile.colSpan"
+          [rowspan]="tile.rowSpan"
+          [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
+          cdkDropListOrientation="horizontal"
+          cdkDropList
+          [cdkDropListData]="tile.cdkDropListData"
+          (cdkDropListDropped)="tileOps.drop($event)"
+        >
+          @for (f of tile.cdkDropListData; track f) {
+          <div
+            cdkDrag
+            [cdkDragDisabled]="!enableFormConstructor"
+            class="form-item"
+            [contextMenuTriggerFor]="enableFormConstructor ? menu : null"
+            (contextmenu)="setCurrentFormElementForContextMenu(f)"
+          >
+            <base-input
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [formGroup]="formGroup"
+              [formFieldColor]="f.color || ''"
+            />
+            <base-select
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.SELECT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [controllerPath]="controllerPath"
+              [formGroup]="formGroup"
+              [dependentAliases]="f.mainControl?.dependentAliases || []"
+              [formFieldColor]="f.color || ''"
+            />
+            <base-checkbox
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+              [alias]="f.alias"
+              [formGroup]="formGroup"
+              [placeholder]="f.placeholder"
+              [outputStringValue]="f.cell && f.cell(detail)"
+            />
+            <base-date-picker
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
+              [alias]="f.alias"
+              [formGroup]="formGroup"
+              [placeholder]="f.placeholder"
+              [formFieldColor]="f.color || ''"
+            />
+            <base-text-field
+              *ngIf="f.mainControl?.type === CONTROL_TYPE.TEXT"
+              [alias]="f.alias"
+              [placeholder]="f.placeholder"
+              [formGroup]="formGroup"
+              [formFieldColor]="f.color || ''"
+            />
+          </div>
+          @if (!$last) {
+          <div class="form-item-separator"></div>
+          } }
+        </mat-grid-tile>
+        }
+      </mat-grid-list>
+    </div>
+    <div *ngIf="!enableFormConstructor" class="form-control-elements">
+      <button mat-fab extended (click)="formActions.saveAction()">
+        <mat-icon>save_as</mat-icon>
+        UPDATE FORM
+      </button>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu>
+  <ng-template matMenuContent let-element="element">
+    <ng-container
+      [ngTemplateOutlet]="actions"
+      [ngTemplateOutletContext]="{
+        element: element
+      }"
+    ></ng-container>
+  </ng-template>
+</mat-menu>
+
+<ng-template #actions>
+  @for (action of formContextMenuActions.allActions; track action; ) {
+  <div style="padding-right: 20px; padding-left: 15px">
+    <base-checkbox
+      (click)="$event.stopPropagation()"
+      *ngIf="action.appEntity?.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+      [alias]="action.appEntity?.alias || ''"
+      [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+      [placeholder]="action.description"
+      [action]="action.appEntity?.action"
+    />
+    <base-input
+      (click)="$event.stopPropagation()"
+      *ngIf="action.appEntity?.mainControl?.type === CONTROL_TYPE.INPUT"
+      [alias]="action.appEntity?.alias || ''"
+      [placeholder]="action.description"
+      [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+      [action]="action.appEntity?.action"
+    />
+  </div>
+  }
+</ng-template>
