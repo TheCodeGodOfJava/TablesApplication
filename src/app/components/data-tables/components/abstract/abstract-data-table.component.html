@@ -190,13 +190,12 @@
           <mat-icon>post_add</mat-icon>
         </button>
       </div>
-      <div class="tableToggle">
+      <div class="tableToggle" *ngIf="masterId">
         <div>
           <span> Table mode </span>
         </div>
         <div style="display: flex; justify-content: center">
           <mat-slide-toggle
-            *ngIf="masterId"
             matTooltip="Switch mode: add or remove entities"
             matTooltipPosition="above"
             [checked]="tableData.toggled"

@@ -153,8 +153,7 @@ export class StrategyResizeDirective<T>
                 (acc, c) => acc + (c.width || 0),
                 0
               );
-              const screenWidth = window.innerWidth;
-              console.log(dx);
+              const screenWidth = window.innerWidth;         
               if (
                 currWidth > this.minWidth &&
                 (dx < -5 || tableWidth > screenWidth - 20)
