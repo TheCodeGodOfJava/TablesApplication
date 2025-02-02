@@ -6,10 +6,11 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { TableFormOperations } from '../../../../data-tables/components/abstract/tableFormOperations';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { Tile } from '../../../interfaces/tile';
+
 export class FormEnhancedOperations<T> extends TableFormOperations<T> {
   constructor(
     protected allFields: AppEntity<T>[],
