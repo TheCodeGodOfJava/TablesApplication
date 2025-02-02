@@ -79,11 +79,10 @@
         <td
           mat-cell
           *matCellDef="let row; let i = index"
-          (click)="!column.isAction && !row.visible && goToRow(row)"
           [contextMenuTriggerFor]="menu"
           [contextMenuTriggerData]="{ row: row, index: i }"
         >
-          <div>
+          <div (click)="!column.isAction && !row.visible && goToRow(row)">
             @if(column.isAction) {
             <div class="action-column">
               <ng-container
