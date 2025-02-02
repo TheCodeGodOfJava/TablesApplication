@@ -16,7 +16,7 @@ import { AbstractEnhancedFormComponent } from '../abstract/abstract-enhanced-for
   templateUrl: './../abstract/abstract-enhanced-form.component.html',
   styleUrl: './../abstract/abstract-enhanced-form.component.scss',
 })
-export class StudentFromComponent extends AbstractEnhancedFormComponent<StudentForm> {
+export class StudentEnhancedFromComponent extends AbstractEnhancedFormComponent<StudentForm> {
   override allFields = studentFormFields;
 
   override controllerPath: string = CONTROLLER_PATHS.students;
