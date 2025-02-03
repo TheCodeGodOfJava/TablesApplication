@@ -11,7 +11,6 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
 
   rowHeight: number = 85;
-  gutter: number = 6;
 
   formFieldsOnOffAlias: string = 'formFieldsOnOff';
   tileColSpanAlias: string = 'tile-col-span';
