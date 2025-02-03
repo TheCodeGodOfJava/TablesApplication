@@ -10,7 +10,7 @@ import { StateService } from '../../../../../services/state/state.service';
 import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
-import { Tile } from '../../../interfaces/tile';
+import { FormMatrix } from '../../../interfaces/formMatrix';
 import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
@@ -48,14 +48,21 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   private _formName!: string;
 
-  protected tiles: Tile<T>[] = [];
-
   get formName(): string {
     if (!this._formName) {
       throw new Error('The name of the form is not set!');
     }
     return this._formName;
   }
+
+  colQty: number = 8;
+
+  protected drawMatrix: FormMatrix<T> = {
+    tiles: [],
+    drawMatrix: Array.from({ length: this.colQty }, () =>
+      Array(this.colQty).fill(0)
+    ),
+  };
 
   formActions!: FormEnhancedActions<T>;
 
@@ -91,7 +98,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     );
     const tilesStr = this.localStorageService.getItem(this.formName);
     if (tilesStr) {
-      this.tiles = JSON.parse(tilesStr);
+      this.drawMatrix.tiles = JSON.parse(tilesStr);
     }
 
     const enableFormStr = this.localStorageService.getItem(
@@ -101,7 +108,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       this.enableFormConstructor = JSON.parse(enableFormStr);
     }
 
-    this.tiles.forEach((tile) => {
+    this.drawMatrix.tiles.forEach((tile) => {
       const updatedData = tile.cdkDropListData
         .map((source) => {
           const target: AppEntity<T> | undefined = this.allFields.find(
@@ -120,7 +127,8 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.tileOps = new TileEnhancedOperations<T>(
       this.allFields,
       this.formName,
-      this.tiles,
+      this.colQty,
+      this.drawMatrix,
       this.fb,
       this.localStorageService,
       this.toastrService

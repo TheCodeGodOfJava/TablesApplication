@@ -1,15 +1,15 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
-import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../../interfaces/tile';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { FormMatrix } from '../../../interfaces/formMatrix';
+import { Tile } from '../../../interfaces/tile';
 import { FormEnhancedOperations } from './form-enhanced-operations';
 
 export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
 
-  columnQuantity: number = 8;
   rowHeight: number = 85;
   gutter: number = 6;
 
@@ -24,13 +24,21 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   constructor(
     public override allFields: AppEntity<T>[],
     protected override formName: string,
-    public override tiles: Tile<T>[],
+    public columnQuantity: number,
+    public override drawMatrix: FormMatrix<T>,
     protected override fb: FormBuilder,
     protected override localStorageService: LocalStorageService,
     protected override toastrService: ToastrService
   ) {
-    super(allFields, formName, tiles, fb, localStorageService, toastrService);
-    const activeFormElements = this.tiles
+    super(
+      allFields,
+      formName,
+      drawMatrix,
+      fb,
+      localStorageService,
+      toastrService
+    );
+    const activeFormElements = this.drawMatrix.tiles
       .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
       .flat()
       .filter((a) => this.allFields.find((f) => f.placeholder === a));
@@ -81,7 +89,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       );
       tileColSpan = this.columnQuantity;
     }
-    this.tiles.push({
+    this.drawMatrix.tiles.push({
       rowSpan: tileRowSpan,
       colSpan: tileColSpan,
       cdkDropListData: [],
@@ -94,7 +102,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
 
   clearAllTiles() {
     this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
-    this.tiles.length = 0;
+    this.drawMatrix.tiles.length = 0;
     this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }

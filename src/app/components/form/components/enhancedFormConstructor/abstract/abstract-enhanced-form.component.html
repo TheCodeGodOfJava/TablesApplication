@@ -37,7 +37,7 @@
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
               (click)="tileOps.clearAllTiles()"
-              [disabled]="!tiles.length || !enableFormConstructor"
+              [disabled]="!drawMatrix.tiles.length"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
             </button>
@@ -68,7 +68,7 @@
         style="margin-top: 5px"
         cdkDropListGroup
       >
-        @for (tile of tiles; track tile) {
+        @for (tile of drawMatrix.tiles; track tile) {
         <mat-grid-tile
           [colspan]="tile.colSpan"
           [rowspan]="tile.rowSpan"

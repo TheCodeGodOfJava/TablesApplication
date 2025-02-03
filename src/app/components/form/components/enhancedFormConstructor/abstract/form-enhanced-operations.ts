@@ -9,13 +9,13 @@ import { Observable, of } from 'rxjs';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { TableFormOperations } from '../../../../data-tables/components/abstract/tableFormOperations';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../../interfaces/tile';
+import { FormMatrix } from '../../../interfaces/formMatrix';
 
 export class FormEnhancedOperations<T> extends TableFormOperations<T> {
   constructor(
     protected allFields: AppEntity<T>[],
     protected formName: string,
-    public tiles: Tile<T>[],
+    public drawMatrix: FormMatrix<T>,
     protected override fb: FormBuilder,
     protected localStorageService: LocalStorageService,
     protected toastrService: ToastrService
@@ -25,10 +25,10 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
 
   public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
     const formControl = formGroup.get(alias);
-    if (this.tiles.length) {
+    if (this.drawMatrix.tiles.length) {
       if (formControl && formControl.value.length) {
         const activePlaceHolders = formControl.value;
-        const activeFormElements = this.tiles
+        const activeFormElements = this.drawMatrix.tiles
           .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
           .flat();
         this.enableFormElements(activePlaceHolders, activeFormElements);
@@ -49,7 +49,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    if (this.tiles.length) {
+    if (this.drawMatrix.tiles.length) {
       const addedPlaceHolders = activePlaceHolders.filter(
         (item) => !activeFormElements.includes(item)
       );
@@ -57,7 +57,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
         const appForm = this.allFields.find(
           (a) => a.placeholder === placeholder
         );
-        appForm && this.tiles[0].cdkDropListData.push(appForm);
+        appForm && this.drawMatrix.tiles[0].cdkDropListData.push(appForm);
       });
     }
   }
@@ -66,12 +66,12 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    if (this.tiles.length) {
+    if (this.drawMatrix.tiles.length) {
       const removedPlaceHolders = activeFormElements.filter(
         (item) => !activePlaceHolders.includes(item)
       );
       removedPlaceHolders.forEach((placeHolder) => {
-        this.tiles.forEach((t) => {
+        this.drawMatrix.tiles.forEach((t) => {
           t.cdkDropListData = t.cdkDropListData.filter(
             (obj) => obj.placeholder !== placeHolder
           );
@@ -111,7 +111,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
 
   public saveFormTemplate(nameSuffix: string = '', json: string = '') {
     if (this.formName) {
-      json = json || JSON.stringify(this.tiles);
+      json = json || JSON.stringify(this.drawMatrix.tiles);
       this.localStorageService.setItem(this.formName + nameSuffix, json);
     } else {
       const errorMsg: string =
