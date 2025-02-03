@@ -14,6 +14,7 @@ import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
+import { debounceTime, fromEvent, map, Observable, startWith } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -65,6 +66,8 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this._formName = name;
   }
 
+  windowWidthObs: Observable<number>;
+
   constructor(
     protected fb: FormBuilder,
     protected stateService: StateService<T>,
@@ -72,6 +75,11 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     protected toastrService: ToastrService
   ) {
     this.formGroup = this.fb.group({});
+    this.windowWidthObs = fromEvent(window, 'resize').pipe(
+      debounceTime(300),
+      map(() => window.innerWidth),
+      startWith(window.innerWidth)
+    );
   }
 
   ngOnInit(): void {
