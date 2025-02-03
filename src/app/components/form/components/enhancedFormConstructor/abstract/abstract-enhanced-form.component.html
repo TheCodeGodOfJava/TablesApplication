@@ -37,7 +37,7 @@
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
               (click)="tileOps.clearAllTiles()"
-              [disabled]="!drawMatrix.tiles.length"
+              [disabled]="!drawMatrix.tiles.size"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
             </button>
@@ -60,16 +60,9 @@
     <mat-divider></mat-divider>
 
     <div class="form-constructor-main">
-      <mat-grid-list
-        class="form-container"
-        [cols]="tileOps.columnQuantity"
-        style="margin-top: 5px"
-        cdkDropListGroup
-      >
-        @for (tile of drawMatrix.tiles; track tile) {
-        <mat-grid-tile
-          [colspan]="tile.colSpan"
-          [rowspan]="tile.rowSpan"
+      <div class="form-container" style="margin-top: 5px" cdkDropListGroup>
+        @for (tile of drawMatrix.tiles.values(); track tile) {
+        <div
           [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
           cdkDropListOrientation="horizontal"
           cdkDropList
@@ -125,9 +118,9 @@
           @if (!$last) {
           <div class="form-item-separator"></div>
           } }
-        </mat-grid-tile>
+        </div>
         }
-      </mat-grid-list>
+      </div>
     </div>
     <div *ngIf="!enableFormConstructor" class="form-control-elements">
       <button mat-fab extended (click)="formActions.saveAction()">

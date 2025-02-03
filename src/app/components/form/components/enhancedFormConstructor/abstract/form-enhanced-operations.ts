@@ -25,10 +25,10 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
 
   public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
     const formControl = formGroup.get(alias);
-    if (this.drawMatrix.tiles.length) {
+    if (this.drawMatrix.tiles.size) {
       if (formControl && formControl.value.length) {
         const activePlaceHolders = formControl.value;
-        const activeFormElements = this.drawMatrix.tiles
+        const activeFormElements = [...this.drawMatrix.tiles.values()]
           .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
           .flat();
         this.enableFormElements(activePlaceHolders, activeFormElements);
@@ -49,7 +49,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    if (this.drawMatrix.tiles.length) {
+    if (this.drawMatrix.tiles.size) {
       const addedPlaceHolders = activePlaceHolders.filter(
         (item) => !activeFormElements.includes(item)
       );
@@ -57,7 +57,8 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
         const appForm = this.allFields.find(
           (a) => a.placeholder === placeholder
         );
-        appForm && this.drawMatrix.tiles[0].cdkDropListData.push(appForm);
+        appForm &&
+          [...this.drawMatrix.tiles.values()][0].cdkDropListData.push(appForm);
       });
     }
   }
@@ -66,7 +67,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    if (this.drawMatrix.tiles.length) {
+    if (this.drawMatrix.tiles.size) {
       const removedPlaceHolders = activeFormElements.filter(
         (item) => !activePlaceHolders.includes(item)
       );

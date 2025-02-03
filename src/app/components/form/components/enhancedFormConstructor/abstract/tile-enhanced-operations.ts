@@ -35,7 +35,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       localStorageService,
       toastrService
     );
-    const activeFormElements = this.drawMatrix.tiles
+    const activeFormElements = [...this.drawMatrix.tiles.values()]
       .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
       .flat()
       .filter((a) => this.allFields.find((f) => f.placeholder === a));
@@ -86,7 +86,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       );
       tileColSpan = this.columnQuantity;
     }
-    this.drawMatrix.tiles.push({
+    this.drawMatrix.tiles.set(Date.now(), {
       rowSpan: tileRowSpan,
       colSpan: tileColSpan,
       cdkDropListData: [],
@@ -99,7 +99,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
 
   clearAllTiles() {
     this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
-    this.drawMatrix.tiles.length = 0;
+    this.drawMatrix.tiles.clear();
     this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }

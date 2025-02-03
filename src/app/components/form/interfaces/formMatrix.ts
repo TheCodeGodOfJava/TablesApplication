@@ -1,6 +1,6 @@
 import { Tile } from './tile';
 
 export interface FormMatrix<T> {
-  tiles: Tile<T>[];
+  tiles: Map<number, Tile<T>>;
   drawMatrix: number[][];
 }

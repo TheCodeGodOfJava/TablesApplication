@@ -11,6 +11,7 @@ import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
+import { Tile } from '../../../interfaces/tile';
 import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
@@ -58,7 +59,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   colQty: number = 8;
 
   protected drawMatrix: FormMatrix<T> = {
-    tiles: [],
+    tiles: new Map<number, Tile<T>>(),
     drawMatrix: Array.from({ length: this.colQty }, () =>
       Array(this.colQty).fill(0)
     ),
