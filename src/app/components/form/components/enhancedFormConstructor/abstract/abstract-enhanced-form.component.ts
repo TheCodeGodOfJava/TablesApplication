@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { debounceTime, fromEvent, map, Observable, startWith } from 'rxjs';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
@@ -14,7 +15,6 @@ import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
-import { debounceTime, fromEvent, map, Observable, startWith } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -42,7 +42,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   formGroup!: FormGroup;
 
   enableFormConstructor: boolean = true;
-  protected enabelFormStringSuffix: string = '_state';
+  protected enableFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
 
@@ -95,7 +95,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     }
 
     const enableFormStr = this.localStorageService.getItem(
-      this.formName + this.enabelFormStringSuffix
+      this.formName + this.enableFormStringSuffix
     );
     if (enableFormStr) {
       this.enableFormConstructor = JSON.parse(enableFormStr);
@@ -162,7 +162,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.enableDisableFormConstructor();
   }
 
-  copyMatchingFields<T extends Record<string, any>>(
+  private copyMatchingFields<T extends Record<string, any>>(
     source: T,
     target: T
   ): void {
@@ -181,7 +181,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       : this.tileOps.tileFormGroup.disable();
 
     this.tileOps.saveFormTemplate(
-      this.enabelFormStringSuffix,
+      this.enableFormStringSuffix,
       JSON.stringify(this.enableFormConstructor)
     );
   }
@@ -201,7 +201,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     );
   }
 
-  setActionControlValue<V>(value: V, actionType: ACTIONS) {
+  private setActionControlValue<V>(value: V, actionType: ACTIONS) {
     const action = this.formContextMenuActions.allActions.find(
       (a) => a.type === actionType
     );

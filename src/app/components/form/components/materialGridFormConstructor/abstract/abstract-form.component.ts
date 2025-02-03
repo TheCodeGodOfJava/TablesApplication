@@ -39,7 +39,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   formGroup!: FormGroup;
 
   enableFormConstructor: boolean = true;
-  protected enabelFormStringSuffix: string = '_state';
+  protected enableFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
 
@@ -85,7 +85,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     }
 
     const enableFormStr = this.localStorageService.getItem(
-      this.formName + this.enabelFormStringSuffix
+      this.formName + this.enableFormStringSuffix
     );
     if (enableFormStr) {
       this.enableFormConstructor = JSON.parse(enableFormStr);
@@ -171,7 +171,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       : this.tileOps.tileFormGroup.disable();
 
     this.tileOps.saveFormTemplate(
-      this.enabelFormStringSuffix,
+      this.enableFormStringSuffix,
       JSON.stringify(this.enableFormConstructor)
     );
   }
