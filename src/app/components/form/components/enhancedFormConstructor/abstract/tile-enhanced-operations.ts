@@ -98,26 +98,4 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }
-
-  removeLast() {
-    const formControl = this.tileFormGroup.get(this.formFieldsOnOffAlias);
-    if (this.tiles.length === 1) {
-      this.tiles.length = 0;
-      formControl?.reset();
-    } else {
-      const lastTile = this.tiles.pop();
-      const elementsInTheLastTile = (
-        lastTile?.cdkDropListData?.map(
-          (tileElement) => tileElement.placeholder
-        ) || []
-      ).filter((el) => !!el) as string[];
-      let activeFormElements: string[] = formControl?.value;
-      activeFormElements = activeFormElements.filter(
-        (item) => !elementsInTheLastTile.includes(item)
-      );
-      formControl?.setValue(activeFormElements);
-    }
-    this.toastrService.success(`Last tile removed!`);
-    this.saveFormTemplate();
-  }
 }
