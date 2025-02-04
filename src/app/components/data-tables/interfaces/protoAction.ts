@@ -1,9 +1,7 @@
 import { ACTIONS } from './ACTIONS';
 
-export interface ProtoAction<T> {
+export interface ProtoAction {
   type: ACTIONS;
   icon: string;
-  getAction?: (model: T, index: number) => void;
-  getShowCondition: (model: T) => boolean;
   description: string;
 }

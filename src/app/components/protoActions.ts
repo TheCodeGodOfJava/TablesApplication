@@ -1,5 +1,5 @@
-import { AppAction } from './data-tables/interfaces/appAction';
+import { ProtoAction } from './data-tables/interfaces/protoAction';
 
-export abstract class ProtoActions<T> {
-  allActions!: AppAction<T>[];
+export abstract class ProtoActions {
+  allActions!: ProtoAction[];
 }

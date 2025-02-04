@@ -8,9 +8,7 @@ import { TileOperations } from './abstract/tile-operations';
 import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
 import { AppAction } from '../../../data-tables/interfaces/appAction';
 
-export class FormContextMenuActions<T extends Id> extends ProtoActions<
-  AppEntity<T>
-> {
+export class FormContextMenuActions<T extends Id> extends ProtoActions {
   currentFormElementForContextMenu!: AppEntity<T>;
 
   override allActions: AppAction<AppEntity<T>>[] = [

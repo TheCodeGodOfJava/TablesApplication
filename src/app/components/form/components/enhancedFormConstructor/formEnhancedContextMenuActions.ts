@@ -1,16 +1,14 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
+import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
+import { AppAction } from '../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { ProtoActions } from '../../../protoActions';
 import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
-import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
-import { AppAction } from '../../../data-tables/interfaces/appAction';
 
-export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions<
-  AppEntity<T>
-> {
+export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
   currentFormElementForContextMenu!: AppEntity<T>;
 
   override allActions: AppAction<AppEntity<T>>[] = [

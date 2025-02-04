@@ -3,8 +3,7 @@ import { Id } from '../models/id';
 import { StateService } from '../services/state/state.service';
 import { ProtoActions } from './protoActions';
 
-export abstract class AbstractActions<T extends Id> extends ProtoActions<T> {
-  
+export abstract class AbstractActions<T extends Id> extends ProtoActions {
   constructor(
     protected controllerPath: string,
     protected stateService: StateService<T>,
