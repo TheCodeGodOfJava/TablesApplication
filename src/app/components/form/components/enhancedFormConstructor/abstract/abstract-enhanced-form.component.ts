@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -10,15 +6,16 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
 import { Tile } from '../../../interfaces/tile';
+import { AnchorPointEnhancedContextMenuActions } from '../anchorPointEnhancedContextMenuActions';
 import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
-import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
 
 @Component({
   standalone: true,
@@ -72,6 +69,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   formActions!: FormEnhancedActions<T>;
 
   formContextMenuActions!: FormEnhancedContextMenuActions<T>;
+  anchorPointContextMenuActions!: AnchorPointEnhancedContextMenuActions;
 
   @Input()
   set formName(name: string) {
@@ -141,6 +139,9 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       this.toastrService
     );
 
+    this.anchorPointContextMenuActions =
+      new AnchorPointEnhancedContextMenuActions();
+
     if (this.allFields) {
       this.stateService
         .getModelById(this.controllerPath, this.detailId)
@@ -207,6 +208,11 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       current.placeholder || '',
       ACTIONS.LABEL
     );
+  }
+
+  setCurrentRowColumnForContextMenu(rowIndex: number, colIndex: number) {
+    this.anchorPointContextMenuActions.rowIndex = rowIndex;
+    this.anchorPointContextMenuActions.colIndex = colIndex;
   }
 
   private setActionControlValue<V>(value: V, actionType: ACTIONS) {

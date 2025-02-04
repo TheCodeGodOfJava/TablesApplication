@@ -55,16 +55,25 @@
           *ngFor="let row of drawMatrix.drawMatrix; let rowIndex = index"
         >
           <ng-container *ngFor="let col of row; let colIndex = index">
-            <ng-container
-              *ngTemplateOutlet="
-                tileTpl;
-                context: {
-                  rowIndex: rowIndex,
-                  colIndex: colIndex,
-                  tileId: getTileIdFromMatrix(rowIndex, colIndex)
-                }
+            <div
+              [contextMenuTriggerFor]="
+                enableFormConstructor ? anchorPointMenu : null
               "
-            ></ng-container>
+              (contextmenu)="
+                setCurrentRowColumnForContextMenu(rowIndex, colIndex)
+              "
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  tileTpl;
+                  context: {
+                    rowIndex: rowIndex,
+                    colIndex: colIndex,
+                    tileId: getTileIdFromMatrix(rowIndex, colIndex)
+                  }
+                "
+              ></ng-container>
+            </div>
           </ng-container>
         </ng-container>
       </div>
@@ -79,13 +88,8 @@
 </div>
 
 <mat-menu #menu>
-  <ng-template matMenuContent let-element="element">
-    <ng-container
-      [ngTemplateOutlet]="actions"
-      [ngTemplateOutletContext]="{
-        element: element
-      }"
-    ></ng-container>
+  <ng-template matMenuContent>
+    <ng-container [ngTemplateOutlet]="actions"></ng-container>
   </ng-template>
 </mat-menu>
 
@@ -108,6 +112,27 @@
       [formGroup]="formContextMenuActions.formContextMenuFormGroup"
       [action]="action.appEntity?.action"
     />
+  </div>
+  }
+</ng-template>
+
+<mat-menu #anchorPointMenu>
+  <ng-template matMenuContent>
+    <ng-container [ngTemplateOutlet]="anchorPointActions"></ng-container>
+  </ng-template>
+</mat-menu>
+
+<ng-template #anchorPointActions>
+  @for (action of anchorPointContextMenuActions.allActions; track action; ) {
+  <div>
+    <button
+      mat-menu-item
+      (click)="action.getAction()"
+      style="margin-right: 10px"
+    >
+      <mat-icon>{{ action.icon }}</mat-icon>
+      <span>{{ action.description }}</span>
+    </button>
   </div>
   }
 </ng-template>

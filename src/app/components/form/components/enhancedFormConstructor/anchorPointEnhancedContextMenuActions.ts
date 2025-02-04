@@ -3,12 +3,15 @@ import { AnchorPointAction } from '../../../data-tables/interfaces/anchorPointAc
 import { ProtoActions } from '../../../protoActions';
 
 export class AnchorPointEnhancedContextMenuActions extends ProtoActions {
+  public rowIndex: number = 0;
+  public colIndex: number = 0;
+
   override allActions: AnchorPointAction[] = [
     {
       type: ACTIONS.CREATE,
       icon: 'add',
       getAction: () => true,
-      description: 'Add new tile',
+      description: 'Add a new tile',
     },
   ];
 
