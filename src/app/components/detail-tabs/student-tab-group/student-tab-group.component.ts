@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { MASTER_TYPES } from '../../../constants';
-import { ACTIONS } from '../../data-tables/interfaces/appAction';
 import { StudentEnhancedFromComponent } from '../../form/components/enhancedFormConstructor/student-enhanced-form/student-enhanced-form.component';
 import { AbstractTabGroupComponent } from '../abstract/abstract-tab-group.component';
 import { tabImports } from '../imports/tabImports';
+import { ACTIONS } from '../../data-tables/interfaces/ACTIONS';
 
 @Component({
   selector: 'student-tab-group',

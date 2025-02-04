@@ -7,13 +7,13 @@ import { TileOperations } from './tile-operations';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
-import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { formImports } from '../form-imports/formImports';
 import { FormContextMenuActions } from '../formContextMenuActions';
 import { Tile } from '../../../interfaces/tile';
 import { FormActions } from '../formActions';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
 
 @Component({
   standalone: true,

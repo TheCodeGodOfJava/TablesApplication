@@ -1,11 +1,12 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Id } from '../../../../models/id';
-import { ACTIONS, AppAction } from '../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { ProtoActions } from '../../../protoActions';
 import { TileOperations } from './abstract/tile-operations';
+import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
+import { AppAction } from '../../../data-tables/interfaces/appAction';
 
 export class FormContextMenuActions<T extends Id> extends ProtoActions<
   AppEntity<T>

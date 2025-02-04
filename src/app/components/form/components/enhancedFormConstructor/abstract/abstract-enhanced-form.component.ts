@@ -1,20 +1,15 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   Input,
-  OnInit,
-  ViewChild,
+  OnInit
 } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { Subject } from 'rxjs';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
-import { ACTIONS } from '../../../../data-tables/interfaces/appAction';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
@@ -23,6 +18,7 @@ import { formEnhancedImports } from '../form-imports/formEnhancedImports';
 import { FormEnhancedActions } from '../formEnhancedActions';
 import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
 
 @Component({
   standalone: true,
@@ -33,7 +29,6 @@ import { TileEnhancedOperations } from './tile-enhanced-operations';
 export abstract class AbstractEnhancedFormComponent<T extends Id>
   implements OnInit
 {
-
   CONTROL_TYPE = CONTROL_TYPE;
   ACTIONS = ACTIONS;
 

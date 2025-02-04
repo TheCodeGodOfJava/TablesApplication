@@ -4,8 +4,8 @@ import { Id } from '../../models/id';
 import { StateService } from '../../services/state/state.service';
 import { AbstractActions } from '../abstractActions';
 import { GenericDataSource } from './components/abstract/genericDataSource';
-import { ACTIONS, AppAction } from './interfaces/appAction';
 import { AppEntity } from './interfaces/appEntity';
+import { ACTIONS } from './interfaces/ACTIONS';
 
 export class TableActions<T extends Id> extends AbstractActions<T> {
   override allActions = [
