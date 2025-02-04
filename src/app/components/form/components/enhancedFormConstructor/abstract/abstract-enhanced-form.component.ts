@@ -1,9 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { debounceTime, fromEvent, map, Observable, startWith } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Id } from '../../../../../models/id';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../../services/state/state.service';
@@ -26,6 +33,7 @@ import { TileEnhancedOperations } from './tile-enhanced-operations';
 export abstract class AbstractEnhancedFormComponent<T extends Id>
   implements OnInit
 {
+
   CONTROL_TYPE = CONTROL_TYPE;
   ACTIONS = ACTIONS;
 
@@ -57,6 +65,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   }
 
   colQty: number = 8;
+  rowHeight: number = 85;
 
   protected drawMatrix: FormMatrix<T> = {
     tiles: new Map<number, Tile<T>>(),
@@ -74,7 +83,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this._formName = name;
   }
 
-  windowWidthObs: Observable<number>;
+  anchorDivWidth: number = 0;
 
   constructor(
     protected fb: FormBuilder,
@@ -83,11 +92,6 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     protected toastrService: ToastrService
   ) {
     this.formGroup = this.fb.group({});
-    this.windowWidthObs = fromEvent(window, 'resize').pipe(
-      debounceTime(300),
-      map(() => window.innerWidth),
-      startWith(window.innerWidth)
-    );
   }
 
   ngOnInit(): void {
@@ -218,5 +222,9 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       action?.appEntity?.alias || ''
     );
     control?.setValue(value);
+  }
+
+  public getTileIdFromMatrix(rowIndex: number, colIndex: number): number {
+    return this.drawMatrix.drawMatrix[rowIndex][colIndex];
   }
 }

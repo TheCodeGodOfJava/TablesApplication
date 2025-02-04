@@ -76,11 +76,16 @@
   transition: transform 300ms cubic-bezier(0, 0, 0.3, 1);
 }
 
+.form-container {
+  width: 100%;
+  position: relative;
+}
+
 .form-container.cdk-drop-list-dragging .form-item:not(.cdk-drag-placeholder) {
   transition: transform 300ms cubic-bezier(0, 0, 0.3, 1);
 }
 
-.tile-visibility { 
+.tile-visibility {
   border-radius: 4px;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
@@ -107,4 +112,11 @@
   padding: 15px;
   display: flex;
   justify-content: right;
+}
+
+.anchor-point {
+  position: absolute;
+  background-color: aqua;
+  box-sizing: border-box;
+  border: 1px solid black;
 }
