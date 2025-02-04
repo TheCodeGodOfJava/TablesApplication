@@ -7,7 +7,10 @@
             <ng-container
               *ngTemplateOutlet="
                 tileControlTpl;
-                context: { tileControl: tileControl }
+                context: {
+                  tileControl: tileControl,
+                  formGroup: tileOps.tileFormGroup
+                }
               "
             ></ng-container>
           </ng-container>
@@ -95,7 +98,7 @@
 
 <ng-template #actions>
   @for (action of formContextMenuActions.allActions; track action; ) {
-  <div style="padding-right: 20px; padding-left: 15px">
+  <div class="contextMenu">
     <base-checkbox
       (click)="$event.stopPropagation()"
       *ngIf="action.appEntity?.mainControl?.type === CONTROL_TYPE.BOOLEAN"
@@ -124,7 +127,22 @@
 
 <ng-template #anchorPointActions>
   @for (action of anchorPointContextMenuActions.allActions; track action; ) {
-  <div>
+  <div class="contextMenu">
+    <ng-container
+      *ngFor="
+        let tileControl of anchorPointContextMenuActions.anchorPointFields
+      "
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          tileControlTpl;
+          context: {
+            tileControl: tileControl,
+            formGroup: anchorPointContextMenuActions.anchorPointFormGroup
+          }
+        "
+      ></ng-container>
+    </ng-container>
     <button
       mat-menu-item
       (click)="action.getAction()"
@@ -137,19 +155,23 @@
   }
 </ng-template>
 
-<ng-template #tileControlTpl let-tileControl="tileControl">
+<ng-template
+  #tileControlTpl
+  let-tileControl="tileControl"
+  let-formGroup="formGroup"
+>
   <base-select
     *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
     [alias]="tileControl.alias"
     [placeholder]="tileControl.placeholder"
-    [formGroup]="tileOps.tileFormGroup"
+    [formGroup]="formGroup"
     [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
     [action]="tileControl.action"
   />
   <base-input
     *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
     [alias]="tileControl.alias"
-    [formGroup]="tileOps.tileFormGroup"
+    [formGroup]="formGroup"
     [placeholder]="tileControl.placeholder"
   />
 </ng-template>

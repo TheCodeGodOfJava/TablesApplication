@@ -69,7 +69,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   formActions!: FormEnhancedActions<T>;
 
   formContextMenuActions!: FormEnhancedContextMenuActions<T>;
-  anchorPointContextMenuActions!: AnchorPointEnhancedContextMenuActions;
+  anchorPointContextMenuActions!: AnchorPointEnhancedContextMenuActions<T>;
 
   @Input()
   set formName(name: string) {
@@ -140,7 +140,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     );
 
     this.anchorPointContextMenuActions =
-      new AnchorPointEnhancedContextMenuActions();
+      new AnchorPointEnhancedContextMenuActions(this.fb, this.tileOps);
 
     if (this.allFields) {
       this.stateService

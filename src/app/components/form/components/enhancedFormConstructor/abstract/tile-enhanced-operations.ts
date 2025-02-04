@@ -4,15 +4,12 @@ import { LocalStorageService } from '../../../../../services/local-storage/local
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
-import { Tile } from '../../../interfaces/tile';
 import { FormEnhancedOperations } from './form-enhanced-operations';
 
 export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
 
   formFieldsOnOffAlias: string = 'formFieldsOnOff';
-  tileColSpanAlias: string = 'tile-col-span';
-  tileRowSpanAlias: string = 'tile-row-span';
 
   tileFormGroup!: FormGroup;
 
@@ -50,22 +47,6 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         },
         action: this.enableDisableFormElements,
       },
-      {
-        alias: this.tileColSpanAlias,
-        placeholder: 'Col span',
-        mainControl: {
-          type: CONTROL_TYPE.INPUT,
-          getControl: () => new FormControl<number>(2),
-        },
-      },
-      {
-        alias: this.tileRowSpanAlias,
-        placeholder: 'Row span',
-        mainControl: {
-          type: CONTROL_TYPE.INPUT,
-          getControl: () => new FormControl<number>(1),
-        },
-      },
     ];
     this.tileFormGroup = this.fb.group({});
     this.tileFormFields.forEach((c) =>
@@ -74,27 +55,27 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   createTile() {
-    const tileRowSpan: number = this.tileFormGroup.get(
-      this.tileRowSpanAlias
-    )?.value;
-    let tileColSpan: number = this.tileFormGroup.get(
-      this.tileColSpanAlias
-    )?.value;
-    if (tileColSpan > this.columnQuantity) {
-      this.toastrService.error(
-        'Tile column span exceeds the column quauntity! Reset to column quantity'
-      );
-      tileColSpan = this.columnQuantity;
-    }
-    this.drawMatrix.tiles.set(Date.now(), {
-      rowSpan: tileRowSpan,
-      colSpan: tileColSpan,
-      cdkDropListData: [],
-    } as Tile<T>);
-    this.toastrService.success(
-      `A tile ${tileColSpan}x${tileRowSpan} succesfully created!`
-    );
-    this.saveFormTemplate();
+    // const tileRowSpan: number = this.tileFormGroup.get(
+    //   this.tileRowSpanAlias
+    // )?.value;
+    // let tileColSpan: number = this.tileFormGroup.get(
+    //   this.tileColSpanAlias
+    // )?.value;
+    // if (tileColSpan > this.columnQuantity) {
+    //   this.toastrService.error(
+    //     'Tile column span exceeds the column quauntity! Reset to column quantity'
+    //   );
+    //   tileColSpan = this.columnQuantity;
+    // }
+    // this.drawMatrix.tiles.set(Date.now(), {
+    //   rowSpan: tileRowSpan,
+    //   colSpan: tileColSpan,
+    //   cdkDropListData: [],
+    // } as Tile<T>);
+    // this.toastrService.success(
+    //   `A tile ${tileColSpan}x${tileRowSpan} succesfully created!`
+    // );
+    // this.saveFormTemplate();
   }
 
   clearAllTiles() {
