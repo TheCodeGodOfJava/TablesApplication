@@ -161,6 +161,7 @@
   let-formGroup="formGroup"
 >
   <base-select
+    (click)="$event.stopPropagation()"
     *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
     [alias]="tileControl.alias"
     [placeholder]="tileControl.placeholder"
@@ -169,6 +170,7 @@
     [action]="tileControl.action"
   />
   <base-input
+    (click)="$event.stopPropagation()"
     *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
     [alias]="tileControl.alias"
     [formGroup]="formGroup"
@@ -213,7 +215,9 @@
     [style.left]="'calc(100%*' + colIndex + '/' + colQty + ')'"
     [style.width]="'calc(100%/' + colQty + ')'"
     [style.height]="rowHeight + 'px'"
-  ></div>
+  >
+    <mat-icon class="icon">crop_free</mat-icon>
+  </div>
   }
 </ng-template>
 

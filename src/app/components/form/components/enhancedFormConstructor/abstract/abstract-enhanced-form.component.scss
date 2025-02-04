@@ -123,12 +123,23 @@
 
 .anchor-point {
   position: absolute;
-  background-color: aqua;
-  box-sizing: border-box;
-  border: 1px solid black;
 }
 
 .contextMenu {
   padding-right: 20px;
   padding-left: 15px;
+}
+
+.icon {
+  opacity: 0.42;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease-in-out;
+  transform-origin: center;
+}
+
+.anchor-point:hover .icon {
+  transform: translate(-50%, -50%) scale(1.8);
 }

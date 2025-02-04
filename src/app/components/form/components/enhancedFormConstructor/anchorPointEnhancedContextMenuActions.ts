@@ -24,7 +24,18 @@ export class AnchorPointEnhancedContextMenuActions<
     {
       type: ACTIONS.CREATE,
       icon: 'add',
-      getAction: () => true,
+      getAction: () => {
+        console.log('Current row index = ', this.rowIndex);
+        console.log('Current col index = ', this.colIndex);
+        console.log(
+          'Current row span = ',
+          this.anchorPointFormGroup.get(this.tileRowSpanAlias)?.value
+        );
+        console.log(
+          'Current col span = ',
+          this.anchorPointFormGroup.get(this.tileColSpanAlias)?.value
+        );
+      },
       description: 'Add a new tile',
     },
   ];
