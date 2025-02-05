@@ -81,6 +81,14 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     }
   }
 
+  startDrag() {
+    document.body.style.userSelect = 'none';
+  }
+
+  endDrag() {
+    document.body.style.userSelect = 'auto';
+  }
+
   public drop(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(

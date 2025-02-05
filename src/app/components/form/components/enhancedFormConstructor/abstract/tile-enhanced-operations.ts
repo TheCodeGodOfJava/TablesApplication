@@ -66,9 +66,9 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     let checkRowIndex: number;
     const matrix = this.drawMatrix.drawMatrix;
     for (let i = 0; i < colSpan; i++) {
-      checkRowIndex = rowIndex + i;
+      checkColIndex = colIndex + i;
       for (let j = 0; j < rowSpan; j++) {
-        checkColIndex = colIndex + j;
+        checkRowIndex = rowIndex + j;
         if (
           checkRowIndex >= matrix[0]?.length ||
           0 ||

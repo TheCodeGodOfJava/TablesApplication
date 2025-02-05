@@ -29,6 +29,8 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   CONTROL_TYPE = CONTROL_TYPE;
   ACTIONS = ACTIONS;
 
+  tileMargin: number = 3;
+
   @Input()
   detailId!: number;
 
@@ -235,16 +237,12 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     control?.setValue(value);
   }
 
-  public getTileIdFromMatrix(rowIndex: number, colIndex: number): number {
-    return this.drawMatrix.drawMatrix[rowIndex][colIndex];
-  }
-
   public getAnchorPointPositionStyles(rowIndex: number, colIndex: number) {
     return {
-      top: `${rowIndex * this.rowHeight}px`,
-      left: `calc(100% * ${colIndex} / ${this.colQty})`,
-      width: `calc(100% / ${this.colQty})`,
-      height: `${this.rowHeight}px`,
+      top: `${rowIndex * this.rowHeight + 3}px`,
+      left: `calc(${this.tileMargin}px + 100% * ${colIndex} / ${this.colQty})`,
+      width: `calc(${-this.tileMargin * 2}px + 100% / ${this.colQty})`,
+      height: `${this.rowHeight - this.tileMargin * 2}px`,
     };
   }
 
@@ -255,8 +253,10 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   ) {
     return {
       ...this.getAnchorPointPositionStyles(rowIndex, colIndex),
-      width: `calc(${tile.colSpan} * 100% / ${this.colQty})`,
-      height: `${this.rowHeight * tile.rowSpan}px`,
+      width: `calc(${-this.tileMargin * 2}px + ${tile.colSpan} * 100% / ${
+        this.colQty
+      })`,
+      height: `${this.rowHeight * tile.rowSpan - this.tileMargin * 2}px`,
     };
   }
 }

@@ -45,16 +45,95 @@
                 setCurrentRowColumnForContextMenu(rowIndex, colIndex)
               "
             >
+              @if (drawMatrix.drawMatrix[rowIndex][colIndex]) {
+
               <ng-container
-                *ngTemplateOutlet="
-                  tileTpl;
-                  context: {
-                    rowIndex: rowIndex,
-                    colIndex: colIndex,
-                    tileId: getTileIdFromMatrix(rowIndex, colIndex)
-                  }
+                *ngIf="
+                  drawMatrix.tiles.get(
+                    drawMatrix.drawMatrix[rowIndex][colIndex]
+                  ) as tile
                 "
-              ></ng-container>
+              >
+                <div
+                  *ngIf="
+                    tile.colIndex === colIndex && tile.rowIndex === rowIndex
+                  "
+                  [ngClass]="
+                    'tile ' + (enableFormConstructor && 'tile-visibility')
+                  "
+                  cdkDropListOrientation="horizontal"
+                  cdkDropList
+                  [cdkDropListData]="tile.cdkDropListData"
+                  (cdkDropListDropped)="tileOps.drop($event)"
+                  [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
+                >
+                  <ng-container
+                    *ngFor="let f of tile.cdkDropListData; let last = last"
+                  >
+                    <div
+                      cdkDrag
+                      (cdkDragStarted)="tileOps.startDrag()"
+                      (cdkDragEnded)="tileOps.endDrag()"
+                      [cdkDragDisabled]="!enableFormConstructor"
+                      class="form-item"
+                      [contextMenuTriggerFor]="
+                        enableFormConstructor ? menu : null
+                      "
+                      (contextmenu)="setCurrentFormElementForContextMenu(f)"
+                    >
+                      <base-input
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [formGroup]="formGroup"
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-select
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.SELECT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [controllerPath]="controllerPath"
+                        [formGroup]="formGroup"
+                        [dependentAliases]="
+                          f.mainControl?.dependentAliases || []
+                        "
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-checkbox
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+                        [alias]="f.alias"
+                        [formGroup]="formGroup"
+                        [placeholder]="f.placeholder"
+                        [outputStringValue]="f.cell && f.cell(detail)"
+                      />
+                      <base-date-picker
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
+                        [alias]="f.alias"
+                        [formGroup]="formGroup"
+                        [placeholder]="f.placeholder"
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-text-field
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.TEXT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [formGroup]="formGroup"
+                        [formFieldColor]="f.color || ''"
+                      />
+                    </div>
+                    <div *ngIf="!last" class="form-item-separator"></div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              } @else {
+              <div
+                *ngIf="enableFormConstructor"
+                class="anchor-point"
+                [ngStyle]="getAnchorPointPositionStyles(rowIndex, colIndex)"
+              >
+                <mat-icon class="anchor-icon">crop_free</mat-icon>
+              </div>
+              }
             </div>
           </ng-container>
         </ng-container>
@@ -144,7 +223,7 @@
     [placeholder]="tileControl.placeholder"
     [formGroup]="formGroup"
     [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
-    [action]="tileControl.action"    
+    [action]="tileControl.action"
   />
   <base-input
     (click)="$event.stopPropagation()"
@@ -152,88 +231,5 @@
     [alias]="tileControl.alias"
     [formGroup]="formGroup"
     [placeholder]="tileControl.placeholder"
-  />
-</ng-template>
-
-<ng-template
-  #tileTpl
-  let-rowIndex="rowIndex"
-  let-colIndex="colIndex"
-  let-tileId="tileId"
->
-  @if (tileId) {
-
-  <ng-container *ngIf="drawMatrix.tiles.get(tileId) as tile">
-    <div
-      *ngIf="tile.colIndex === colIndex && tile.rowIndex === rowIndex"
-      [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
-      cdkDropListOrientation="horizontal"
-      cdkDropList
-      [cdkDropListData]="tile.cdkDropListData"
-      (cdkDropListDropped)="tileOps.drop($event)"
-      [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
-    >
-      <ng-container *ngFor="let f of tile.cdkDropListData">
-        <div
-          cdkDrag
-          [cdkDragDisabled]="!enableFormConstructor"
-          class="form-item"
-          [contextMenuTriggerFor]="enableFormConstructor ? menu : null"
-          (contextmenu)="setCurrentFormElementForContextMenu(f)"
-        >
-          <ng-container
-            *ngTemplateOutlet="formFieldTpl; context: { f: f }"
-          ></ng-container>
-        </div>
-      </ng-container>
-    </div>
-  </ng-container>
-  } @else {
-  <div
-    class="anchor-point"
-    [ngStyle]="getAnchorPointPositionStyles(rowIndex, colIndex)"
-  >
-    <mat-icon class="icon">crop_free</mat-icon>
-  </div>
-  }
-</ng-template>
-
-<ng-template #formFieldTpl let-f="f">
-  <base-input
-    *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
-    [alias]="f.alias"
-    [placeholder]="f.placeholder"
-    [formGroup]="formGroup"
-    [formFieldColor]="f.color || ''"
-  />
-  <base-select
-    *ngIf="f.mainControl?.type === CONTROL_TYPE.SELECT"
-    [alias]="f.alias"
-    [placeholder]="f.placeholder"
-    [controllerPath]="controllerPath"
-    [formGroup]="formGroup"
-    [dependentAliases]="f.mainControl?.dependentAliases || []"
-    [formFieldColor]="f.color || ''"
-  />
-  <base-checkbox
-    *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"
-    [alias]="f.alias"
-    [formGroup]="formGroup"
-    [placeholder]="f.placeholder"
-    [outputStringValue]="f.cell && f.cell(detail)"
-  />
-  <base-date-picker
-    *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
-    [alias]="f.alias"
-    [formGroup]="formGroup"
-    [placeholder]="f.placeholder"
-    [formFieldColor]="f.color || ''"
-  />
-  <base-text-field
-    *ngIf="f.mainControl?.type === CONTROL_TYPE.TEXT"
-    [alias]="f.alias"
-    [placeholder]="f.placeholder"
-    [formGroup]="formGroup"
-    [formFieldColor]="f.color || ''"
   />
 </ng-template>

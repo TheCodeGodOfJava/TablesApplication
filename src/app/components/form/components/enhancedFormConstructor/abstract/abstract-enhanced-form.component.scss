@@ -63,16 +63,18 @@
   background-color: #dadbdd;
 }
 
-.tile {
-  display: flex;
-  flex-direction: row-reverse;
-  mat-form-field {
+::ng-deep {
+  .tile {
+    position: absolute;
     display: flex;
-    flex-grow: 1;
-    .mat-mdc-form-field-flex,
-    .mat-mdc-form-field-infix,
-    textarea {
-      height: 100% !important;
+    mat-form-field {
+      display: flex;
+      flex-grow: 1;
+      .mat-mdc-form-field-flex,
+      .mat-mdc-form-field-infix,
+      textarea {
+        height: 100% !important;
+      }
     }
   }
 }
@@ -92,7 +94,7 @@
   padding-left: 15px;
 }
 
-.icon {
+.anchor-icon {
   opacity: 0.42;
   position: absolute;
   top: 50%;
@@ -102,6 +104,6 @@
   transform-origin: center;
 }
 
-.anchor-point:hover .icon {
+.anchor-point:hover .anchor-icon {
   transform: translate(-50%, -50%) scale(1.8);
 }
