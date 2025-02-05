@@ -25,17 +25,6 @@ export class AnchorPointEnhancedContextMenuActions<
       type: ACTIONS.CREATE,
       icon: 'add_circle_outline',
       getAction: () => {
-        console.log('Current row index = ', this.rowIndex);
-        console.log('Current col index = ', this.colIndex);
-        console.log(
-          'Current row span = ',
-          this.anchorPointFormGroup.get(this.tileRowSpanAlias)?.value
-        );
-        console.log(
-          'Current col span = ',
-          this.anchorPointFormGroup.get(this.tileColSpanAlias)?.value
-        );
-        
         const tileRowSpan: number = this.anchorPointFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
@@ -52,6 +41,15 @@ export class AnchorPointEnhancedContextMenuActions<
       },
       description: 'Add a new tile',
       color: 'green',
+    },
+    {
+      type: ACTIONS.CLEAR,
+      icon: 'delete_sweep',
+      getAction: () => {
+        this.tileOps.clearAllTiles();
+      },
+      description: 'Clear tiles',
+      color: 'red',
     },
   ];
 

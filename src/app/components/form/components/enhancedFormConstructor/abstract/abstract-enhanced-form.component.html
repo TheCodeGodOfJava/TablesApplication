@@ -1,33 +1,18 @@
 <div *ngIf="detail">
   <div class="form-constructor-control">
     <div class="form-constructor-wrapper">
-      <div class="field-list">
-        <div class="tile-span">
-          <ng-container *ngFor="let tileControl of tileOps.tileFormFields">
-            <ng-container
-              *ngTemplateOutlet="
-                tileControlTpl;
-                context: {
-                  tileControl: tileControl,
-                  formGroup: tileOps.tileFormGroup
-                }
-              "
-            ></ng-container>
-          </ng-container>
-          <div class="button-group">
-            <button
-              mat-icon-button
-              color="warn"
-              matTooltip="Clear all tiles"
-              matTooltipPosition="above"
-              (click)="tileOps.clearAllTiles()"
-              [disabled]="!drawMatrix.tiles.size"
-            >
-              <mat-icon class="danger-color">delete_sweep</mat-icon>
-            </button>
-          </div>
-        </div>
-      </div>
+      <ng-container *ngFor="let tileControl of tileOps.tileFormFields">
+        <ng-container
+          *ngTemplateOutlet="
+            tileControlTpl;
+            context: {
+              tileControl: tileControl,
+              formGroup: tileOps.tileFormGroup
+            }
+          "
+        ></ng-container>
+      </ng-container>
+
       <div>
         <mat-slide-toggle
           matTooltip="Turn form constructor on/off"
@@ -43,7 +28,11 @@
     <mat-divider></mat-divider>
 
     <div class="form-constructor-main">
-      <div class="form-container" cdkDropListGroup>
+      <div
+        class="form-container"
+        [style.height]="rowHeight * colQty + 'px'"
+        cdkDropListGroup
+      >
         <ng-container
           *ngFor="let row of drawMatrix.drawMatrix; let rowIndex = index"
         >
@@ -116,23 +105,21 @@
 </mat-menu>
 
 <ng-template #anchorPointActions>
+  <ng-container
+    *ngFor="let tileControl of anchorPointContextMenuActions.anchorPointFields"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        tileControlTpl;
+        context: {
+          tileControl: tileControl,
+          formGroup: anchorPointContextMenuActions.anchorPointFormGroup
+        }
+      "
+    ></ng-container>
+  </ng-container>
   @for (action of anchorPointContextMenuActions.allActions; track action; ) {
   <div class="contextMenu">
-    <ng-container
-      *ngFor="
-        let tileControl of anchorPointContextMenuActions.anchorPointFields
-      "
-    >
-      <ng-container
-        *ngTemplateOutlet="
-          tileControlTpl;
-          context: {
-            tileControl: tileControl,
-            formGroup: anchorPointContextMenuActions.anchorPointFormGroup
-          }
-        "
-      ></ng-container>
-    </ng-container>
     <button
       mat-menu-item
       (click)="action.getAction()"
@@ -157,7 +144,7 @@
     [placeholder]="tileControl.placeholder"
     [formGroup]="formGroup"
     [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
-    [action]="tileControl.action"
+    [action]="tileControl.action"    
   />
   <base-input
     (click)="$event.stopPropagation()"

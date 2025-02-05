@@ -9,4 +9,5 @@ export enum ACTIONS {
   COLOR = 'COLOR',
   LABEL = 'LABEL',
   CREATE = 'CREATE',
+  CLEAR = 'CLEAR',
 }

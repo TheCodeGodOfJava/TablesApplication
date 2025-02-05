@@ -20,36 +20,10 @@
 }
 
 .form-constructor-wrapper {
+  padding-left: 2%;
+  padding-right: 2%;
   display: flex;
-  justify-content: center;
-
-  .field-list {
-    width: 85%;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-  }
-
-  .form-constructor {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .element-parameters {
-    display: flex;
-    gap: 10px;
-  }
-
-  .tile-span {
-    display: flex;
-    justify-content: space-between;
-    gap: 25px;
-  }
-
-  .button-group {
-    display: flex;
-    align-items: center;
-  }
+  justify-content: space-between;
 }
 
 .form-item {
@@ -78,16 +52,6 @@
   transition: transform 300ms cubic-bezier(0, 0, 0.3, 1);
 }
 
-.form-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  margin-top: 5px;
-  position: relative;
-}
-
 .form-container.cdk-drop-list-dragging .form-item:not(.cdk-drag-placeholder) {
   transition: transform 300ms cubic-bezier(0, 0, 0.3, 1);
 }
@@ -99,21 +63,19 @@
   background-color: #dadbdd;
 }
 
-
-  .tile {
+.tile {
+  display: flex;
+  flex-direction: row-reverse;
+  mat-form-field {
     display: flex;
-    flex-direction: row-reverse;
-    mat-form-field {
-      display: flex;
-      flex-grow: 1;
-      .mat-mdc-form-field-flex,
-      .mat-mdc-form-field-infix,
-      textarea {
-        height: 100% !important;
-      }
+    flex-grow: 1;
+    .mat-mdc-form-field-flex,
+    .mat-mdc-form-field-infix,
+    textarea {
+      height: 100% !important;
     }
   }
-
+}
 
 .form-control-elements {
   padding: 15px;
