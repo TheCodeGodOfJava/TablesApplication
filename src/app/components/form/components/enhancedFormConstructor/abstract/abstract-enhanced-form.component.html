@@ -148,7 +148,7 @@
       (click)="action.getAction()"
       style="margin-right: 10px"
     >
-      <mat-icon>{{ action.icon }}</mat-icon>
+      <mat-icon [ngStyle]="{ color: action.color }">{{ action.icon }}</mat-icon>
       <span>{{ action.description }}</span>
     </button>
   </div>

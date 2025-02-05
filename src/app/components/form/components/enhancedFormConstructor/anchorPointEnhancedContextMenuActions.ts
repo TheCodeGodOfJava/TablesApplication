@@ -23,7 +23,7 @@ export class AnchorPointEnhancedContextMenuActions<
   override allActions: AnchorPointAction[] = [
     {
       type: ACTIONS.CREATE,
-      icon: 'add',
+      icon: 'add_circle_outline',
       getAction: () => {
         console.log('Current row index = ', this.rowIndex);
         console.log('Current col index = ', this.colIndex);
@@ -37,6 +37,7 @@ export class AnchorPointEnhancedContextMenuActions<
         );
       },
       description: 'Add a new tile',
+      color: 'green',
     },
   ];
 
