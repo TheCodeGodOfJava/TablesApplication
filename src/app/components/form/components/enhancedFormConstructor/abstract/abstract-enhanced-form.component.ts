@@ -228,4 +228,25 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   public getTileIdFromMatrix(rowIndex: number, colIndex: number): number {
     return this.drawMatrix.drawMatrix[rowIndex][colIndex];
   }
+
+  public getAnchorPointPositionStyles(rowIndex: number, colIndex: number) {
+    return {
+      top: `${rowIndex * this.rowHeight}px`,
+      left: `calc(100% * ${colIndex} / ${this.colQty})`,
+      width: `calc(100% / ${this.colQty})`,
+      height: `${this.rowHeight}px`,
+    };
+  }
+
+  public getTilePositionStyles(
+    rowIndex: number,
+    colIndex: number,
+    tile: Tile<T>
+  ) {
+    return {
+      ...this.getAnchorPointPositionStyles(rowIndex, colIndex),
+      width: `calc(${tile.colSpan} * 100% / ${this.colQty})`,
+      height: `${this.rowHeight * tile.rowSpan}px`,
+    };
+  }
 }

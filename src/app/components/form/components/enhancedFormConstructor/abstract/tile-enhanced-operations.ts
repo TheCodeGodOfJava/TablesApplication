@@ -54,7 +54,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     );
   }
 
-  createTile() {
+  createTile(rowIndex: number, colIndex: number) {
     // const tileRowSpan: number = this.tileFormGroup.get(
     //   this.tileRowSpanAlias
     // )?.value;

@@ -1,10 +1,10 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { FormOperations } from './form-operations';
-import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
-import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../../interfaces/tile';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { Tile } from '../../../interfaces/tile';
+import { FormOperations } from './form-operations';
 
 export class TileOperations<T> extends FormOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
@@ -82,6 +82,8 @@ export class TileOperations<T> extends FormOperations<T> {
       tileColSpan = this.columnQuantity;
     }
     this.tiles.push({
+      rowIndex: 0,
+      colIndex: 0,
       rowSpan: tileRowSpan,
       colSpan: tileColSpan,
       cdkDropListData: [],

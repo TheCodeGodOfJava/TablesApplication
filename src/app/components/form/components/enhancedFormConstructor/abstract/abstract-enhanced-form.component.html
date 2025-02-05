@@ -17,16 +17,6 @@
           <div class="button-group">
             <button
               mat-icon-button
-              matTooltip="Create tile"
-              matTooltipPosition="above"
-              [disabled]="!enableFormConstructor"
-              (click)="tileOps.createTile()"
-            >
-              <mat-icon class="success-color">add_circle_outline</mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
               color="warn"
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
@@ -185,13 +175,16 @@
   let-tileId="tileId"
 >
   @if (tileId) {
+
   <ng-container *ngIf="drawMatrix.tiles.get(tileId) as tile">
     <div
+      *ngIf="tile.colIndex === colIndex && tile.rowIndex === rowIndex"
       [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
       cdkDropListOrientation="horizontal"
       cdkDropList
       [cdkDropListData]="tile.cdkDropListData"
       (cdkDropListDropped)="tileOps.drop($event)"
+      [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
     >
       <ng-container *ngFor="let f of tile.cdkDropListData">
         <div
@@ -211,10 +204,7 @@
   } @else {
   <div
     class="anchor-point"
-    [style.top]="rowIndex * rowHeight + 'px'"
-    [style.left]="'calc(100%*' + colIndex + '/' + colQty + ')'"
-    [style.width]="'calc(100%/' + colQty + ')'"
-    [style.height]="rowHeight + 'px'"
+    [ngStyle]="getAnchorPointPositionStyles(rowIndex, colIndex)"
   >
     <mat-icon class="icon">crop_free</mat-icon>
   </div>
