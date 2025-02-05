@@ -55,6 +55,32 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     );
   }
 
+  private iterateTileSpace(
+    rowIndex: number,
+    colIndex: number,
+    rowSpan: number,
+    colSpan: number,
+    callback: (rowIndex: number, colIndex: number) => boolean
+  ) {
+    let checkColIndex: number;
+    let checkRowIndex: number;
+    const matrix = this.drawMatrix.drawMatrix;
+    for (let i = 0; i < colSpan; i++) {
+      checkRowIndex = rowIndex + i;
+      for (let j = 0; j < rowSpan; j++) {
+        checkColIndex = colIndex + j;
+        if (
+          checkRowIndex >= matrix[0]?.length ||
+          0 ||
+          checkColIndex >= matrix.length ||
+          !callback(checkRowIndex, checkColIndex)
+        )
+          return false;
+      }
+    }
+    return true;
+  }
+
   createTile(
     rowIndex: number,
     colIndex: number,
@@ -64,37 +90,28 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const matrix = this.drawMatrix.drawMatrix;
     const tileId: number = Date.now();
 
-    const iterateTileSpace = (
-      callback: (rowIndex: number, colIndex: number) => boolean
-    ) => {
-      let checkColIndex: number;
-      let checkRowIndex: number;
-      for (let i = 0; i < colSpan; i++) {
-        checkRowIndex = rowIndex + i;
-        for (let j = 0; j < rowSpan; j++) {
-          checkColIndex = colIndex + j;
-          if (
-            checkRowIndex >= matrix[0]?.length ||
-            0 ||
-            checkColIndex >= matrix.length ||
-            !callback(checkRowIndex, checkColIndex)
-          )
-            return false;
-        }
-      }
-      return true;
-    };
-
-    const isAvailable = iterateTileSpace((row, col) => !matrix[row][col]);
+    const isAvailable = this.iterateTileSpace(
+      rowIndex,
+      colIndex,
+      rowSpan,
+      colSpan,
+      (row, col) => !matrix[row][col]
+    );
     if (!isAvailable) {
       this.toastrService.error(
         'No free place for the new tile! Please adjust col span and row span accordingly!'
       );
     } else {
-      iterateTileSpace((row, col) => {
-        matrix[row][col] = tileId;
-        return true;
-      });
+      this.iterateTileSpace(
+        rowIndex,
+        colIndex,
+        rowSpan,
+        colSpan,
+        (row, col) => {
+          matrix[row][col] = tileId;
+          return true;
+        }
+      );
 
       this.drawMatrix.tiles.set(Date.now(), {
         id: tileId,
@@ -113,8 +130,19 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
 
   clearAllTiles() {
     this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
+    const matrix = this.drawMatrix.drawMatrix;
+    this.iterateTileSpace(
+      0,
+      0,
+      matrix[0]?.length,
+      matrix.length,
+      (row, col) => {
+        matrix[row][col] = 0;
+        return true;
+      }
+    );
     this.drawMatrix.tiles.clear();
     this.saveFormTemplate();
-    this.toastrService.success(`Cleared!`);
+    this.toastrService.success(`Form tiles cleared!`);
   }
 }

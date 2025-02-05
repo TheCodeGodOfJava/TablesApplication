@@ -20,7 +20,6 @@ import { MatMenuModule } from '@angular/material/menu';
 
 export const formEnhancedImports = [
   MatDividerModule,
-  MatGridListModule,
   MatButtonModule,
   MatIconModule,
   MatTooltipModule,

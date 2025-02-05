@@ -99,7 +99,7 @@
   background-color: #dadbdd;
 }
 
-::ng-deep {
+
   .tile {
     display: flex;
     flex-direction: row-reverse;
@@ -113,7 +113,7 @@
       }
     }
   }
-}
+
 
 .form-control-elements {
   padding: 15px;
