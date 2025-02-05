@@ -87,6 +87,16 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.formGroup = this.fb.group({});
   }
 
+  private deserializeFormMatrix<T>(json: string): FormMatrix<T> {
+    const parsed = JSON.parse(json);
+    const tiles = new Map<number, Tile<T>>(parsed.tiles);
+
+    return {
+      tiles,
+      drawMatrix: parsed.drawMatrix,
+    };
+  }
+
   ngOnInit(): void {
     this.formActions = new FormEnhancedActions(
       this.controllerPath,
@@ -94,9 +104,9 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       this.stateService,
       this.toastrService
     );
-    const tilesStr = this.localStorageService.getItem(this.formName);
-    if (tilesStr) {
-      this.drawMatrix.tiles = JSON.parse(tilesStr);
+    const matrixStr = this.localStorageService.getItem(this.formName);
+    if (matrixStr) {
+      this.drawMatrix = this.deserializeFormMatrix(matrixStr);
     }
 
     const enableFormStr = this.localStorageService.getItem(

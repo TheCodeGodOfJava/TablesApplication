@@ -4,6 +4,7 @@ import { LocalStorageService } from '../../../../../services/local-storage/local
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
+import { Tile } from '../../../interfaces/tile';
 import { FormEnhancedOperations } from './form-enhanced-operations';
 
 export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
@@ -54,28 +55,60 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     );
   }
 
-  createTile(rowIndex: number, colIndex: number) {
-    // const tileRowSpan: number = this.tileFormGroup.get(
-    //   this.tileRowSpanAlias
-    // )?.value;
-    // let tileColSpan: number = this.tileFormGroup.get(
-    //   this.tileColSpanAlias
-    // )?.value;
-    // if (tileColSpan > this.columnQuantity) {
-    //   this.toastrService.error(
-    //     'Tile column span exceeds the column quauntity! Reset to column quantity'
-    //   );
-    //   tileColSpan = this.columnQuantity;
-    // }
-    // this.drawMatrix.tiles.set(Date.now(), {
-    //   rowSpan: tileRowSpan,
-    //   colSpan: tileColSpan,
-    //   cdkDropListData: [],
-    // } as Tile<T>);
-    // this.toastrService.success(
-    //   `A tile ${tileColSpan}x${tileRowSpan} succesfully created!`
-    // );
-    // this.saveFormTemplate();
+  createTile(
+    rowIndex: number,
+    colIndex: number,
+    rowSpan: number,
+    colSpan: number
+  ) {
+    const matrix = this.drawMatrix.drawMatrix;
+    const tileId: number = Date.now();
+
+    const iterateTileSpace = (
+      callback: (rowIndex: number, colIndex: number) => boolean
+    ) => {
+      let checkColIndex: number;
+      let checkRowIndex: number;
+      for (let i = 0; i < colSpan; i++) {
+        checkRowIndex = rowIndex + i;
+        for (let j = 0; j < rowSpan; j++) {
+          checkColIndex = colIndex + j;
+          if (
+            checkRowIndex >= matrix[0]?.length ||
+            0 ||
+            checkColIndex >= matrix.length ||
+            !callback(checkRowIndex, checkColIndex)
+          )
+            return false;
+        }
+      }
+      return true;
+    };
+
+    const isAvailable = iterateTileSpace((row, col) => !matrix[row][col]);
+    if (!isAvailable) {
+      this.toastrService.error(
+        'No free place for the new tile! Please adjust col span and row span accordingly!'
+      );
+    } else {
+      iterateTileSpace((row, col) => {
+        matrix[row][col] = tileId;
+        return true;
+      });
+
+      this.drawMatrix.tiles.set(Date.now(), {
+        id: tileId,
+        rowIndex: rowIndex,
+        colIndex: colIndex,
+        rowSpan: rowSpan,
+        colSpan: colSpan,
+        cdkDropListData: [],
+      } as Tile<T>);
+      this.toastrService.success(
+        `A tile ${colSpan}x${rowSpan} succesfully created!`
+      );
+      this.saveFormTemplate();
+    }
   }
 
   clearAllTiles() {

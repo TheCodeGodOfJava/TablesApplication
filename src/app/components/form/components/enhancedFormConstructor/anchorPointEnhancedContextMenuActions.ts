@@ -35,6 +35,20 @@ export class AnchorPointEnhancedContextMenuActions<
           'Current col span = ',
           this.anchorPointFormGroup.get(this.tileColSpanAlias)?.value
         );
+        
+        const tileRowSpan: number = this.anchorPointFormGroup.get(
+          this.tileRowSpanAlias
+        )?.value;
+        const tileColSpan: number = this.anchorPointFormGroup.get(
+          this.tileColSpanAlias
+        )?.value;
+
+        this.tileOps.createTile(
+          this.rowIndex,
+          this.colIndex,
+          tileRowSpan,
+          tileColSpan
+        );
       },
       description: 'Add a new tile',
       color: 'green',

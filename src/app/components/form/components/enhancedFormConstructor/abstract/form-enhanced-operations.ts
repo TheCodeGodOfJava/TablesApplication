@@ -112,7 +112,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
 
   public saveFormTemplate(nameSuffix: string = '', json: string = '') {
     if (this.formName) {
-      json = json || JSON.stringify(this.drawMatrix.tiles);
+      json = json || this.serializeFormMatrix(this.drawMatrix);
       this.localStorageService.setItem(this.formName + nameSuffix, json);
     } else {
       const errorMsg: string =
@@ -120,5 +120,12 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
       this.toastrService.error(errorMsg);
       throw Error(errorMsg);
     }
+  }
+
+  private serializeFormMatrix<T>(formMatrix: FormMatrix<T>): string {
+    return JSON.stringify({
+      tiles: Array.from(formMatrix.tiles.entries()),
+      drawMatrix: formMatrix.drawMatrix,
+    });
   }
 }

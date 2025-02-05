@@ -82,6 +82,7 @@ export class TileOperations<T> extends FormOperations<T> {
       tileColSpan = this.columnQuantity;
     }
     this.tiles.push({
+      id: Date.now(),
       rowIndex: 0,
       colIndex: 0,
       rowSpan: tileRowSpan,
