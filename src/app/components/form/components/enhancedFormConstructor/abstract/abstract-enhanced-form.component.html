@@ -67,6 +67,7 @@
                   (cdkDropListDropped)="tileOps.drop($event)"
                   [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
                 >
+                <div *ngIf="tile.cdkDropListData.length" class="form-item-separator"></div>
                   <ng-container
                     *ngFor="let f of tile.cdkDropListData; let last = last"
                   >
@@ -79,7 +80,10 @@
                       [contextMenuTriggerFor]="
                         enableFormConstructor ? menu : null
                       "
-                      (contextmenu)="setCurrentFormElementForContextMenu(f)"
+                      (contextmenu)="
+                        setCurrentFormElementForContextMenu(f);
+                        $event.stopPropagation()
+                      "
                     >
                       <base-input
                         *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
@@ -121,7 +125,7 @@
                         [formFieldColor]="f.color || ''"
                       />
                     </div>
-                    <div *ngIf="!last" class="form-item-separator"></div>
+                    <div class="form-item-separator"></div>
                   </ng-container>
                 </div>
               </ng-container>
