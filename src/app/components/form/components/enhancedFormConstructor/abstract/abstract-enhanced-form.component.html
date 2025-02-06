@@ -65,7 +65,13 @@
                     <div
                       *ngIf="i === 0"
                       class="form-item-separator"
-                      [ngStyle]="{ width: tileMargin * 2 + 'px' }"
+                      [ngStyle]="{
+                        width:
+                          (enableFormConstructor ? 2 : 1) *
+                            multiplier *
+                            tileMargin +
+                          'px'
+                      }"
                     ></div>
                     <div
                       cdkDrag
@@ -124,7 +130,14 @@
                     <div
                       class="form-item-separator"
                       [ngStyle]="{
-                        width: (last ? tileMargin * 2 : tileMargin * 4) + 'px'
+                        width:
+                          (last
+                            ? (enableFormConstructor ? 2 : 1) *
+                              multiplier *
+                              tileMargin
+                            : (enableFormConstructor ? 4 : 2) *
+                              multiplier *
+                              tileMargin) + 'px'
                       }"
                     ></div>
                   </ng-container>

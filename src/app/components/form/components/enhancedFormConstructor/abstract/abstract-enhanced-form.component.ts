@@ -30,6 +30,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   ACTIONS = ACTIONS;
 
   tileMargin: number = 3;
+  multiplier: number = 2;
 
   @Input()
   detailId!: number;
