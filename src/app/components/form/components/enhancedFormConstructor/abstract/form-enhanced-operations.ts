@@ -23,63 +23,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     super(allFields, fb);
   }
 
-  public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
-    const formControl = formGroup.get(alias);
-    if (this.drawMatrix.tiles.size) {
-      if (formControl && formControl.value.length) {
-        const activePlaceHolders = formControl.value;
-        const activeFormElements = [...this.drawMatrix.tiles.values()]
-          .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
-          .flat();
-        this.enableFormElements(activePlaceHolders, activeFormElements);
-        this.disableFormElement(activePlaceHolders, activeFormElements);
-
-        this.toastrService.success('Form configuration successfully changed!');
-      }
-    } else {
-      formControl?.reset();
-      this.toastrService.error(
-        'No form containers found! Please add at least one form container!'
-      );
-    }
-    this.saveFormTemplate();
-  };
-
-  private enableFormElements(
-    activePlaceHolders: string[],
-    activeFormElements: string[]
-  ): void {
-    if (this.drawMatrix.tiles.size) {
-      const addedPlaceHolders = activePlaceHolders.filter(
-        (item) => !activeFormElements.includes(item)
-      );
-      addedPlaceHolders.forEach((placeholder: string) => {
-        const appForm = this.allFields.find(
-          (a) => a.placeholder === placeholder
-        );
-        appForm &&
-          [...this.drawMatrix.tiles.values()][0].cdkDropListData.push(appForm);
-      });
-    }
-  }
-
-  private disableFormElement(
-    activePlaceHolders: string[],
-    activeFormElements: string[]
-  ): void {
-    if (this.drawMatrix.tiles.size) {
-      const removedPlaceHolders = activeFormElements.filter(
-        (item) => !activePlaceHolders.includes(item)
-      );
-      removedPlaceHolders.forEach((placeHolder) => {
-        this.drawMatrix.tiles.forEach((t) => {
-          t.cdkDropListData = t.cdkDropListData.filter(
-            (obj) => obj.placeholder !== placeHolder
-          );
-        });
-      });
-    }
-  }
+  
 
   startDrag() {
     document.body.style.userSelect = 'none';

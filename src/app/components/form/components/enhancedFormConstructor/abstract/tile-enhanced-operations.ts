@@ -1,4 +1,4 @@
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
@@ -9,12 +9,6 @@ import { FormEnhancedOperations } from './form-enhanced-operations';
 
 export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
-
-  formFieldsOnOffAlias: string = 'formFieldsOnOff';
-
-  tileFormGroup!: FormGroup;
-
-  tileFormFields!: AppEntity<T>[];
 
   constructor(
     public override allFields: AppEntity<T>[],
@@ -32,26 +26,6 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       fb,
       localStorageService,
       toastrService
-    );
-    const activeFormElements = [...this.drawMatrix.tiles.values()]
-      .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
-      .flat()
-      .filter((a) => this.allFields.find((f) => f.placeholder === a));
-    this.tileFormFields = [
-      {
-        alias: this.formFieldsOnOffAlias,
-        placeholder: 'Form fields on/off',
-        mainControl: {
-          type: CONTROL_TYPE.SELECT,
-          getControl: () => new FormControl<string[]>(activeFormElements),
-          filterLocalSource: this.getSortedActiveFormElements,
-        },
-        action: this.enableDisableFormElements,
-      },
-    ];
-    this.tileFormGroup = this.fb.group({});
-    this.tileFormFields.forEach((c) =>
-      this.addControlsToFormGroup(c.alias, c.mainControl, this.tileFormGroup)
     );
   }
 
@@ -101,9 +75,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       (row, col) => !matrix[row][col]
     );
     if (!isAvailable) {
-      this.toastrService.error(
-        'No free place for the new tile! Please adjust col span and row span accordingly!'
-      );
+      this.getNoFreeSpacetErrorToast();
     } else {
       this.iterateTileSpace(
         rowIndex,
@@ -131,8 +103,73 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     }
   }
 
-  clearAllTiles() {
-    this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
+  editTile(
+    rowIndex: number,
+    colIndex: number,
+    rowSpan: number,
+    colSpan: number
+  ) {
+    const matrix = this.drawMatrix.drawMatrix;
+    const tileId: number = matrix[rowIndex][colIndex];
+    const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
+
+    if (tile) {
+      this.iterateTileSpace(
+        tile.rowIndex,
+        tile.colIndex,
+        tile.rowSpan,
+        tile.colSpan,
+        (row, col) => {
+          matrix[row][col] = 0;
+          return true;
+        }
+      );
+
+      const isAvailable = this.iterateTileSpace(
+        tile.rowIndex,
+        tile.colIndex,
+        rowSpan,
+        colSpan,
+        (row, col) => !matrix[row][col]
+      );
+
+      if (!isAvailable) {
+        this.iterateTileSpace(
+          tile.rowIndex,
+          tile.colIndex,
+          tile.rowSpan,
+          tile.colSpan,
+          (row, col) => {
+            matrix[row][col] = tileId;
+            return true;
+          }
+        );
+        this.getNoFreeSpacetErrorToast();
+      } else {
+        this.iterateTileSpace(
+          tile.rowIndex,
+          tile.colIndex,
+          rowSpan,
+          colSpan,
+          (row, col) => {
+            matrix[row][col] = tileId;
+            return true;
+          }
+        );
+        tile.rowSpan = rowSpan;
+        tile.colSpan = colSpan;
+        this.toastrService.success(
+          `A tile ${colSpan}x${rowSpan} succesfully edited!`
+        );
+        this.saveFormTemplate();
+      }
+    } else {
+      this.getTileAbsentErrorToast(rowIndex, colIndex);
+    }
+  }
+
+  clearAllTiles(formGroup: FormGroup, alias: string) {
+    formGroup.get(alias)?.reset();
     const matrix = this.drawMatrix.drawMatrix;
     this.iterateTileSpace(
       0,
@@ -149,17 +186,21 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.toastrService.success(`Form tiles cleared!`);
   }
 
-  removeTile(rowIndex: number, colIndex: number) {
+  removeTile(
+    formGroup: FormGroup,
+    alias: string,
+    rowIndex: number,
+    colIndex: number
+  ) {
     const matrix = this.drawMatrix.drawMatrix;
     const tileId: number = matrix[rowIndex][colIndex];
     const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
     if (tile) {
-      const formControl = this.tileFormGroup.get(this.formFieldsOnOffAlias);
-      const selectedValues = formControl?.value;
+      const formControl = formGroup.get(alias);
       const tileValues = tile.cdkDropListData.map(
         (entity) => entity.placeholder
       );
-      const restValues = selectedValues.filter(
+      const restValues = formControl?.value.filter(
         (placeholder: string) => !tileValues.includes(placeholder)
       );
       formControl?.setValue(restValues);
@@ -175,9 +216,18 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       );
       this.drawMatrix.tiles.delete(tileId);
     } else {
-      this.toastrService.error(
-        `No tile exists on position row = ${rowIndex} column = ${colIndex}!`
-      );
+      this.getTileAbsentErrorToast(rowIndex, colIndex);
     }
+  }
+
+  private getTileAbsentErrorToast(rowIndex: number, colIndex: number) {
+    this.toastrService.error(
+      `No tile exists on position row = ${rowIndex} column = ${colIndex}!`
+    );
+  }
+  private getNoFreeSpacetErrorToast() {
+    this.toastrService.error(
+      'No free place for the new tile! Please adjust col span and row span accordingly!'
+    );
   }
 }

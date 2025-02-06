@@ -7,6 +7,7 @@ import { AppEntity } from '../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 import { ProtoActions } from '../../../protoActions';
 import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
+import { AnchorPointEnhancedContextMenuActions } from './anchorPointEnhancedContextMenuActions';
 
 export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
   currentFormElementForContextMenu!: AppEntity<T>;
@@ -73,9 +74,10 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
           const value: string = fromGroup.get(alias)?.value;
           this.currentFormElementForContextMenu.placeholder = value;
 
-          const fc = this.tileOps.tileFormGroup.get(
-            this.tileOps.formFieldsOnOffAlias
-          );
+          const fc =
+            this.anchorPointContextMenuActions.anchorPointFormGroup.get(
+              this.anchorPointContextMenuActions.formFieldsOnOffAlias
+            );
 
           let selectedFormElements: string[] = fc?.value;
           const placeHolder = this.currentFormElementForContextMenu.placeholder;
@@ -98,6 +100,7 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
     protected fb: FormBuilder,
     protected mainFormGroup: FormGroup,
     protected tileOps: TileEnhancedOperations<T>,
+    protected anchorPointContextMenuActions: AnchorPointEnhancedContextMenuActions<T>,
     protected toastrService: ToastrService
   ) {
     super();

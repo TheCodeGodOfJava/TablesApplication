@@ -78,8 +78,6 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this._formName = name;
   }
 
-  anchorDivWidth: number = 0;
-
   constructor(
     protected fb: FormBuilder,
     protected stateService: StateService<T>,
@@ -143,16 +141,20 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       this.localStorageService,
       this.toastrService
     );
+    this.anchorPointContextMenuActions =
+      new AnchorPointEnhancedContextMenuActions(
+        this.fb,
+        this.tileOps,
+        this.toastrService
+      );
 
     this.formContextMenuActions = new FormEnhancedContextMenuActions(
       this.fb,
       this.formGroup,
       this.tileOps,
+      this.anchorPointContextMenuActions,
       this.toastrService
     );
-
-    this.anchorPointContextMenuActions =
-      new AnchorPointEnhancedContextMenuActions(this.fb, this.tileOps);
 
     if (this.allFields) {
       this.stateService
@@ -197,10 +199,6 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   }
 
   enableDisableFormConstructor(): void {
-    this.enableFormConstructor
-      ? this.tileOps.tileFormGroup.enable()
-      : this.tileOps.tileFormGroup.disable();
-
     this.tileOps.saveFormTemplate(
       this.enableFormStringSuffix,
       JSON.stringify(this.enableFormConstructor)

@@ -1,18 +1,6 @@
 <div *ngIf="detail">
   <div class="form-constructor-control">
     <div class="form-constructor-wrapper">
-      <ng-container *ngFor="let tileControl of tileOps.tileFormFields">
-        <ng-container
-          *ngTemplateOutlet="
-            tileControlTpl;
-            context: {
-              tileControl: tileControl,
-              formGroup: tileOps.tileFormGroup
-            }
-          "
-        ></ng-container>
-      </ng-container>
-
       <div>
         <mat-slide-toggle
           matTooltip="Turn form constructor on/off"
@@ -203,6 +191,25 @@
 <ng-template #anchorPointActions>
   <div style="display: flex; justify-content: center">
     <div style="width: 85%">
+      <base-select
+        (click)="$event.stopPropagation()"
+        *ngIf="
+          drawMatrix.drawMatrix[anchorPointContextMenuActions.rowIndex][
+            anchorPointContextMenuActions.colIndex
+          ]
+        "
+        [alias]="anchorPointContextMenuActions.formFieldsOnOffField.alias"
+        [placeholder]="
+          anchorPointContextMenuActions.formFieldsOnOffField.placeholder
+        "
+        [formGroup]="anchorPointContextMenuActions.anchorPointFormGroup"
+        [filterLocalSource]="
+          anchorPointContextMenuActions.formFieldsOnOffField.mainControl
+            ?.filterLocalSource
+        "
+        [action]="anchorPointContextMenuActions.formFieldsOnOffField.action"
+      />
+
       <ng-container
         *ngFor="
           let tileControl of anchorPointContextMenuActions.anchorPointFields
@@ -240,15 +247,6 @@
   let-tileControl="tileControl"
   let-formGroup="formGroup"
 >
-  <base-select
-    (click)="$event.stopPropagation()"
-    *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.SELECT"
-    [alias]="tileControl.alias"
-    [placeholder]="tileControl.placeholder"
-    [formGroup]="formGroup"
-    [filterLocalSource]="tileControl.mainControl?.filterLocalSource"
-    [action]="tileControl.action"
-  />
   <base-input
     (click)="$event.stopPropagation()"
     *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
