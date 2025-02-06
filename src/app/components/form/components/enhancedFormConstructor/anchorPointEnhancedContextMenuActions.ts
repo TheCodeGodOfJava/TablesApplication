@@ -100,6 +100,28 @@ export class AnchorPointEnhancedContextMenuActions<
       description: 'Clear tiles',
       color: 'red',
     },
+    {
+      type: ACTIONS.DUPLICATE,
+      getShowCondition: () =>
+        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      icon: 'control_point_duplicate',
+      getAction: () => {
+        this.tileOps.duplicateAnchorPointRow(this.rowIndex);
+      },
+      description: 'Duplicate form row',
+      color: 'green',
+    },
+    {
+      type: ACTIONS.DELETE,
+      getShowCondition: () =>
+        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      icon: 'highlight_remove',
+      getAction: () => {
+        this.tileOps.deleteAnchorPointRow(this.rowIndex);
+      },
+      description: 'Delete current form row',
+      color: 'red',
+    },
   ];
 
   constructor(

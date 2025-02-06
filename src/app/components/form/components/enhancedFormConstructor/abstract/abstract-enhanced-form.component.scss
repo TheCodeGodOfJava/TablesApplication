@@ -94,7 +94,7 @@
 }
 
 .anchor-icon {
-  opacity: 0.42;
+  opacity: 0.24;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -104,5 +104,5 @@
 }
 
 .anchor-point:hover .anchor-icon {
-  transform: translate(-50%, -50%) scale(1.8);
+  transform: translate(-50%, -50%) scale(1.9);
 }

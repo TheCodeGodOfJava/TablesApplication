@@ -10,4 +10,6 @@ export enum ACTIONS {
   LABEL = 'LABEL',
   CREATE = 'CREATE',
   CLEAR = 'CLEAR',
+  DUPLICATE = 'DUPLICATE',
+  DELETE = 'DELETE',
 }

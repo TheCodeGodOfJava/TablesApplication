@@ -42,14 +42,15 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     if (rowSpan <= 0 || colSpan <= 0) {
       return false;
     }
-    for (let i = 0; i < colSpan; i++) {
-      checkColIndex = colIndex + i;
-      for (let j = 0; j < rowSpan; j++) {
-        checkRowIndex = rowIndex + j;
+
+    for (let i = 0; i < rowSpan; i++) {
+      checkRowIndex = rowIndex + i;
+      for (let j = 0; j < colSpan; j++) {
+        checkColIndex = colIndex + j;
         if (
-          checkRowIndex >= matrix[0]?.length ||
+          checkColIndex >= matrix[0]?.length ||
           0 ||
-          checkColIndex >= matrix.length ||
+          checkRowIndex >= matrix.length ||
           !callback(checkRowIndex, checkColIndex)
         )
           return false;
@@ -185,6 +186,61 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.drawMatrix.tiles.clear();
     this.saveFormTemplate();
     this.toastrService.success(`Form tiles cleared!`);
+  }
+
+  duplicateAnchorPointRow(rowIndex: number) {
+    const matrix = this.drawMatrix.drawMatrix;
+    const currentRow = matrix[rowIndex];
+
+    if (!currentRow.every((tileId) => !tileId)) {
+      this.toastrService.error('You can only duplicate an empty row!');
+      return;
+    }
+
+    matrix.splice(rowIndex + 1, 0, [...currentRow]);
+
+    const tilesToUpdate: number[] = [];
+
+    for (let i = rowIndex + 1; i < matrix.length; i++) {
+      for (let j = 0; j < currentRow.length; j++) {
+        const tileId = matrix[i][j];
+        if (tileId && !tilesToUpdate.includes(tileId)) {
+          tilesToUpdate.push(tileId);
+        }
+      }
+    }
+    let tile: Tile<T> | undefined;
+    tilesToUpdate.forEach((tileId) => {
+      tile = this.drawMatrix.tiles.get(tileId);
+      if (tile) {
+        tile.rowIndex = ++tile.rowIndex;
+      }
+    });
+
+    this.saveFormTemplate();
+    this.toastrService.success('Anchor point row duplicated!');
+  }
+
+  deleteAnchorPointRow(rowIndex: number) {
+    const matrix = this.drawMatrix.drawMatrix;
+    if (matrix.length === 1) {
+      this.toastrService.error('You cant delete the last row!');
+      return;
+    }
+
+    const currentRow = matrix[rowIndex];
+
+    const isRowEmpty = currentRow.every((tileId) => !tileId);
+
+    if (!isRowEmpty) {
+      this.toastrService.error('You can only delete an empty row!');
+      return;
+    }
+
+    matrix.splice(rowIndex, 1);
+
+    this.saveFormTemplate();
+    this.toastrService.success('Current row deleted!');
   }
 
   removeTile(
