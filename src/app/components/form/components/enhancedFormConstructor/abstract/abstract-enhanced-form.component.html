@@ -184,21 +184,28 @@
 </mat-menu>
 
 <ng-template #anchorPointActions>
-  <ng-container
-    *ngFor="let tileControl of anchorPointContextMenuActions.anchorPointFields"
-  >
-    <ng-container
-      *ngTemplateOutlet="
-        tileControlTpl;
-        context: {
-          tileControl: tileControl,
-          formGroup: anchorPointContextMenuActions.anchorPointFormGroup
-        }
-      "
-    ></ng-container>
-  </ng-container>
+  <div style="display: flex; justify-content: center">
+    <div style="width: 85%">
+      <ng-container
+        *ngFor="
+          let tileControl of anchorPointContextMenuActions.anchorPointFields
+        "
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            tileControlTpl;
+            context: {
+              tileControl: tileControl,
+              formGroup: anchorPointContextMenuActions.anchorPointFormGroup
+            }
+          "
+        ></ng-container>
+      </ng-container>
+    </div>
+  </div>
+
   @for (action of anchorPointContextMenuActions.allActions; track action; ) {
-  <div class="contextMenu">
+  <div *ngIf="action.getShowCondition()" class="contextMenu">
     <button
       mat-menu-item
       (click)="action.getAction()"

@@ -24,6 +24,8 @@ export class AnchorPointEnhancedContextMenuActions<
     {
       type: ACTIONS.CREATE,
       icon: 'add_circle_outline',
+      getShowCondition: () =>
+        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
       getAction: () => {
         const tileRowSpan: number = this.anchorPointFormGroup.get(
           this.tileRowSpanAlias
@@ -44,6 +46,7 @@ export class AnchorPointEnhancedContextMenuActions<
     },
     {
       type: ACTIONS.CLEAR,
+      getShowCondition: () => true,
       icon: 'delete_sweep',
       getAction: () => {
         this.tileOps.clearAllTiles();
