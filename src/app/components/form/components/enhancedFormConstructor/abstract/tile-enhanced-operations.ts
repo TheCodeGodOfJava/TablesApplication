@@ -88,7 +88,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         }
       );
 
-      this.drawMatrix.tiles.set(Date.now(), {
+      this.drawMatrix.tiles.set(tileId, {
         id: tileId,
         rowIndex: rowIndex,
         colIndex: colIndex,
