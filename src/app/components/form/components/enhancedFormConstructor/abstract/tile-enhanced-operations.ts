@@ -148,4 +148,36 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.saveFormTemplate();
     this.toastrService.success(`Form tiles cleared!`);
   }
+
+  removeTile(rowIndex: number, colIndex: number) {
+    const matrix = this.drawMatrix.drawMatrix;
+    const tileId: number = matrix[rowIndex][colIndex];
+    const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
+    if (tile) {
+      const formControl = this.tileFormGroup.get(this.formFieldsOnOffAlias);
+      const selectedValues = formControl?.value;
+      const tileValues = tile.cdkDropListData.map(
+        (entity) => entity.placeholder
+      );
+      const restValues = selectedValues.filter(
+        (placeholder: string) => !tileValues.includes(placeholder)
+      );
+      formControl?.setValue(restValues);
+      this.iterateTileSpace(
+        tile.rowIndex,
+        tile.colIndex,
+        tile.rowSpan,
+        tile.colSpan,
+        (row, col) => {
+          matrix[row][col] = 0;
+          return true;
+        }
+      );
+      this.drawMatrix.tiles.delete(tileId);
+    } else {
+      this.toastrService.error(
+        `No tile exists on position row = ${rowIndex} column = ${colIndex}!`
+      );
+    }
+  }
 }

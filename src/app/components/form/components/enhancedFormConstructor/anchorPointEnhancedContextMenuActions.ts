@@ -58,7 +58,9 @@ export class AnchorPointEnhancedContextMenuActions<
       getShowCondition: () =>
         !!this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
       icon: 'remove_circle_outline',
-      getAction: () => {},
+      getAction: () => {
+        this.tileOps.removeTile(this.rowIndex, this.colIndex);
+      },
       description: 'Remove the tile',
       color: 'red',
     },
