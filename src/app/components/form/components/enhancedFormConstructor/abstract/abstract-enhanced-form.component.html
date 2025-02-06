@@ -67,10 +67,18 @@
                   (cdkDropListDropped)="tileOps.drop($event)"
                   [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
                 >
-                <div *ngIf="tile.cdkDropListData.length" class="form-item-separator"></div>
                   <ng-container
-                    *ngFor="let f of tile.cdkDropListData; let last = last"
+                    *ngFor="
+                      let f of tile.cdkDropListData;
+                      let i = index;
+                      let last = last
+                    "
                   >
+                    <div
+                      *ngIf="i === 0"
+                      class="form-item-separator"
+                      [ngStyle]="{ width: tileMargin * 2 + 'px' }"
+                    ></div>
                     <div
                       cdkDrag
                       (cdkDragStarted)="tileOps.startDrag()"
@@ -125,7 +133,12 @@
                         [formFieldColor]="f.color || ''"
                       />
                     </div>
-                    <div class="form-item-separator"></div>
+                    <div
+                      class="form-item-separator"
+                      [ngStyle]="{
+                        width: (last ? tileMargin * 2 : tileMargin * 4) + 'px'
+                      }"
+                    ></div>
                   </ng-container>
                 </div>
               </ng-container>

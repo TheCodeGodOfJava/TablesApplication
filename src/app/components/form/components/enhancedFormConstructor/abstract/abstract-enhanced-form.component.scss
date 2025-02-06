@@ -34,9 +34,7 @@
 .form-item-separator {
   // Needs to fix displaying form fields in the tile. Scaling mat-select elements changes
   // its initial size and we get white lines on top and bottom
-  min-width: 10px;
   height: 100%;
-  background-color: white;
 }
 
 .cdk-drag-preview {
