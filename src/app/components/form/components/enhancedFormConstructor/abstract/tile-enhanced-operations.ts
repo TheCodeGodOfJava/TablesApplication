@@ -65,6 +65,9 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     let checkColIndex: number;
     let checkRowIndex: number;
     const matrix = this.drawMatrix.drawMatrix;
+    if (rowSpan <= 0 || colSpan <= 0) {
+      return false;
+    }
     for (let i = 0; i < colSpan; i++) {
       checkColIndex = colIndex + i;
       for (let j = 0; j < rowSpan; j++) {

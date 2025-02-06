@@ -45,6 +45,24 @@ export class AnchorPointEnhancedContextMenuActions<
       color: 'green',
     },
     {
+      type: ACTIONS.EDIT,
+      getShowCondition: () =>
+        !!this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      icon: 'edit_note',
+      getAction: () => {},
+      description: 'Edit the tile',
+      color: 'red',
+    },
+    {
+      type: ACTIONS.REMOVE,
+      getShowCondition: () =>
+        !!this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      icon: 'remove_circle_outline',
+      getAction: () => {},
+      description: 'Remove the tile',
+      color: 'red',
+    },
+    {
       type: ACTIONS.CLEAR,
       getShowCondition: () => true,
       icon: 'delete_sweep',
