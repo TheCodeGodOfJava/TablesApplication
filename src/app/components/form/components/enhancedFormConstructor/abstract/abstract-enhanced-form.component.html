@@ -167,12 +167,6 @@
 </div>
 
 <mat-menu #menu>
-  <ng-template matMenuContent>
-    <ng-container [ngTemplateOutlet]="actions"></ng-container>
-  </ng-template>
-</mat-menu>
-
-<ng-template #actions>
   @for (action of formContextMenuActions.allActions; track action; ) {
   <div class="contextMenu">
     <base-checkbox
@@ -193,15 +187,11 @@
     />
   </div>
   }
-</ng-template>
-
-<mat-menu #anchorPointMenu>
-  <ng-template matMenuContent>
-    <ng-container [ngTemplateOutlet]="anchorPointActions"></ng-container>
-  </ng-template>
 </mat-menu>
 
-<ng-template #anchorPointActions>
+<ng-template #actions> </ng-template>
+
+<mat-menu #anchorPointMenu>
   <div style="display: flex; justify-content: center">
     <div style="width: 85%">
       <base-select
@@ -228,15 +218,13 @@
           let tileControl of anchorPointContextMenuActions.anchorPointFields
         "
       >
-        <ng-container
-          *ngTemplateOutlet="
-            tileControlTpl;
-            context: {
-              tileControl: tileControl,
-              formGroup: anchorPointContextMenuActions.anchorPointFormGroup
-            }
-          "
-        ></ng-container>
+        <base-input
+          (click)="$event.stopPropagation()"
+          *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
+          [alias]="tileControl.alias"
+          [formGroup]="anchorPointContextMenuActions.anchorPointFormGroup"
+          [placeholder]="tileControl.placeholder"
+        />
       </ng-container>
     </div>
   </div>
@@ -253,18 +241,4 @@
     </button>
   </div>
   }
-</ng-template>
-
-<ng-template
-  #tileControlTpl
-  let-tileControl="tileControl"
-  let-formGroup="formGroup"
->
-  <base-input
-    (click)="$event.stopPropagation()"
-    *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
-    [alias]="tileControl.alias"
-    [formGroup]="formGroup"
-    [placeholder]="tileControl.placeholder"
-  />
-</ng-template>
+</mat-menu>

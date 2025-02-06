@@ -60,6 +60,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   }
 
   colQty: number = 8;
+  rowQty: number = this.colQty;
   rowHeight: number = 85;
 
   protected drawMatrix: FormMatrix<T> = {
