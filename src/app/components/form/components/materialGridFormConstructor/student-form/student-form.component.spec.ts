@@ -232,6 +232,9 @@ describe('TileOperations', () => {
 
   it('should remove the last tile', () => {
     tileOperations.tiles.push({
+      id:1,
+      rowIndex:0,
+      colIndex:0,
       rowSpan: 2,
       colSpan: 4,
       cdkDropListData: [
