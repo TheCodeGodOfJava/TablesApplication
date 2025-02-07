@@ -260,4 +260,82 @@ describe('TileEnhancedOperations', () => {
     expect(tile).not.toBeNull();
     expect(tile?.rowIndex).toBe(rowIndex - 1);
   });
+
+  it('should move tile up', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = matrix.length - 1;
+    const colIndex = 0;
+    const rowSpan = 1;
+    const colSpan = matrix.length;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.moveTileUp(rowIndex, colIndex);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(matrix[matrix.length - 1].every((num) => num === 0)).toBe(true);
+    expect(matrix[matrix.length - 2].every((num) => num === tile?.id)).toBe(
+      true
+    );
+    expect(tile?.rowIndex).toBe(matrix.length - 2);
+  });
+
+  it('should move tile down', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = 0;
+    const colIndex = 0;
+    const rowSpan = 1;
+    const colSpan = matrix.length;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.moveTileDown(rowIndex, colIndex);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(matrix[0].every((num) => num === 0)).toBe(true);
+    expect(matrix[1].every((num) => num === tile?.id)).toBe(true);
+    expect(tile?.rowIndex).toBe(1);
+  });
+
+  it('should move tile left', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = 0;
+    const colIndex = 1;
+    const rowSpan = matrix.length;
+    const colSpan = 1;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.moveTileLeft(rowIndex, colIndex);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(matrix.every((row) => row[1] === 0)).toBe(true);
+    expect(matrix.every((row) => row[0] === tile?.id)).toBe(true);
+    expect(tile?.colIndex).toBe(0);
+  });
+
+  it('should move tile right', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = 0;
+    const colIndex = 0;
+    const rowSpan = matrix.length;
+    const colSpan = 1;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.moveTileRight(rowIndex, colIndex);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(matrix.every((row) => row[0] === 0)).toBe(true);
+    expect(matrix.every((row) => row[1] === tile?.id)).toBe(true);
+    expect(tile?.colIndex).toBe(1);
+  });
 });
