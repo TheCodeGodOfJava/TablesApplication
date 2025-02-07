@@ -5,6 +5,7 @@ import { LocalStorageService } from '../../../../../services/local-storage/local
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
+import { Tile } from '../../../interfaces/tile';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
 
 describe('TileEnhancedOperations', () => {
@@ -12,6 +13,7 @@ describe('TileEnhancedOperations', () => {
   let toastrServiceMock: jasmine.SpyObj<ToastrService>;
   let localStorageServiceMock: jasmine.SpyObj<LocalStorageService>;
   const formBuilder: FormBuilder = new FormBuilder();
+  const colQty = 8;
 
   beforeEach(() => {
     toastrServiceMock = jasmine.createSpyObj('ToastrService', [
@@ -30,14 +32,11 @@ describe('TileEnhancedOperations', () => {
       ],
     });
 
-    const allFieldsMock: AppEntity<any>[] = []; // Mock your app entity array here
+    const allFieldsMock: AppEntity<any>[] = [];
     const drawMatrixMock: FormMatrix<any> = {
-      tiles: new Map(),
-      drawMatrix: [
-        [0, 0],
-        [0, 0],
-      ],
-    }; // Mock the draw matrix here
+      tiles: new Map<number, Tile<any>>(),
+      drawMatrix: Array.from({ length: colQty }, () => Array(colQty).fill(0)),
+    };
     const formName = 'testForm';
 
     tileOps = new TileEnhancedOperations(
@@ -53,8 +52,9 @@ describe('TileEnhancedOperations', () => {
 
   it('should create a tile when space is available', () => {
     // Arrange
-    const rowIndex = 0;
-    const colIndex = 0;
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = 1;
+    const colIndex = 1;
     const rowSpan = 1;
     const colSpan = 1;
 
@@ -69,12 +69,13 @@ describe('TileEnhancedOperations', () => {
     expect(tileOps.drawMatrix.tiles.size).toBeGreaterThan(0); // Ensure tiles are being added to the map
   });
 
-  it('should not create a tile when no space is available', () => {
+  it('should not create a tile when no space is available horizontally', () => {
     // Arrange
-    let rowIndex = 7;
-    let colIndex = 0;
-    let rowSpan = 1;
-    let colSpan = 1;
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = 0;
+    const colIndex = matrix[0].length - 1;
+    const rowSpan = 1;
+    const colSpan = 2;
 
     // Act
     tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
@@ -83,9 +84,65 @@ describe('TileEnhancedOperations', () => {
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
       'No free place for the new tile! Please adjust col span and row span accordingly!'
     );
+  });
 
-    rowIndex = 0;
-    colIndex = 7;
+  it('should not create a tile when another tile blocks space horisontally', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+
+    for (let i = 0; i < matrix.length - 1; i++) {
+      matrix[i][matrix[0].length - 1] = 1;
+    }
+
+    const rowIndex = 0;
+    const colIndex = matrix[0].length - 2;
+    const rowSpan = 1;
+    const colSpan = 2;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+
+    // Assert
+    expect(toastrServiceMock.error).toHaveBeenCalledWith(
+      'No free place for the new tile! Please adjust col span and row span accordingly!'
+    );
+    for (let i = 0; i < matrix.length - 1; i++) {
+      matrix[i][matrix[0].length - 1] = 0;
+    }
+  });
+
+  it('should not create a tile when another tile blocks space vertically', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+
+    for (let i = 0; i < matrix[0].length - 1; i++) {
+      matrix[matrix.length - 1][i] = 1;
+    }
+
+    const rowIndex = matrix.length - 2;
+    const colIndex = 0;
+    const rowSpan = 2;
+    const colSpan = 1;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+
+    // Assert
+    expect(toastrServiceMock.error).toHaveBeenCalledWith(
+      'No free place for the new tile! Please adjust col span and row span accordingly!'
+    );
+    for (let i = 0; i < matrix[0].length - 1; i++) {
+      matrix[matrix.length - 1][matrix[1].length - 1] = 1;
+    }
+  });
+
+  it('should not create a tile when no space is available vertically', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = matrix.length - 1;
+    const colIndex = 0;
+    const rowSpan = 2;
+    const colSpan = 1;
 
     // Act
     tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
