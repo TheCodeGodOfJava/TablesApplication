@@ -226,4 +226,38 @@ describe('TileEnhancedOperations', () => {
       'No tile exists on position row = 0 column = 0!'
     );
   });
+
+  it('should bring tiles down under the row we added', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = matrix.length - 1;
+    const colIndex = 0;
+    const rowSpan = 1;
+    const colSpan = matrix.length;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.duplicateAnchorPointRow(0);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(tile?.rowIndex).toBe(rowIndex + 1);
+  });
+
+  it('should bring tiles up under the row we deleted', () => {
+    // Arrange
+    const matrix = tileOps.drawMatrix.drawMatrix;
+    const rowIndex = matrix.length - 1;
+    const colIndex = 0;
+    const rowSpan = 1;
+    const colSpan = matrix.length;
+
+    // Act
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.deleteAnchorPointRow(0);
+    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    // Assert
+    expect(tile).not.toBeNull();
+    expect(tile?.rowIndex).toBe(rowIndex - 1);
+  });
 });
