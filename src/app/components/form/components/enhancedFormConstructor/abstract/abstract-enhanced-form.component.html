@@ -209,10 +209,64 @@
 <ng-template #actions> </ng-template>
 
 <mat-menu #anchorPointMenu>
-  <div style="display: flex; justify-content: center">
-    <div style="width: 85%">
+  <div class="anchor-point-menu" style="padding: 12px">
+    <div *ngIf="showTileExistsCondition()" class="anchor-point-menu">
+      <div class="directions">
+        <div style="display: flex; justify-content: center">
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileUp(
+                anchorPointContextMenuActions.rowIndex,
+                anchorPointContextMenuActions.colIndex
+              )
+            "
+          >
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileLeft(
+                anchorPointContextMenuActions.rowIndex,
+                anchorPointContextMenuActions.colIndex
+              )
+            "
+            style="margin-right: 20px"
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileRight(
+                anchorPointContextMenuActions.rowIndex,
+                anchorPointContextMenuActions.colIndex
+              )
+            "
+            style="margin-left: 20px"
+          >
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <div style="display: flex; justify-content: center">
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileDown(
+                anchorPointContextMenuActions.rowIndex,
+                anchorPointContextMenuActions.colIndex
+              )
+            "
+          >
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+        </div>
+      </div>
       <base-select
-        *ngIf="showAddFormElementsCondition()"
         (click)="$event.stopPropagation()"
         [alias]="anchorPointContextMenuActions.formFieldsOnOffField.alias"
         [placeholder]="
@@ -225,7 +279,9 @@
         "
         [action]="anchorPointContextMenuActions.formFieldsOnOffField.action"
       />
+    </div>
 
+    <div class="anchor-point-menu">
       <ng-container
         *ngFor="
           let tileControl of anchorPointContextMenuActions.anchorPointFields

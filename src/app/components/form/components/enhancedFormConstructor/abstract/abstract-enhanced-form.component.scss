@@ -106,3 +106,16 @@
 .anchor-point:hover .anchor-icon {
   transform: translate(-50%, -50%) scale(1.9);
 }
+
+.directions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.anchor-point-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

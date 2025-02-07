@@ -2,6 +2,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { DIRECTIONS } from '../../../../data-tables/interfaces/DIRECTIONS';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
 import { Tile } from '../../../interfaces/tile';
@@ -107,14 +108,40 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   editTile(
     rowIndex: number,
     colIndex: number,
-    rowSpan: number,
-    colSpan: number
+    rowSpan?: number,
+    colSpan?: number,
+    move?: { direction: DIRECTIONS; offset: number }
   ) {
     const matrix = this.drawMatrix.drawMatrix;
     const tileId: number = matrix[rowIndex][colIndex];
     const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
+    let rowIndexOffset = rowIndex;
+    let colIndexOffset = colIndex;
 
     if (tile) {
+      rowSpan = rowSpan || tile.rowSpan;
+      colSpan = colSpan || tile.colSpan;
+
+      if (move) {
+        if (move.direction === DIRECTIONS.UP && rowIndex) {
+          --rowIndexOffset;
+        } else if (
+          move.direction === DIRECTIONS.DOWN &&
+          rowIndex < matrix.length - 1
+        ) {
+          ++rowIndexOffset;
+        } else if (move.direction === DIRECTIONS.LEFT && colIndex) {
+          --colIndexOffset;
+        } else if (
+          move.direction === DIRECTIONS.RIGHT &&
+          colIndex < matrix[0].length - 1
+        ) {
+          ++colIndexOffset;
+        } else {
+          this.toastrService.error("Can't move the tile!");
+          return;
+        }
+      }
       this.iterateTileSpace(
         tile.rowIndex,
         tile.colIndex,
@@ -127,8 +154,8 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       );
 
       const isAvailable = this.iterateTileSpace(
-        tile.rowIndex,
-        tile.colIndex,
+        rowIndexOffset,
+        colIndexOffset,
         rowSpan,
         colSpan,
         (row, col) => !matrix[row][col]
@@ -148,8 +175,8 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         this.getNoFreeSpacetErrorToast();
       } else {
         this.iterateTileSpace(
-          tile.rowIndex,
-          tile.colIndex,
+          rowIndexOffset,
+          colIndexOffset,
           rowSpan,
           colSpan,
           (row, col) => {
@@ -162,6 +189,8 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         this.toastrService.success(
           `A tile ${colSpan}x${rowSpan} succesfully edited!`
         );
+        tile.rowIndex = rowIndexOffset;
+        tile.colIndex = colIndexOffset;
         this.saveFormTemplate();
       }
     } else {
@@ -292,9 +321,30 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       `No tile exists on position row = ${rowIndex} column = ${colIndex}!`
     );
   }
+
   private getNoFreeSpacetErrorToast() {
     this.toastrService.error(
       'No free place for the new tile! Please adjust col span and row span accordingly!'
     );
+  }
+
+  moveTileUp(rowIndex: number, colIndex: number) {
+    const direction = { direction: DIRECTIONS.UP, offset: 1 };
+    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+  }
+
+  moveTileDown(rowIndex: number, colIndex: number) {
+    const direction = { direction: DIRECTIONS.DOWN, offset: 1 };
+    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+  }
+
+  moveTileLeft(rowIndex: number, colIndex: number) {
+    const direction = { direction: DIRECTIONS.LEFT, offset: 1 };
+    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+  }
+
+  moveTileRight(rowIndex: number, colIndex: number) {
+    const direction = { direction: DIRECTIONS.RIGHT, offset: 1 };
+    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
   }
 }

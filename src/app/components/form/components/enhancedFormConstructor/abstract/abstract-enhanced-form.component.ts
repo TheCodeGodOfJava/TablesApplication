@@ -237,7 +237,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     control?.setValue(value);
   }
 
-  public showAddFormElementsCondition(): boolean {
+  public showTileExistsCondition(): boolean {
     const a = this.anchorPointContextMenuActions;
     return !!this.drawMatrix.drawMatrix[a.rowIndex][a.colIndex];
   }
