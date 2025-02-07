@@ -179,32 +179,32 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.toastrService.success(`Form tiles cleared!`);
   }
 
-  duplicateAnchorPointRow(rowIndex: number) {
-    if (!this.isRowActionAllowed(rowIndex, 'duplicate')) return;
-
-    this.drawMatrix.drawMatrix.splice(rowIndex + 1, 0, [
-      ...this.drawMatrix.drawMatrix[rowIndex],
-    ]);
-    this.updateTileRowIndices(
-      rowIndex + 1,
-      this.drawMatrix.drawMatrix[rowIndex].length,
-      1
-    );
-
-    this.saveResult('Anchor point row duplicated!');
+  duplicateAnchorPointRow(rowIndex: number, rowSpan: number) {
+    const matrix = this.drawMatrix.drawMatrix;
+    for (let i = 0; i < rowSpan; i++) {
+      if (!this.isRowActionAllowed(matrix, rowIndex, 'duplicate')) return;
+      matrix.splice(rowIndex + 1 + i, 0, [...matrix[rowIndex]]);
+      this.updateTileRowIndices(
+        rowIndex + 1,
+        this.drawMatrix.drawMatrix[rowIndex].length,
+        1
+      );
+      this.saveResult('Anchor point row duplicated!');
+    }
   }
 
-  deleteAnchorPointRow(rowIndex: number) {
-    if (!this.isRowActionAllowed(rowIndex, 'delete')) return;
-
-    this.drawMatrix.drawMatrix.splice(rowIndex, 1);
-    this.updateTileRowIndices(
-      rowIndex,
-      this.drawMatrix.drawMatrix[rowIndex]?.length || 0,
-      -1
-    );
-
-    this.saveResult('Current anchor point row deleted!');
+  deleteAnchorPointRow(rowIndex: number, rowSpan: number) {
+    const matrix = this.drawMatrix.drawMatrix;
+    for (let i = 0; i < rowSpan; i++) {
+      if (!this.isRowActionAllowed(matrix, rowIndex, 'delete')) return;
+      this.drawMatrix.drawMatrix.splice(rowIndex, 1);
+      this.updateTileRowIndices(
+        rowIndex,
+        this.drawMatrix.drawMatrix[rowIndex]?.length || 0,
+        -1
+      );
+      this.saveResult('Current anchor point row deleted!');
+    }
   }
 
   private saveResult(resultMessage: string) {
@@ -213,10 +213,10 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   private isRowActionAllowed(
+    matrix: number[][],
     rowIndex: number,
     action: 'duplicate' | 'delete'
   ): boolean {
-    const matrix = this.drawMatrix.drawMatrix;
     const currentRow = matrix[rowIndex];
 
     if (action === 'delete' && matrix.length === 1) {

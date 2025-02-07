@@ -250,7 +250,7 @@
       style="margin-right: 10px"
     >
       <mat-icon [ngStyle]="{ color: action.color }">{{ action.icon }}</mat-icon>
-      <span>{{ action.description }}</span>
+      <span>{{ action.getDescription() }}</span>
     </button>
   </div>
   }

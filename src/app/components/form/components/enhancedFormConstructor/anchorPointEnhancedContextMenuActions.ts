@@ -46,7 +46,7 @@ export class AnchorPointEnhancedContextMenuActions<
           tileColSpan
         );
       },
-      description: 'Add new tile',
+      getDescription: () => 'Add new tile',
       color: 'green',
     },
     {
@@ -68,7 +68,7 @@ export class AnchorPointEnhancedContextMenuActions<
           tileColSpan
         );
       },
-      description: 'Edit tile',
+      getDescription: () => 'Edit tile',
       color: 'red',
     },
     {
@@ -84,7 +84,7 @@ export class AnchorPointEnhancedContextMenuActions<
           this.colIndex
         );
       },
-      description: 'Remove tile',
+      getDescription: () => 'Remove tile',
       color: 'red',
     },
     {
@@ -93,9 +93,18 @@ export class AnchorPointEnhancedContextMenuActions<
         !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
       icon: 'control_point_duplicate',
       getAction: () => {
-        this.tileOps.duplicateAnchorPointRow(this.rowIndex);
+        const tileRowSpan: number = this.anchorPointFormGroup.get(
+          this.tileRowSpanAlias
+        )?.value;
+        this.tileOps.duplicateAnchorPointRow(this.rowIndex, tileRowSpan);
       },
-      description: 'Add row to current',
+      getDescription: () => {
+        const tileRowSpan: number = this.anchorPointFormGroup.get(
+          this.tileRowSpanAlias
+        )?.value;
+
+        return `Add ${tileRowSpan} row(s) here`;
+      },
       color: 'green',
     },
     {
@@ -104,9 +113,18 @@ export class AnchorPointEnhancedContextMenuActions<
         !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
       icon: 'highlight_remove',
       getAction: () => {
-        this.tileOps.deleteAnchorPointRow(this.rowIndex);
+        const tileRowSpan: number = this.anchorPointFormGroup.get(
+          this.tileRowSpanAlias
+        )?.value;
+        this.tileOps.deleteAnchorPointRow(this.rowIndex, tileRowSpan);
       },
-      description: 'Delete current row',
+      getDescription: () => {
+        const tileRowSpan: number = this.anchorPointFormGroup.get(
+          this.tileRowSpanAlias
+        )?.value;
+
+        return `Delete ${tileRowSpan} row(s) here`;
+      },
       color: 'red',
     },
   ];
