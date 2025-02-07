@@ -147,6 +147,10 @@ describe('TileEnhancedOperations', () => {
     expect(toastrServiceMock.success).toHaveBeenCalledWith(
       'Form tiles cleared!'
     );
+    const result: boolean = tileOps.drawMatrix.drawMatrix
+      .flat()
+      .some((num) => num !== 0);
+    expect(result).toBe(false);
     expect(tileOps.drawMatrix.tiles.size).toBe(0); // Ensure tiles are cleared
   });
 
