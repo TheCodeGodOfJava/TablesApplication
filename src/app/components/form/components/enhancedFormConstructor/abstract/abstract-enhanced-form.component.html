@@ -3,8 +3,8 @@
     <div class="form-constructor-wrapper">
       <div class="button-group">
         <button
-          mat-icon-button
-          color="warn"
+          mat-mini-fab
+          color="warn" 
           matTooltip="Clear all tiles"
           matTooltipPosition="above"
           (click)="
@@ -15,7 +15,7 @@
           "
           [disabled]="!drawMatrix.tiles.size || !enableFormConstructor"
         >
-          <mat-icon class="danger-color">delete_sweep</mat-icon>
+          <mat-icon>delete_sweep</mat-icon>
         </button>
       </div>
       <div>

@@ -173,16 +173,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const formControl = formGroup.get(alias);
     formControl?.setValue([]);
     const matrix = this.drawMatrix.drawMatrix;
-    this.iterateTileSpace(
-      0,
-      0,
-      matrix[0]?.length,
-      matrix.length,
-      (row, col) => {
-        matrix[row][col] = 0;
-        return true;
-      }
-    );
+    matrix.forEach(row => row.fill(0));
     this.drawMatrix.tiles.clear();
     this.saveFormTemplate();
     this.toastrService.success(`Form tiles cleared!`);
