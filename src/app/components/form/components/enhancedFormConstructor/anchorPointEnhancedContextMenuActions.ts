@@ -88,19 +88,6 @@ export class AnchorPointEnhancedContextMenuActions<
       color: 'red',
     },
     {
-      type: ACTIONS.CLEAR,
-      getShowCondition: () => true,
-      icon: 'delete_sweep',
-      getAction: () => {
-        this.tileOps.clearAllTiles(
-          this.anchorPointFormGroup,
-          this.formFieldsOnOffAlias
-        );
-      },
-      description: 'Clear tiles',
-      color: 'red',
-    },
-    {
       type: ACTIONS.DUPLICATE,
       getShowCondition: () =>
         !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],

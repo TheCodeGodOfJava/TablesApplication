@@ -1,6 +1,23 @@
 <div *ngIf="detail">
   <div class="form-constructor-control">
     <div class="form-constructor-wrapper">
+      <div class="button-group">
+        <button
+          mat-icon-button
+          color="warn"
+          matTooltip="Clear all tiles"
+          matTooltipPosition="above"
+          (click)="
+            tileOps.clearAllTiles(
+              anchorPointContextMenuActions.anchorPointFormGroup,
+              anchorPointContextMenuActions.formFieldsOnOffAlias
+            )
+          "
+          [disabled]="!drawMatrix.tiles.size || !enableFormConstructor"
+        >
+          <mat-icon class="danger-color">delete_sweep</mat-icon>
+        </button>
+      </div>
       <div>
         <mat-slide-toggle
           matTooltip="Turn form constructor on/off"
@@ -196,11 +213,6 @@
     <div style="width: 85%">
       <base-select
         (click)="$event.stopPropagation()"
-        *ngIf="
-          drawMatrix.drawMatrix[anchorPointContextMenuActions.rowIndex][
-            anchorPointContextMenuActions.colIndex
-          ]
-        "
         [alias]="anchorPointContextMenuActions.formFieldsOnOffField.alias"
         [placeholder]="
           anchorPointContextMenuActions.formFieldsOnOffField.placeholder
