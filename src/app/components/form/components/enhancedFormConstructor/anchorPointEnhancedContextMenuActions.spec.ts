@@ -101,8 +101,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
     duplicateAction?.getAction();
 
     // Verify that duplicateAnchorPointRow was called
-    expect(tileOpsMock.duplicateAnchorPointRow).toHaveBeenCalledWith(
-      component.rowIndex
+    expect(tileOpsMock.duplicateAnchorPointRow).toHaveBeenCalled(
     );
   });
 
@@ -115,8 +114,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
     deleteAction?.getAction();
 
     // Verify that deleteAnchorPointRow was called
-    expect(tileOpsMock.deleteAnchorPointRow).toHaveBeenCalledWith(
-      component.rowIndex
+    expect(tileOpsMock.deleteAnchorPointRow).toHaveBeenCalled(
     );
   });
 

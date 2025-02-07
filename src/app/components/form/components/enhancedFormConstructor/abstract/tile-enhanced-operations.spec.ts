@@ -237,7 +237,7 @@ describe('TileEnhancedOperations', () => {
 
     // Act
     tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.duplicateAnchorPointRow(0);
+    tileOps.duplicateAnchorPointRow(0, 1);
     const tile = tileOps.drawMatrix.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
@@ -254,7 +254,7 @@ describe('TileEnhancedOperations', () => {
 
     // Act
     tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.deleteAnchorPointRow(0);
+    tileOps.deleteAnchorPointRow(0, 1);
     const tile = tileOps.drawMatrix.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
