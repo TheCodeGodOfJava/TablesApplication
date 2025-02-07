@@ -13,7 +13,7 @@ import { FormMatrix } from '../../../interfaces/formMatrix';
 
 export class FormEnhancedOperations<T> extends TableFormOperations<T> {
   constructor(
-    protected allFields: AppEntity<T>[],
+    public allFields: AppEntity<T>[],
     protected formName: string,
     public drawMatrix: FormMatrix<T>,
     protected override fb: FormBuilder,
@@ -21,9 +21,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     protected toastrService: ToastrService
   ) {
     super(allFields, fb);
-  }
-
-  
+  }  
 
   startDrag() {
     document.body.style.userSelect = 'none';

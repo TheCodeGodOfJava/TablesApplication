@@ -39,7 +39,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   allFields!: AppEntity<T>[];
 
-  protected tileOps!: TileEnhancedOperations<T>;
+  public tileOps!: TileEnhancedOperations<T>;
 
   @Input() controllerPath!: string;
 
@@ -63,7 +63,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   rowQty: number = this.colQty;
   rowHeight: number = 85;
 
-  protected drawMatrix: FormMatrix<T> = {
+  public drawMatrix: FormMatrix<T> = {
     tiles: new Map<number, Tile<T>>(),
     drawMatrix: Array.from({ length: this.colQty }, () =>
       Array(this.colQty).fill(0)
@@ -184,7 +184,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
         });
     }
 
-    this.enableDisableFormConstructor();
+    this.saveFormConstructorState();
   }
 
   private copyMatchingFields<T extends Record<string, any>>(
@@ -200,7 +200,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     });
   }
 
-  enableDisableFormConstructor(): void {
+  saveFormConstructorState(): void {
     this.tileOps.saveFormTemplate(
       this.enableFormStringSuffix,
       JSON.stringify(this.enableFormConstructor)
@@ -209,7 +209,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   toggleFormConstructor(event: MatSlideToggleChange) {
     this.enableFormConstructor = event.checked;
-    this.enableDisableFormConstructor();
+    this.saveFormConstructorState();
   }
 
   setCurrentFormElementForContextMenu(current: AppEntity<T>) {
@@ -227,7 +227,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.anchorPointContextMenuActions.colIndex = colIndex;
   }
 
-  private setActionControlValue<V>(value: V, actionType: ACTIONS) {
+  public setActionControlValue<V>(value: V, actionType: ACTIONS) {
     const action = this.formContextMenuActions.allActions.find(
       (a) => a.type === actionType
     );
