@@ -237,6 +237,11 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     control?.setValue(value);
   }
 
+  public showAddFormElementsCondition(): boolean {
+    const a = this.anchorPointContextMenuActions;
+    return !!this.drawMatrix.drawMatrix[a.rowIndex][a.colIndex];
+  }
+
   public getAnchorPointPositionStyles(rowIndex: number, colIndex: number) {
     return {
       top: `${rowIndex * this.rowHeight + 3}px`,

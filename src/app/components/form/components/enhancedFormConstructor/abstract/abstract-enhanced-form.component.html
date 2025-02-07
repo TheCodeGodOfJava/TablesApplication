@@ -4,7 +4,7 @@
       <div class="button-group">
         <button
           mat-mini-fab
-          color="warn" 
+          color="warn"
           matTooltip="Clear all tiles"
           matTooltipPosition="above"
           (click)="
@@ -212,6 +212,7 @@
   <div style="display: flex; justify-content: center">
     <div style="width: 85%">
       <base-select
+        *ngIf="showAddFormElementsCondition()"
         (click)="$event.stopPropagation()"
         [alias]="anchorPointContextMenuActions.formFieldsOnOffField.alias"
         [placeholder]="

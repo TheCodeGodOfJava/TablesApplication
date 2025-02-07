@@ -95,7 +95,7 @@ export class AnchorPointEnhancedContextMenuActions<
       getAction: () => {
         this.tileOps.duplicateAnchorPointRow(this.rowIndex);
       },
-      description: 'Duplicate form row',
+      description: 'Add row to current',
       color: 'green',
     },
     {
@@ -106,7 +106,7 @@ export class AnchorPointEnhancedContextMenuActions<
       getAction: () => {
         this.tileOps.deleteAnchorPointRow(this.rowIndex);
       },
-      description: 'Delete current form row',
+      description: 'Delete current row',
       color: 'red',
     },
   ];
