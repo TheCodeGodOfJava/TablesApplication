@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
 import { FormMatrix } from '../../interfaces/formMatrix';
-import { Tile } from '../../interfaces/tile';
 import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
 import { AnchorPointEnhancedContextMenuActions } from './anchorPointEnhancedContextMenuActions';
 
@@ -39,8 +38,6 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
       ],
     };
 
-
-
     tileOpsMock.drawMatrix = drawMatrixMock;
 
     toastrServiceMock = jasmine.createSpyObj('ToastrService', [
@@ -72,8 +69,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
 
     // Verify that saveFormTemplate was called
     expect(tileOpsMock.saveFormTemplate).toHaveBeenCalled();
-  }); 
-
+  });
 
   it('should call removeTile when REMOVE action is triggered', () => {
     const removeAction = component.allActions.find(
@@ -101,8 +97,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
     duplicateAction?.getAction();
 
     // Verify that duplicateAnchorPointRow was called
-    expect(tileOpsMock.duplicateAnchorPointRow).toHaveBeenCalled(
-    );
+    expect(tileOpsMock.duplicateAnchorPointRow).toHaveBeenCalled();
   });
 
   it('should call deleteAnchorPointRow when DELETE action is triggered', () => {
@@ -114,8 +109,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
     deleteAction?.getAction();
 
     // Verify that deleteAnchorPointRow was called
-    expect(tileOpsMock.deleteAnchorPointRow).toHaveBeenCalled(
-    );
+    expect(tileOpsMock.deleteAnchorPointRow).toHaveBeenCalled();
   });
 
   it('should show error toastr if no form containers are found', () => {
