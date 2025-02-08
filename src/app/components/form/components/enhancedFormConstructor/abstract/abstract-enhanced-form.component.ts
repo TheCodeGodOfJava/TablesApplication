@@ -304,4 +304,8 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       }
     );
   }
+
+  getConnectedTiles(): string[] {
+    return [...this.drawMatrix.tiles.keys()].map((key) => key.toString());
+  }
 }

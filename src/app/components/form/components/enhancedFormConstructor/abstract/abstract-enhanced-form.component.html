@@ -33,11 +33,7 @@
     <mat-divider></mat-divider>
 
     <div class="form-constructor-main">
-      <div
-        class="form-container"
-        [style.height]="rowHeight * colQty + 'px'"
-        cdkDropListGroup
-      >
+      <div class="form-container" [style.height]="rowHeight * colQty + 'px'">
         <ng-container
           *ngFor="let row of drawMatrix.drawMatrix; let rowIndex = index"
         >
@@ -66,6 +62,7 @@
                   *ngIf="
                     tile.colIndex === colIndex && tile.rowIndex === rowIndex
                   "
+                  [id]="tile.id.toString()"
                   cdkDrag
                   (cdkDragStarted)="startTileDrag(tile)"
                   (cdkDragEnded)="endTileDrag()"
@@ -77,6 +74,7 @@
                   cdkDropList
                   [cdkDropListData]="tile.cdkDropListData"
                   (cdkDropListDropped)="tileOps.dropField($event)"
+                  [cdkDropListConnectedTo]="getConnectedTiles()"
                   [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
                 >
                   <ng-container
