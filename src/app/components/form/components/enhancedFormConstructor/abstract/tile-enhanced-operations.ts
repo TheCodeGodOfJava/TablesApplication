@@ -2,7 +2,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
 import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
-import { DIRECTIONS } from '../../../../data-tables/interfaces/DIRECTIONS';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
 import { Tile } from '../../../interfaces/tile';
@@ -110,7 +109,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     colIndex: number,
     rowSpan?: number,
     colSpan?: number,
-    move?: { direction: DIRECTIONS; offset: number }
+    move?: { horizontal: number; vertical: number }
   ) {
     const matrix = this.drawMatrix.drawMatrix;
     const tileId: number = matrix[rowIndex][colIndex];
@@ -123,19 +122,13 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       colSpan = colSpan || tile.colSpan;
 
       if (move) {
-        if (move.direction === DIRECTIONS.UP && rowIndex) {
+        if (move.vertical > 0 && rowIndex) {
           --rowIndexOffset;
-        } else if (
-          move.direction === DIRECTIONS.DOWN &&
-          rowIndex < matrix.length - 1
-        ) {
+        } else if (move.vertical < 0 && rowIndex < matrix.length - 1) {
           ++rowIndexOffset;
-        } else if (move.direction === DIRECTIONS.LEFT && colIndex) {
+        } else if (move.horizontal < 0 && colIndex) {
           --colIndexOffset;
-        } else if (
-          move.direction === DIRECTIONS.RIGHT &&
-          colIndex < matrix[0].length - 1
-        ) {
+        } else if (move.horizontal > 0 && colIndex < matrix[0].length - 1) {
           ++colIndexOffset;
         } else {
           this.toastrService.error("Can't move the tile!");
@@ -329,22 +322,22 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   moveTileUp(rowIndex: number, colIndex: number) {
-    const direction = { direction: DIRECTIONS.UP, offset: 1 };
+    const direction = { horizontal: 0, vertical: 1 };
     this.editTile(rowIndex, colIndex, undefined, undefined, direction);
   }
 
   moveTileDown(rowIndex: number, colIndex: number) {
-    const direction = { direction: DIRECTIONS.DOWN, offset: 1 };
+    const direction = { horizontal: 0, vertical: -1 };
     this.editTile(rowIndex, colIndex, undefined, undefined, direction);
   }
 
   moveTileLeft(rowIndex: number, colIndex: number) {
-    const direction = { direction: DIRECTIONS.LEFT, offset: 1 };
+    const direction = { horizontal: -1, vertical: 0 };
     this.editTile(rowIndex, colIndex, undefined, undefined, direction);
   }
 
   moveTileRight(rowIndex: number, colIndex: number) {
-    const direction = { direction: DIRECTIONS.RIGHT, offset: 1 };
+    const direction = { horizontal: 1, vertical: 0 };
     this.editTile(rowIndex, colIndex, undefined, undefined, direction);
   }
 }
