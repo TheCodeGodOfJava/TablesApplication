@@ -39,15 +39,12 @@
         >
           <ng-container *ngFor="let col of row; let colIndex = index">
             <div
-              (mouseenter)="setCurrentRowColumnForTileDrag(rowIndex, colIndex)"
               [contextMenuTriggerFor]="
                 enableFormConstructor ? anchorPointMenu : null
               "
               (contextmenu)="
                 setCurrentRowColumnForContextMenu(rowIndex, colIndex)
               "
-              cdkDropList
-              [cdkDropListSortingDisabled]="true"
             >
               @if (drawMatrix.drawMatrix[rowIndex][colIndex]) {
 
@@ -168,6 +165,7 @@
               } @else {
               <div
                 *ngIf="enableFormConstructor"
+                (mouseup)="setCurrentRowColumnForTileDrag(rowIndex, colIndex)"
                 class="anchor-point"
                 [ngStyle]="getAnchorPointPositionStyles(rowIndex, colIndex)"
               >
