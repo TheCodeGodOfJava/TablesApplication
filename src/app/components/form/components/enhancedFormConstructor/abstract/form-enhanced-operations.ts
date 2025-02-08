@@ -3,7 +3,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
@@ -21,17 +21,9 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
     protected toastrService: ToastrService
   ) {
     super(allFields, fb);
-  }  
-
-  startDrag() {
-    document.body.style.userSelect = 'none';
   }
 
-  endDrag() {
-    document.body.style.userSelect = 'auto';
-  }
-
-  public drop(event: CdkDragDrop<any>) {
+  public dropField(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,

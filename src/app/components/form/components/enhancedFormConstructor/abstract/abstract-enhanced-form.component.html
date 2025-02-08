@@ -43,12 +43,15 @@
         >
           <ng-container *ngFor="let col of row; let colIndex = index">
             <div
+              (mouseenter)="setCurrentRowColumnForTileDrag(rowIndex, colIndex)"
               [contextMenuTriggerFor]="
                 enableFormConstructor ? anchorPointMenu : null
               "
               (contextmenu)="
                 setCurrentRowColumnForContextMenu(rowIndex, colIndex)
               "
+              cdkDropList
+              [cdkDropListSortingDisabled]="true"
             >
               @if (drawMatrix.drawMatrix[rowIndex][colIndex]) {
 
@@ -63,13 +66,17 @@
                   *ngIf="
                     tile.colIndex === colIndex && tile.rowIndex === rowIndex
                   "
+                  cdkDrag
+                  (cdkDragStarted)="startTileDrag(tile)"
+                  (cdkDragEnded)="endTileDrag()"
+                  [cdkDragDisabled]="!enableFormConstructor"
                   [ngClass]="
                     'tile ' + (enableFormConstructor && 'tile-visibility')
                   "
                   cdkDropListOrientation="horizontal"
                   cdkDropList
                   [cdkDropListData]="tile.cdkDropListData"
-                  (cdkDropListDropped)="tileOps.drop($event)"
+                  (cdkDropListDropped)="tileOps.dropField($event)"
                   [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
                 >
                   <ng-container
@@ -92,8 +99,8 @@
                     ></div>
                     <div
                       cdkDrag
-                      (cdkDragStarted)="tileOps.startDrag()"
-                      (cdkDragEnded)="tileOps.endDrag()"
+                      (cdkDragStarted)="startFieldDrag()"
+                      (cdkDragEnded)="endFieldDrag()"
                       [cdkDragDisabled]="!enableFormConstructor"
                       class="form-item"
                       [contextMenuTriggerFor]="

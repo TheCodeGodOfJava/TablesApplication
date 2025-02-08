@@ -32,6 +32,10 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   tileMargin: number = 3;
   multiplier: number = 2;
 
+  rowIndexTileDragDestination: number = 0;
+  colIndexTileDragDestination: number = 0;
+  draggedTile!: Tile<T>;
+
   @Input()
   detailId!: number;
 
@@ -227,6 +231,11 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.anchorPointContextMenuActions.colIndex = colIndex;
   }
 
+  setCurrentRowColumnForTileDrag(rowIndex: number, colIndex: number) {
+    this.rowIndexTileDragDestination = rowIndex;
+    this.colIndexTileDragDestination = colIndex;
+  }
+
   public setActionControlValue<V>(value: V, actionType: ACTIONS) {
     const action = this.formContextMenuActions.allActions.find(
       (a) => a.type === actionType
@@ -263,5 +272,22 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       })`,
       height: `${this.rowHeight * tile.rowSpan - this.tileMargin * 2}px`,
     };
+  }
+
+  startFieldDrag() {
+    document.body.style.userSelect = 'none';
+  }
+
+  endFieldDrag() {
+    document.body.style.userSelect = 'auto';
+  }
+
+  startTileDrag(currentTile: Tile<T>) {
+    document.body.style.userSelect = 'none';
+    this.draggedTile = currentTile;
+  }
+
+  endTileDrag() {
+    document.body.style.userSelect = 'auto';
   }
 }
