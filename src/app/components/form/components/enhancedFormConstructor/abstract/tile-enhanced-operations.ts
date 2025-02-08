@@ -76,7 +76,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       (row, col) => !matrix[row][col]
     );
     if (!isAvailable) {
-      this.getNoFreeSpacetErrorToast();
+      this.getFailedToModfyTileError('create');
     } else {
       this.iterateTileSpace(
         rowIndex,
@@ -104,6 +104,22 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     }
   }
 
+  private adjustIndex(
+    moveOffset: number,
+    span: number,
+    boundary: number,
+    originalIndex: number
+  ): number {
+    const indexOffset = originalIndex - moveOffset;
+    if (
+      (moveOffset > 0 && indexOffset < 0) ||
+      (moveOffset < 0 && indexOffset + span > boundary)
+    ) {
+      return originalIndex;
+    }
+    return indexOffset;
+  }
+
   editTile(
     rowIndex: number,
     colIndex: number,
@@ -114,27 +130,15 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const matrix = this.drawMatrix.drawMatrix;
     const tileId: number = matrix[rowIndex][colIndex];
     const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
-    let rowIndexOffset = rowIndex;
-    let colIndexOffset = colIndex;
+    let rowIndexOffset = 0;
+    let colIndexOffset = 0;
 
     if (tile) {
       rowSpan = rowSpan || tile.rowSpan;
       colSpan = colSpan || tile.colSpan;
 
-      if (move) {
-        if (move.vertical > 0 && rowIndex) {
-          --rowIndexOffset;
-        } else if (move.vertical < 0 && rowIndex < matrix.length - 1) {
-          ++rowIndexOffset;
-        } else if (move.horizontal < 0 && colIndex) {
-          --colIndexOffset;
-        } else if (move.horizontal > 0 && colIndex < matrix[0].length - 1) {
-          ++colIndexOffset;
-        } else {
-          this.toastrService.error("Can't move the tile!");
-          return;
-        }
-      }
+      let isMovable = false;
+
       this.iterateTileSpace(
         tile.rowIndex,
         tile.colIndex,
@@ -146,6 +150,25 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         }
       );
 
+      if (move) {
+        isMovable = true;
+        rowIndexOffset = this.adjustIndex(
+          move.vertical,
+          rowSpan,
+          matrix.length,
+          rowIndex
+        );
+        colIndexOffset = this.adjustIndex(
+          -move.horizontal,
+          colSpan,
+          matrix[0].length,
+          colIndex
+        );
+        if (rowIndexOffset === rowIndex && colIndexOffset === colIndex) {
+          isMovable = false;
+        }
+      }
+
       const isAvailable = this.iterateTileSpace(
         rowIndexOffset,
         colIndexOffset,
@@ -154,7 +177,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         (row, col) => !matrix[row][col]
       );
 
-      if (!isAvailable) {
+      if (!isAvailable || !isMovable) {
         this.iterateTileSpace(
           tile.rowIndex,
           tile.colIndex,
@@ -165,7 +188,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
             return true;
           }
         );
-        this.getNoFreeSpacetErrorToast();
+        this.getFailedToModfyTileError('edit');
       } else {
         this.iterateTileSpace(
           rowIndexOffset,
@@ -315,10 +338,8 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     );
   }
 
-  private getNoFreeSpacetErrorToast() {
-    this.toastrService.error(
-      'No free place for the new tile! Please adjust col span and row span accordingly!'
-    );
+  private getFailedToModfyTileError(action: string) {
+    this.toastrService.error(`Failed to ${action} tile!`);
   }
 
   moveTileUp(rowIndex: number, colIndex: number) {

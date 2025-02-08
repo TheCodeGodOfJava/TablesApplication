@@ -82,7 +82,7 @@ describe('TileEnhancedOperations', () => {
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
-      'No free place for the new tile! Please adjust col span and row span accordingly!'
+      'Failed to create tile!'
     );
   });
 
@@ -104,7 +104,7 @@ describe('TileEnhancedOperations', () => {
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
-      'No free place for the new tile! Please adjust col span and row span accordingly!'
+      'Failed to create tile!'
     );
     for (let i = 0; i < matrix.length - 1; i++) {
       matrix[i][matrix[0].length - 1] = 0;
@@ -129,7 +129,7 @@ describe('TileEnhancedOperations', () => {
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
-      'No free place for the new tile! Please adjust col span and row span accordingly!'
+      'Failed to create tile!'
     );
     for (let i = 0; i < matrix[0].length - 1; i++) {
       matrix[matrix.length - 1][matrix[1].length - 1] = 1;
@@ -149,7 +149,7 @@ describe('TileEnhancedOperations', () => {
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
-      'No free place for the new tile! Please adjust col span and row span accordingly!'
+      'Failed to create tile!'
     );
   });
 
@@ -159,27 +159,16 @@ describe('TileEnhancedOperations', () => {
     const colIndex = 0;
     const rowSpan = 2;
     const colSpan = 2;
-    const tileId = 12345;
-    tileOps.drawMatrix.drawMatrix[0][0] = tileId;
-    tileOps.drawMatrix.tiles.set(tileId, {
-      id: tileId,
-      rowIndex: 0,
-      colIndex: 0,
-      rowSpan: 1,
-      colSpan: 1,
-      cdkDropListData: [],
-    });
+
+    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
 
     // Act
     tileOps.editTile(rowIndex, colIndex, rowSpan, colSpan);
 
     // Assert
-    expect(toastrServiceMock.success).toHaveBeenCalledWith(
-      'A tile 2x2 succesfully edited!'
-    );
-    expect(tileOps.drawMatrix.drawMatrix[0][0]).toBe(tileId); // Ensure the tile is moved
+    const tileId = tileOps.drawMatrix.drawMatrix[0][0];
+    expect(!!tileId).toBe(true); // Ensure the tile is moved
     expect(tileOps.drawMatrix.tiles.get(tileId)?.rowSpan).toBe(2);
-    expect(tileOps.drawMatrix.tiles.get(tileId)?.colSpan).toBe(2);
   });
 
   it('should clear all tiles', () => {

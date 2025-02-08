@@ -289,5 +289,19 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   endTileDrag() {
     document.body.style.userSelect = 'auto';
+    const horizontalOffset =
+      this.colIndexTileDragDestination - this.draggedTile.colIndex;
+    const verticalOffset =
+      this.draggedTile.rowIndex - this.rowIndexTileDragDestination;
+    this.tileOps.editTile(
+      this.draggedTile.rowIndex,
+      this.draggedTile.colIndex,
+      this.draggedTile.rowSpan,
+      this.draggedTile.colSpan,
+      {
+        horizontal: horizontalOffset,
+        vertical: verticalOffset,
+      }
+    );
   }
 }
