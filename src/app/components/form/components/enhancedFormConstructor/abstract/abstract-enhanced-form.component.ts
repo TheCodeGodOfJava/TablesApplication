@@ -32,8 +32,6 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   tileMargin: number = 3;
   multiplier: number = 2;
 
-  rowIndexTileDragDestination: number = 0;
-  colIndexTileDragDestination: number = 0;
   draggedTile!: Tile<T>;
 
   @Input()
@@ -231,11 +229,6 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     this.anchorPointContextMenuActions.colIndex = colIndex;
   }
 
-  setCurrentRowColumnForTileDrag(rowIndex: number, colIndex: number) {
-    this.rowIndexTileDragDestination = rowIndex;
-    this.colIndexTileDragDestination = colIndex;
-  }
-
   public setActionControlValue<V>(value: V, actionType: ACTIONS) {
     const action = this.formContextMenuActions.allActions.find(
       (a) => a.type === actionType
@@ -260,13 +253,9 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     };
   }
 
-  public getTilePositionStyles(
-    rowIndex: number,
-    colIndex: number,
-    tile: Tile<T>
-  ) {
+  public getTilePositionStyles(tile: Tile<T>) {
     return {
-      ...this.getAnchorPointPositionStyles(rowIndex, colIndex),
+      ...this.getAnchorPointPositionStyles(tile.rowIndex, tile.colIndex),
       width: `calc(${-this.tileMargin * 2}px + ${tile.colSpan} * 100% / ${
         this.colQty
       })`,
@@ -274,25 +263,22 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     };
   }
 
-  startFieldDrag() {
+  startDrag() {
     document.body.style.userSelect = 'none';
   }
 
-  endFieldDrag() {
+  endDrag() {
     document.body.style.userSelect = 'auto';
   }
 
-  startTileDrag(currentTile: Tile<T>) {
-    document.body.style.userSelect = 'none';
-    this.draggedTile = currentTile;
+  startTileDrag(tile: Tile<T>) {
+    this.draggedTile = tile;
   }
 
-  endTileDrag() {
+  endTileDrag(rowIndexDrag: number, colIndexDrag: number) {
     document.body.style.userSelect = 'auto';
-    const horizontalOffset =
-      this.colIndexTileDragDestination - this.draggedTile.colIndex;
-    const verticalOffset =
-      this.draggedTile.rowIndex - this.rowIndexTileDragDestination;
+    const horizontalOffset = colIndexDrag - this.draggedTile.colIndex;
+    const verticalOffset = this.draggedTile.rowIndex - rowIndexDrag;
     this.tileOps.editTile(
       this.draggedTile.rowIndex,
       this.draggedTile.colIndex,
@@ -303,6 +289,10 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
         vertical: verticalOffset,
       }
     );
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
   }
 
   getConnectedTiles(): string[] {

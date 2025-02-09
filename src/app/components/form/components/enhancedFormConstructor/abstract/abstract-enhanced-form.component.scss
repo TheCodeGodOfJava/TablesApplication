@@ -64,6 +64,7 @@
 
 ::ng-deep {
   .tile {
+    z-index: 1000;
     position: absolute;
     display: flex;
     mat-form-field {

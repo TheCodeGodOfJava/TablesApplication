@@ -97,6 +97,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         colSpan: colSpan,
         cdkDropListData: [],
       } as Tile<T>);
+      this.drawMatrix = { ...this.drawMatrix };
       this.toastrService.success(
         `A tile ${colSpan}x${rowSpan} succesfully created!`
       );
@@ -139,17 +140,6 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
 
       let isMovable = false;
 
-      this.iterateTileSpace(
-        tile.rowIndex,
-        tile.colIndex,
-        tile.rowSpan,
-        tile.colSpan,
-        (row, col) => {
-          matrix[row][col] = 0;
-          return true;
-        }
-      );
-
       if (move) {
         isMovable = true;
         rowIndexOffset = this.adjustIndex(
@@ -174,22 +164,22 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         colIndexOffset,
         rowSpan,
         colSpan,
-        (row, col) => !matrix[row][col]
+        (row, col) => !matrix[row][col] || matrix[row][col] === tileId
       );
 
       if (!isAvailable || !isMovable) {
+        this.getFailedToModfyTileError('edit');
+      } else {
         this.iterateTileSpace(
           tile.rowIndex,
           tile.colIndex,
           tile.rowSpan,
           tile.colSpan,
           (row, col) => {
-            matrix[row][col] = tileId;
+            matrix[row][col] = 0;
             return true;
           }
         );
-        this.getFailedToModfyTileError('edit');
-      } else {
         this.iterateTileSpace(
           rowIndexOffset,
           colIndexOffset,
@@ -212,6 +202,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     } else {
       this.getTileAbsentErrorToast(rowIndex, colIndex);
     }
+    this.drawMatrix = { ...this.drawMatrix };
   }
 
   clearAllTiles(formGroup: FormGroup, alias: string) {
@@ -220,6 +211,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const matrix = this.drawMatrix.drawMatrix;
     matrix.forEach((row) => row.fill(0));
     this.drawMatrix.tiles.clear();
+    this.drawMatrix = { ...this.drawMatrix };
     this.saveFormTemplate();
     this.toastrService.success(`Form tiles cleared!`);
   }
@@ -253,6 +245,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   private saveResult(resultMessage: string) {
+    this.drawMatrix = { ...this.drawMatrix };
     this.saveFormTemplate();
     this.toastrService.success(resultMessage);
   }
@@ -330,6 +323,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     } else {
       this.getTileAbsentErrorToast(rowIndex, colIndex);
     }
+    this.drawMatrix = { ...this.drawMatrix };
   }
 
   private getTileAbsentErrorToast(rowIndex: number, colIndex: number) {

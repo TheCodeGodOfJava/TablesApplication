@@ -60,19 +60,17 @@
                     tile.colIndex === colIndex && tile.rowIndex === rowIndex
                   "
                   [id]="tile.id.toString()"
-                  cdkDrag
-                  (cdkDragStarted)="startTileDrag(tile)"
-                  (cdkDragEnded)="endTileDrag()"
-                  [cdkDragDisabled]="!enableFormConstructor"
                   [ngClass]="
                     'tile ' + (enableFormConstructor && 'tile-visibility')
                   "
+                  draggable="true"
+                  (dragstart)="startTileDrag(tile)"
                   cdkDropListOrientation="horizontal"
                   cdkDropList
                   [cdkDropListData]="tile.cdkDropListData"
                   (cdkDropListDropped)="tileOps.dropField($event)"
                   [cdkDropListConnectedTo]="getConnectedTiles()"
-                  [ngStyle]="getTilePositionStyles(rowIndex, colIndex, tile)"
+                  [ngStyle]="getTilePositionStyles(tile)"
                 >
                   <ng-container
                     *ngFor="
@@ -94,8 +92,8 @@
                     ></div>
                     <div
                       cdkDrag
-                      (cdkDragStarted)="startFieldDrag()"
-                      (cdkDragEnded)="endFieldDrag()"
+                      (cdkDragStarted)="startDrag()"
+                      (cdkDragEnded)="endDrag()"
                       [cdkDragDisabled]="!enableFormConstructor"
                       class="form-item"
                       [contextMenuTriggerFor]="
@@ -165,7 +163,8 @@
               } @else {
               <div
                 *ngIf="enableFormConstructor"
-                (mouseup)="setCurrentRowColumnForTileDrag(rowIndex, colIndex)"
+                (dragover)="onDragOver($event)"
+                (drop)="endTileDrag(rowIndex, colIndex)"
                 class="anchor-point"
                 [ngStyle]="getAnchorPointPositionStyles(rowIndex, colIndex)"
               >
