@@ -274,16 +274,16 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   }
 
   onTileDrop(yDrag: number, xDrag: number) {
-    const horizontalOffset = xDrag - this.draggedTile.x;
-    const verticalOffset = this.draggedTile.y - yDrag;
+    const hzOffset = xDrag - this.draggedTile.x;
+    const vtOffset = this.draggedTile.y - yDrag;
     this.tileOps.editTile(
       this.draggedTile.y,
       this.draggedTile.x,
       this.draggedTile.ySpan,
       this.draggedTile.xSpan,
       {
-        horizontal: horizontalOffset,
-        vertical: verticalOffset,
+        hz: hzOffset,
+        vt: vtOffset,
       }
     );
     document.body.style.userSelect = 'auto';
@@ -295,5 +295,5 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   getConnectedTiles(): string[] {
     return [...this.mtx.tiles.keys()].map((key) => key.toString());
-  } 
+  }
 }

@@ -107,7 +107,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     x: number,
     ySpan?: number,
     xSpan?: number,
-    move?: { horizontal: number; vertical: number }
+    move?: { hz: number; vt: number }
   ) {
     const matrix = this.mtx.mtx;
     const tileId: number = matrix[y][x];
@@ -120,13 +120,8 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       xSpan = xSpan || tile.xSpan;
 
       if (move) {
-        yOffset = this.adjustIndex(move.vertical, ySpan, matrix.length, y);
-        xOffset = this.adjustIndex(
-          -move.horizontal,
-          xSpan,
-          matrix[0].length,
-          x
-        );
+        yOffset = this.adjustIndex(move.vt, ySpan, matrix.length, y);
+        xOffset = this.adjustIndex(-move.hz, xSpan, matrix[0].length, x);
       }
 
       const isAvailable = this.iterateTileSpace(
@@ -183,10 +178,10 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   duplicateAnchorPointRow(y: number, ySpan: number) {
     const matrix = this.mtx.mtx;
     for (let i = 0; i < ySpan; i++) {
-      if (!this.isRowActionAllowed(matrix, y, 'duplicate')) return;
+      if (!this.isRowActionAllowed(matrix, y, 'add to')) return;
       matrix.splice(y + 1 + i, 0, [...matrix[y]]);
       this.updateTileRowIndices(y + 1, this.mtx.mtx[y].length, 1);
-      this.saveResult('Anchor point row duplicated!');
+      this.saveResult('Anchor point row(s) added!');
     }
   }
 
@@ -209,7 +204,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   private isRowActionAllowed(
     matrix: number[][],
     y: number,
-    action: 'duplicate' | 'delete'
+    action: 'add to' | 'delete'
   ): boolean {
     const currentRow = matrix[y];
 
@@ -288,22 +283,22 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   moveTileUp(y: number, x: number) {
-    const direction = { horizontal: 0, vertical: 1 };
+    const direction = { hz: 0, vt: 1 };
     this.editTile(y, x, undefined, undefined, direction);
   }
 
   moveTileDown(y: number, x: number) {
-    const direction = { horizontal: 0, vertical: -1 };
+    const direction = { hz: 0, vt: -1 };
     this.editTile(y, x, undefined, undefined, direction);
   }
 
   moveTileLeft(y: number, x: number) {
-    const direction = { horizontal: -1, vertical: 0 };
+    const direction = { hz: -1, vt: 0 };
     this.editTile(y, x, undefined, undefined, direction);
   }
 
   moveTileRight(y: number, x: number) {
-    const direction = { horizontal: 1, vertical: 0 };
+    const direction = { hz: 1, vt: 0 };
     this.editTile(y, x, undefined, undefined, direction);
   }
 }
