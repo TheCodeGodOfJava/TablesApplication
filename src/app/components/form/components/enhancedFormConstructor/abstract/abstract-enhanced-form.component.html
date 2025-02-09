@@ -47,7 +47,7 @@
                   *ngIf="tile.x === x && tile.y === y"
                   [id]="tile.id.toString()"
                   [ngClass]="'tile ' + (isFormCtrOn && 'tile-visibility')"
-                  draggable="true"
+                  [draggable]="isTileDraggable"
                   (dragstart)="startTileDrag(tile)"
                   cdkDropListOrientation="horizontal"
                   cdkDropList
@@ -73,6 +73,8 @@
                     ></div>
                     <div
                       cdkDrag
+                      (mouseenter)="isTileDraggable = false"
+                      (mouseleave)="isTileDraggable = true"
                       (cdkDragStarted)="startDrag()"
                       (cdkDragEnded)="endDrag()"
                       [cdkDragDisabled]="!isFormCtrOn"
@@ -231,7 +233,6 @@
       </div>
       <base-select
         *ngIf="apCtxMenuActions.onOffField as onOffField"
-
         [alias]="onOffField.alias"
         [placeholder]="onOffField.placeholder"
         [formGroup]="apCtxMenuActions.apFormGroup"

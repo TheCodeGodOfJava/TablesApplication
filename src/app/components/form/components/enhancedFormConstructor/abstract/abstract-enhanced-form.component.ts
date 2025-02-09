@@ -33,6 +33,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   multiplier: number = 2;
 
   draggedTile!: Tile<T>;
+  isTileDraggable: boolean = true;
 
   @Input()
   detailId!: number;
@@ -294,5 +295,5 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   getConnectedTiles(): string[] {
     return [...this.mtx.tiles.keys()].map((key) => key.toString());
-  }
+  } 
 }

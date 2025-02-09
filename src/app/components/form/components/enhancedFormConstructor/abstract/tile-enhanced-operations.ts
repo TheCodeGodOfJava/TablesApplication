@@ -93,12 +93,11 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     boundary: number,
     originalIndex: number
   ): number {
-    const indexOffset = originalIndex - moveOffset;
-    if (
-      (moveOffset > 0 && indexOffset < 0) ||
-      (moveOffset < 0 && indexOffset + span > boundary)
-    ) {
-      return originalIndex;
+    let indexOffset = originalIndex - moveOffset;
+    if (moveOffset > 0 && indexOffset < 0) {
+      indexOffset = 0;
+    } else if (moveOffset < 0 && indexOffset + span > boundary) {
+      indexOffset = boundary - span;
     }
     return indexOffset;
   }
@@ -113,17 +112,14 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const matrix = this.mtx.mtx;
     const tileId: number = matrix[y][x];
     const tile: Tile<T> | undefined = this.mtx.tiles.get(tileId);
-    let yOffset = 0;
-    let xOffset = 0;
+    let yOffset = y;
+    let xOffset = x;
 
     if (tile) {
       ySpan = ySpan || tile.ySpan;
       xSpan = xSpan || tile.xSpan;
 
-      let isMovable = false;
-
       if (move) {
-        isMovable = true;
         yOffset = this.adjustIndex(move.vertical, ySpan, matrix.length, y);
         xOffset = this.adjustIndex(
           -move.horizontal,
@@ -131,9 +127,6 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
           matrix[0].length,
           x
         );
-        if (yOffset === y && xOffset === x) {
-          isMovable = false;
-        }
       }
 
       const isAvailable = this.iterateTileSpace(
@@ -144,7 +137,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         (row, col) => !matrix[row][col] || matrix[row][col] === tileId
       );
 
-      if (!isAvailable || !isMovable) {
+      if (!isAvailable) {
         this.getFailedToModfyTileError('edit');
       } else {
         this.iterateTileSpace(
@@ -163,11 +156,11 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         });
         tile.ySpan = ySpan;
         tile.xSpan = xSpan;
+        tile.y = yOffset;
+        tile.x = xOffset;
         this.toastrService.success(
           `A tile ${xSpan}x${ySpan} succesfully edited!`
         );
-        tile.y = yOffset;
-        tile.x = xOffset;
         this.saveFormTemplate();
       }
     } else {
