@@ -23,14 +23,14 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
       'deleteAnchorPointRow',
       'saveFormTemplate',
       'getSortedActiveFormElements',
-      'drawMatrix',
+      'mtx',
       'allFields',
       'tiles',
     ]);
 
-    const drawMatrixMock: FormMatrix<any> = {
+    const mtxMock: FormMatrix<any> = {
       tiles: new Map(),
-      drawMatrix: [
+      mtx: [
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
@@ -38,7 +38,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
       ],
     };
 
-    tileOpsMock.drawMatrix = drawMatrixMock;
+    tileOpsMock.mtx = mtxMock;
 
     toastrServiceMock = jasmine.createSpyObj('ToastrService', [
       'success',
@@ -62,7 +62,7 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
 
   it('should call saveFormTemplate when enabling/disabling form elements', () => {
     const alias = 'formFieldsOnOff';
-    const formGroup = component.anchorPointFormGroup;
+    const formGroup = component.apFormGroup;
 
     // Simulate calling enableDisableFormElements
     component.enableDisableFormElements(alias, formGroup);
@@ -81,10 +81,10 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
 
     // Verify that removeTile was called
     expect(tileOpsMock.removeTile).toHaveBeenCalledWith(
-      component.anchorPointFormGroup,
-      component.formFieldsOnOffAlias,
-      component.rowIndex,
-      component.colIndex
+      component.apFormGroup,
+      component.onOffAlias,
+      component.y,
+      component.x
     );
   });
 
@@ -114,10 +114,10 @@ describe('AnchorPointEnhancedContextMenuActions', () => {
 
   it('should show error toastr if no form containers are found', () => {
     const alias = 'formFieldsOnOff';
-    const formGroup = component.anchorPointFormGroup;
+    const formGroup = component.apFormGroup;
 
     // Simulate empty form container (by setting the tiles size to 0)
-    tileOpsMock.drawMatrix.tiles = new Map();
+    tileOpsMock.mtx.tiles = new Map();
 
     // Simulate calling enableDisableFormElements
     component.enableDisableFormElements(alias, formGroup);

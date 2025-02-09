@@ -15,7 +15,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
   constructor(
     public allFields: AppEntity<T>[],
     protected formName: string,
-    public drawMatrix: FormMatrix<T>,
+    public mtx: FormMatrix<T>,
     protected override fb: FormBuilder,
     protected localStorageService: LocalStorageService,
     protected toastrService: ToastrService
@@ -54,7 +54,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
 
   public saveFormTemplate(nameSuffix: string = '', json: string = '') {
     if (this.formName) {
-      json = json || this.serializeFormMatrix(this.drawMatrix);
+      json = json || this.serializeFormMatrix(this.mtx);
       this.localStorageService.setItem(this.formName + nameSuffix, json);
     } else {
       const errorMsg: string =
@@ -67,7 +67,7 @@ export class FormEnhancedOperations<T> extends TableFormOperations<T> {
   private serializeFormMatrix<T>(formMatrix: FormMatrix<T>): string {
     return JSON.stringify({
       tiles: Array.from(formMatrix.tiles.entries()),
-      drawMatrix: formMatrix.drawMatrix,
+      mtx: formMatrix.mtx,
     });
   }
 }

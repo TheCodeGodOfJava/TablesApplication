@@ -1,8 +1,8 @@
 import {
-    ComponentFixture,
-    TestBed,
-    fakeAsync,
-    tick,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
 } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -81,9 +81,9 @@ describe('StudentFromComponent', () => {
     expect(component.formName).toBe('testForm');
   });
 
-  it('should initialize drawMatrix correctly', () => {
-    expect(component.drawMatrix.drawMatrix.length).toBe(component.colQty);
-    expect(component.drawMatrix.drawMatrix[0].length).toBe(component.colQty);
+  it('should initialize mtx correctly', () => {
+    expect(component.mtx.mtx.length).toBe(component.colQty);
+    expect(component.mtx.mtx[0].length).toBe(component.colQty);
   });
 
   it('should save form template when toggling form constructor', fakeAsync(() => {
@@ -91,7 +91,7 @@ describe('StudentFromComponent', () => {
     const saveFormTemplateSpy = spyOn(component, 'saveFormConstructorState');
 
     // Initial state
-    expect(component.enableFormConstructor).toBe(true);
+    expect(component.isFormCtrOn).toBe(true);
 
     // Simulate MatSlideToggleChange event
     const toggleEvent = { checked: false } as MatSlideToggleChange;
@@ -102,7 +102,7 @@ describe('StudentFromComponent', () => {
 
     // Verify that saveFormTemplate was called
     expect(saveFormTemplateSpy).toHaveBeenCalled();
-  }));  
+  }));
 
   it('should call setActionControlValue for updating form control values', () => {
     const currentField: AppEntity<any> = {
@@ -112,9 +112,9 @@ describe('StudentFromComponent', () => {
       disabled: false,
     };
     const mockControl = { setValue: jasmine.createSpy('setValue') };
-    component.formContextMenuActions = {
+    component.formCtxMenuActions = {
       allActions: [{ type: ACTIONS.STATE, appEntity: { alias: 'field1' } }],
-      formContextMenuFormGroup: {
+      formCtxMenuFormGroup: {
         get: jasmine.createSpy().and.returnValue(mockControl),
       },
     } as any;
@@ -125,7 +125,7 @@ describe('StudentFromComponent', () => {
   });
 
   it('should return correct anchor point position styles', () => {
-    const styles = component.getAnchorPointPositionStyles(1, 2);
+    const styles = component.getApPositionStyles(1, 2);
 
     expect(styles.left).toContain('calc(');
     expect(styles.width).toContain('calc(');
@@ -134,13 +134,13 @@ describe('StudentFromComponent', () => {
   it('should return correct tile position styles', () => {
     const tileMock: Tile<any> = {
       id: 1,
-      rowIndex: 0,
-      colIndex: 0,
-      rowSpan: 1,
-      colSpan: 2,
+      y: 0,
+      x: 0,
+      ySpan: 1,
+      xSpan: 2,
       cdkDropListData: [],
     };
-    const styles = component.getTilePositionStyles(1, 2, tileMock);
+    const styles = component.getTilePositionStyles(tileMock);
 
     expect(styles.width).toContain('calc(');
   });

@@ -12,76 +12,63 @@ import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
 export class AnchorPointEnhancedContextMenuActions<
   T extends Id
 > extends ProtoActions {
-  public rowIndex: number = 0;
-  public colIndex: number = 0;
+  public y: number = 0;
+  public x: number = 0;
 
   tileColSpanAlias: string = 'tile-col-span';
   tileRowSpanAlias: string = 'tile-row-span';
-  formFieldsOnOffAlias: string = 'formFieldsOnOff';
+  onOffAlias: string = 'formFieldsOnOff';
 
-  anchorPointFormGroup!: FormGroup;
+  apFormGroup!: FormGroup;
 
-  anchorPointFields!: AppEntity<T>[];
+  apFields!: AppEntity<T>[];
 
-  formFieldsOnOffField: AppEntity<T>;
+  onOffField: AppEntity<T>;
 
   override allActions: AnchorPointAction[] = [
     {
       type: ACTIONS.CREATE,
       icon: 'add_circle_outline',
-      getShowCondition: () =>
-        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       getAction: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
-        const tileColSpan: number = this.anchorPointFormGroup.get(
+        const tileColSpan: number = this.apFormGroup.get(
           this.tileColSpanAlias
         )?.value;
 
-        this.tileOps.createTile(
-          this.rowIndex,
-          this.colIndex,
-          tileRowSpan,
-          tileColSpan
-        );
+        this.tileOps.createTile(this.y, this.x, tileRowSpan, tileColSpan);
       },
       getDescription: () => 'Add new tile',
       color: 'green',
     },
     {
       type: ACTIONS.EDIT,
-      getShowCondition: () =>
-        !!this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      getShowCondition: () => !!this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'edit_note',
       getAction: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
-        const tileColSpan: number = this.anchorPointFormGroup.get(
+        const tileColSpan: number = this.apFormGroup.get(
           this.tileColSpanAlias
         )?.value;
-        this.tileOps.editTile(
-          this.rowIndex,
-          this.colIndex,
-          tileRowSpan,
-          tileColSpan
-        );
+        this.tileOps.editTile(this.y, this.x, tileRowSpan, tileColSpan);
       },
       getDescription: () => 'Edit tile',
       color: 'red',
     },
     {
       type: ACTIONS.REMOVE,
-      getShowCondition: () =>
-        !!this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      getShowCondition: () => !!this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'remove_circle_outline',
       getAction: () => {
         this.tileOps.removeTile(
-          this.anchorPointFormGroup,
-          this.formFieldsOnOffAlias,
-          this.rowIndex,
-          this.colIndex
+          this.apFormGroup,
+          this.onOffAlias,
+          this.y,
+          this.x
         );
       },
       getDescription: () => 'Remove tile',
@@ -89,17 +76,16 @@ export class AnchorPointEnhancedContextMenuActions<
     },
     {
       type: ACTIONS.DUPLICATE,
-      getShowCondition: () =>
-        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'control_point_duplicate',
       getAction: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
-        this.tileOps.duplicateAnchorPointRow(this.rowIndex, tileRowSpan);
+        this.tileOps.duplicateAnchorPointRow(this.y, tileRowSpan);
       },
       getDescription: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
 
@@ -109,17 +95,16 @@ export class AnchorPointEnhancedContextMenuActions<
     },
     {
       type: ACTIONS.DELETE,
-      getShowCondition: () =>
-        !this.tileOps.drawMatrix.drawMatrix[this.rowIndex][this.colIndex],
+      getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'highlight_remove',
       getAction: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
-        this.tileOps.deleteAnchorPointRow(this.rowIndex, tileRowSpan);
+        this.tileOps.deleteAnchorPointRow(this.y, tileRowSpan);
       },
       getDescription: () => {
-        const tileRowSpan: number = this.anchorPointFormGroup.get(
+        const tileRowSpan: number = this.apFormGroup.get(
           this.tileRowSpanAlias
         )?.value;
 
@@ -135,13 +120,13 @@ export class AnchorPointEnhancedContextMenuActions<
     protected toastrService: ToastrService
   ) {
     super();
-    const activeFormElements = [...this.tileOps.drawMatrix.tiles.values()]
+    const activeFormElements = [...this.tileOps.mtx.tiles.values()]
       .map((el) => el.cdkDropListData.map((tile) => tile.placeholder || ''))
       .flat()
       .filter((a) => this.tileOps.allFields.find((f) => f.placeholder === a));
 
-    this.formFieldsOnOffField = {
-      alias: this.formFieldsOnOffAlias,
+    this.onOffField = {
+      alias: this.onOffAlias,
       placeholder: 'Form fields on/off',
       mainControl: {
         type: CONTROL_TYPE.SELECT,
@@ -150,7 +135,7 @@ export class AnchorPointEnhancedContextMenuActions<
       },
       action: this.enableDisableFormElements,
     };
-    this.anchorPointFields = [
+    this.apFields = [
       {
         alias: this.tileColSpanAlias,
         placeholder: 'Col span',
@@ -168,21 +153,21 @@ export class AnchorPointEnhancedContextMenuActions<
         },
       },
     ];
-    this.anchorPointFields.push(this.formFieldsOnOffField);
+    this.apFields.push(this.onOffField);
 
-    this.anchorPointFormGroup = this.fb.group({});
-    this.anchorPointFields.forEach((c) =>
+    this.apFormGroup = this.fb.group({});
+    this.apFields.forEach((c) =>
       this.tileOps.addControlsToFormGroup(
         c.alias,
         c.mainControl,
-        this.anchorPointFormGroup
+        this.apFormGroup
       )
     );
   }
 
   public enableDisableFormElements = (alias: string, formGroup: FormGroup) => {
     const formControl = formGroup.get(alias);
-    const matrix = this.tileOps.drawMatrix;
+    const matrix = this.tileOps.mtx;
     if (matrix.tiles.size) {
       if (formControl && formControl.value.length) {
         const activePlaceHolders = formControl.value;
@@ -207,13 +192,13 @@ export class AnchorPointEnhancedContextMenuActions<
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    const matrix = this.tileOps.drawMatrix;
+    const matrix = this.tileOps.mtx;
     if (matrix.tiles.size) {
       const addedPlaceHolders = activePlaceHolders.filter(
         (item) => !activeFormElements.includes(item)
       );
       addedPlaceHolders.forEach((placeholder: string) => {
-        const tileId: number = matrix.drawMatrix[this.rowIndex][this.colIndex];
+        const tileId: number = matrix.mtx[this.y][this.x];
         if (tileId) {
           const appForm = this.tileOps.allFields.find(
             (a) => a.placeholder === placeholder
@@ -229,7 +214,7 @@ export class AnchorPointEnhancedContextMenuActions<
     activePlaceHolders: string[],
     activeFormElements: string[]
   ): void {
-    const matrix = this.tileOps.drawMatrix;
+    const matrix = this.tileOps.mtx;
     if (matrix.tiles.size) {
       const removedPlaceHolders = activeFormElements.filter(
         (item) => !activePlaceHolders.includes(item)

@@ -10,7 +10,7 @@ import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
 import { AnchorPointEnhancedContextMenuActions } from './anchorPointEnhancedContextMenuActions';
 
 export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
-  currentFormElementForContextMenu!: AppEntity<T>;
+  currentFormElementForCtxMenu!: AppEntity<T>;
 
   override allActions: AppAction<AppEntity<T>>[] = [
     {
@@ -27,9 +27,9 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: boolean = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.disabled = !value;
+          this.currentFormElementForCtxMenu.disabled = !value;
           const mainGroupFormControl = this.mainFormGroup.get(
-            this.currentFormElementForContextMenu.alias
+            this.currentFormElementForCtxMenu.alias
           );
           value
             ? mainGroupFormControl?.enable()
@@ -53,7 +53,7 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: string = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.color = value;
+          this.currentFormElementForCtxMenu.color = value;
           this.tileOps.saveFormTemplate();
         },
       },
@@ -72,15 +72,14 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: string = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.placeholder = value;
+          this.currentFormElementForCtxMenu.placeholder = value;
 
-          const fc =
-            this.anchorPointContextMenuActions.anchorPointFormGroup.get(
-              this.anchorPointContextMenuActions.formFieldsOnOffAlias
-            );
+          const fc = this.apCtxMenuActions.apFormGroup.get(
+            this.apCtxMenuActions.onOffAlias
+          );
 
           let selectedFormElements: string[] = fc?.value;
-          const placeHolder = this.currentFormElementForContextMenu.placeholder;
+          const placeHolder = this.currentFormElementForCtxMenu.placeholder;
           selectedFormElements = selectedFormElements.filter(
             (item) => item !== placeHolder
           );
@@ -94,17 +93,17 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
     },
   ];
 
-  formContextMenuFormGroup!: FormGroup;
+  formCtxMenuFormGroup!: FormGroup;
 
   constructor(
     protected fb: FormBuilder,
     protected mainFormGroup: FormGroup,
     protected tileOps: TileEnhancedOperations<T>,
-    protected anchorPointContextMenuActions: AnchorPointEnhancedContextMenuActions<T>,
+    protected apCtxMenuActions: AnchorPointEnhancedContextMenuActions<T>,
     protected toastrService: ToastrService
   ) {
     super();
-    this.formContextMenuFormGroup = this.fb.group({});
+    this.formCtxMenuFormGroup = this.fb.group({});
     this.allActions
       .map((a) => a.appEntity)
       .forEach(
@@ -113,7 +112,7 @@ export class FormEnhancedContextMenuActions<T extends Id> extends ProtoActions {
           tileOps.addControlsToFormGroup(
             c.alias,
             c.mainControl,
-            this.formContextMenuFormGroup
+            this.formCtxMenuFormGroup
           )
       );
   }

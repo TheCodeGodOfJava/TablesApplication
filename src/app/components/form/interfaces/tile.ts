@@ -2,9 +2,9 @@ import { AppEntity } from '../../data-tables/interfaces/appEntity';
 
 export interface Tile<T> {
   id: number;
-  rowIndex: number;
-  colIndex: number;
-  rowSpan: number;
-  colSpan: number;
+  y: number;
+  x: number;
+  ySpan: number;
+  xSpan: number;
   cdkDropListData: AppEntity<T>[];
 }

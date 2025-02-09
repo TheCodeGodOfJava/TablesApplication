@@ -14,39 +14,32 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     public override allFields: AppEntity<T>[],
     protected override formName: string,
     public columnQuantity: number,
-    public override drawMatrix: FormMatrix<T>,
+    public override mtx: FormMatrix<T>,
     protected override fb: FormBuilder,
     protected override localStorageService: LocalStorageService,
     protected override toastrService: ToastrService
   ) {
-    super(
-      allFields,
-      formName,
-      drawMatrix,
-      fb,
-      localStorageService,
-      toastrService
-    );
+    super(allFields, formName, mtx, fb, localStorageService, toastrService);
   }
 
   private iterateTileSpace(
-    rowIndex: number,
-    colIndex: number,
-    rowSpan: number,
-    colSpan: number,
-    callback: (rowIndex: number, colIndex: number) => boolean
+    y: number,
+    x: number,
+    ySpan: number,
+    xSpan: number,
+    callback: (y: number, x: number) => boolean
   ) {
     let checkColIndex: number;
     let checkRowIndex: number;
-    const matrix = this.drawMatrix.drawMatrix;
-    if (rowSpan <= 0 || colSpan <= 0) {
+    const matrix = this.mtx.mtx;
+    if (ySpan <= 0 || xSpan <= 0) {
       return false;
     }
 
-    for (let i = 0; i < rowSpan; i++) {
-      checkRowIndex = rowIndex + i;
-      for (let j = 0; j < colSpan; j++) {
-        checkColIndex = colIndex + j;
+    for (let i = 0; i < ySpan; i++) {
+      checkRowIndex = y + i;
+      for (let j = 0; j < xSpan; j++) {
+        checkColIndex = x + j;
         if (
           checkColIndex >= matrix[0]?.length ||
           0 ||
@@ -59,47 +52,36 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     return true;
   }
 
-  createTile(
-    rowIndex: number,
-    colIndex: number,
-    rowSpan: number,
-    colSpan: number
-  ) {
-    const matrix = this.drawMatrix.drawMatrix;
+  createTile(y: number, x: number, ySpan: number, xSpan: number) {
+    const matrix = this.mtx.mtx;
     const tileId: number = Date.now();
 
     const isAvailable = this.iterateTileSpace(
-      rowIndex,
-      colIndex,
-      rowSpan,
-      colSpan,
+      y,
+      x,
+      ySpan,
+      xSpan,
       (row, col) => !matrix[row][col]
     );
     if (!isAvailable) {
       this.getFailedToModfyTileError('create');
     } else {
-      this.iterateTileSpace(
-        rowIndex,
-        colIndex,
-        rowSpan,
-        colSpan,
-        (row, col) => {
-          matrix[row][col] = tileId;
-          return true;
-        }
-      );
+      this.iterateTileSpace(y, x, ySpan, xSpan, (row, col) => {
+        matrix[row][col] = tileId;
+        return true;
+      });
 
-      this.drawMatrix.tiles.set(tileId, {
+      this.mtx.tiles.set(tileId, {
         id: tileId,
-        rowIndex: rowIndex,
-        colIndex: colIndex,
-        rowSpan: rowSpan,
-        colSpan: colSpan,
+        y: y,
+        x: x,
+        ySpan: ySpan,
+        xSpan: xSpan,
         cdkDropListData: [],
       } as Tile<T>);
-      this.drawMatrix = { ...this.drawMatrix };
+      this.mtx = { ...this.mtx };
       this.toastrService.success(
-        `A tile ${colSpan}x${rowSpan} succesfully created!`
+        `A tile ${xSpan}x${ySpan} succesfully created!`
       );
       this.saveFormTemplate();
     }
@@ -122,48 +104,43 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
   }
 
   editTile(
-    rowIndex: number,
-    colIndex: number,
-    rowSpan?: number,
-    colSpan?: number,
+    y: number,
+    x: number,
+    ySpan?: number,
+    xSpan?: number,
     move?: { horizontal: number; vertical: number }
   ) {
-    const matrix = this.drawMatrix.drawMatrix;
-    const tileId: number = matrix[rowIndex][colIndex];
-    const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
-    let rowIndexOffset = 0;
-    let colIndexOffset = 0;
+    const matrix = this.mtx.mtx;
+    const tileId: number = matrix[y][x];
+    const tile: Tile<T> | undefined = this.mtx.tiles.get(tileId);
+    let yOffset = 0;
+    let xOffset = 0;
 
     if (tile) {
-      rowSpan = rowSpan || tile.rowSpan;
-      colSpan = colSpan || tile.colSpan;
+      ySpan = ySpan || tile.ySpan;
+      xSpan = xSpan || tile.xSpan;
 
       let isMovable = false;
 
       if (move) {
         isMovable = true;
-        rowIndexOffset = this.adjustIndex(
-          move.vertical,
-          rowSpan,
-          matrix.length,
-          rowIndex
-        );
-        colIndexOffset = this.adjustIndex(
+        yOffset = this.adjustIndex(move.vertical, ySpan, matrix.length, y);
+        xOffset = this.adjustIndex(
           -move.horizontal,
-          colSpan,
+          xSpan,
           matrix[0].length,
-          colIndex
+          x
         );
-        if (rowIndexOffset === rowIndex && colIndexOffset === colIndex) {
+        if (yOffset === y && xOffset === x) {
           isMovable = false;
         }
       }
 
       const isAvailable = this.iterateTileSpace(
-        rowIndexOffset,
-        colIndexOffset,
-        rowSpan,
-        colSpan,
+        yOffset,
+        xOffset,
+        ySpan,
+        xSpan,
         (row, col) => !matrix[row][col] || matrix[row][col] === tileId
       );
 
@@ -171,91 +148,77 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
         this.getFailedToModfyTileError('edit');
       } else {
         this.iterateTileSpace(
-          tile.rowIndex,
-          tile.colIndex,
-          tile.rowSpan,
-          tile.colSpan,
+          tile.y,
+          tile.x,
+          tile.ySpan,
+          tile.xSpan,
           (row, col) => {
             matrix[row][col] = 0;
             return true;
           }
         );
-        this.iterateTileSpace(
-          rowIndexOffset,
-          colIndexOffset,
-          rowSpan,
-          colSpan,
-          (row, col) => {
-            matrix[row][col] = tileId;
-            return true;
-          }
-        );
-        tile.rowSpan = rowSpan;
-        tile.colSpan = colSpan;
+        this.iterateTileSpace(yOffset, xOffset, ySpan, xSpan, (row, col) => {
+          matrix[row][col] = tileId;
+          return true;
+        });
+        tile.ySpan = ySpan;
+        tile.xSpan = xSpan;
         this.toastrService.success(
-          `A tile ${colSpan}x${rowSpan} succesfully edited!`
+          `A tile ${xSpan}x${ySpan} succesfully edited!`
         );
-        tile.rowIndex = rowIndexOffset;
-        tile.colIndex = colIndexOffset;
+        tile.y = yOffset;
+        tile.x = xOffset;
         this.saveFormTemplate();
       }
     } else {
-      this.getTileAbsentErrorToast(rowIndex, colIndex);
+      this.getTileAbsentErrorToast(y, x);
     }
-    this.drawMatrix = { ...this.drawMatrix };
+    this.mtx = { ...this.mtx };
   }
 
   clearAllTiles(formGroup: FormGroup, alias: string) {
     const formControl = formGroup.get(alias);
     formControl?.setValue([]);
-    const matrix = this.drawMatrix.drawMatrix;
+    const matrix = this.mtx.mtx;
     matrix.forEach((row) => row.fill(0));
-    this.drawMatrix.tiles.clear();
-    this.drawMatrix = { ...this.drawMatrix };
+    this.mtx.tiles.clear();
+    this.mtx = { ...this.mtx };
     this.saveFormTemplate();
     this.toastrService.success(`Form tiles cleared!`);
   }
 
-  duplicateAnchorPointRow(rowIndex: number, rowSpan: number) {
-    const matrix = this.drawMatrix.drawMatrix;
-    for (let i = 0; i < rowSpan; i++) {
-      if (!this.isRowActionAllowed(matrix, rowIndex, 'duplicate')) return;
-      matrix.splice(rowIndex + 1 + i, 0, [...matrix[rowIndex]]);
-      this.updateTileRowIndices(
-        rowIndex + 1,
-        this.drawMatrix.drawMatrix[rowIndex].length,
-        1
-      );
+  duplicateAnchorPointRow(y: number, ySpan: number) {
+    const matrix = this.mtx.mtx;
+    for (let i = 0; i < ySpan; i++) {
+      if (!this.isRowActionAllowed(matrix, y, 'duplicate')) return;
+      matrix.splice(y + 1 + i, 0, [...matrix[y]]);
+      this.updateTileRowIndices(y + 1, this.mtx.mtx[y].length, 1);
       this.saveResult('Anchor point row duplicated!');
     }
   }
 
-  deleteAnchorPointRow(rowIndex: number, rowSpan: number) {
-    const matrix = this.drawMatrix.drawMatrix;
-    for (let i = 0; i < rowSpan; i++) {
-      if (!this.isRowActionAllowed(matrix, rowIndex, 'delete')) return;
-      this.drawMatrix.drawMatrix.splice(rowIndex, 1);
-      this.updateTileRowIndices(
-        rowIndex,
-        this.drawMatrix.drawMatrix[rowIndex]?.length || 0,
-        -1
-      );
+  deleteAnchorPointRow(y: number, ySpan: number) {
+    const matrix = this.mtx.mtx;
+    for (let i = 0; i < ySpan; i++) {
+      if (!this.isRowActionAllowed(matrix, y, 'delete')) return;
+      this.mtx.mtx.splice(y, 1);
+      this.updateTileRowIndices(y, this.mtx.mtx[y]?.length || 0, -1);
       this.saveResult('Current anchor point row deleted!');
     }
   }
 
   private saveResult(resultMessage: string) {
-    this.drawMatrix = { ...this.drawMatrix };
+    this.mtx = { ...this.mtx };
     this.saveFormTemplate();
     this.toastrService.success(resultMessage);
   }
 
   private isRowActionAllowed(
     matrix: number[][],
-    rowIndex: number,
+    y: number,
     action: 'duplicate' | 'delete'
   ): boolean {
-    const currentRow = matrix[rowIndex];
+    const currentRow = matrix[y];
 
     if (action === 'delete' && matrix.length === 1) {
       this.toastrService.error('You can’t delete the last row!');
@@ -275,7 +238,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     rowLength: number,
     delta: number
   ) {
-    const matrix = this.drawMatrix.drawMatrix;
+    const matrix = this.mtx.mtx;
     const tilesToUpdate = new Set<number>();
 
     for (let i = startIndex; i < matrix.length; i++) {
@@ -286,20 +249,15 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     }
 
     tilesToUpdate.forEach((tileId) => {
-      const tile = this.drawMatrix.tiles.get(tileId);
-      if (tile) tile.rowIndex += delta;
+      const tile = this.mtx.tiles.get(tileId);
+      if (tile) tile.y += delta;
     });
   }
 
-  removeTile(
-    formGroup: FormGroup,
-    alias: string,
-    rowIndex: number,
-    colIndex: number
-  ) {
-    const matrix = this.drawMatrix.drawMatrix;
-    const tileId: number = matrix[rowIndex][colIndex];
-    const tile: Tile<T> | undefined = this.drawMatrix.tiles.get(tileId);
+  removeTile(formGroup: FormGroup, alias: string, y: number, x: number) {
+    const matrix = this.mtx.mtx;
+    const tileId: number = matrix[y][x];
+    const tile: Tile<T> | undefined = this.mtx.tiles.get(tileId);
     if (tile) {
       const formControl = formGroup.get(alias);
       const tileValues = tile.cdkDropListData.map(
@@ -310,25 +268,25 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       );
       formControl?.setValue(restValues);
       this.iterateTileSpace(
-        tile.rowIndex,
-        tile.colIndex,
-        tile.rowSpan,
-        tile.colSpan,
+        tile.y,
+        tile.x,
+        tile.ySpan,
+        tile.xSpan,
         (row, col) => {
           matrix[row][col] = 0;
           return true;
         }
       );
-      this.drawMatrix.tiles.delete(tileId);
+      this.mtx.tiles.delete(tileId);
     } else {
-      this.getTileAbsentErrorToast(rowIndex, colIndex);
+      this.getTileAbsentErrorToast(y, x);
     }
-    this.drawMatrix = { ...this.drawMatrix };
+    this.mtx = { ...this.mtx };
   }
 
-  private getTileAbsentErrorToast(rowIndex: number, colIndex: number) {
+  private getTileAbsentErrorToast(y: number, x: number) {
     this.toastrService.error(
-      `No tile exists on position row = ${rowIndex} column = ${colIndex}!`
+      `No tile exists on position row = ${y} column = ${x}!`
     );
   }
 
@@ -336,23 +294,23 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     this.toastrService.error(`Failed to ${action} tile!`);
   }
 
-  moveTileUp(rowIndex: number, colIndex: number) {
+  moveTileUp(y: number, x: number) {
     const direction = { horizontal: 0, vertical: 1 };
-    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+    this.editTile(y, x, undefined, undefined, direction);
   }
 
-  moveTileDown(rowIndex: number, colIndex: number) {
+  moveTileDown(y: number, x: number) {
     const direction = { horizontal: 0, vertical: -1 };
-    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+    this.editTile(y, x, undefined, undefined, direction);
   }
 
-  moveTileLeft(rowIndex: number, colIndex: number) {
+  moveTileLeft(y: number, x: number) {
     const direction = { horizontal: -1, vertical: 0 };
-    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+    this.editTile(y, x, undefined, undefined, direction);
   }
 
-  moveTileRight(rowIndex: number, colIndex: number) {
+  moveTileRight(y: number, x: number) {
     const direction = { horizontal: 1, vertical: 0 };
-    this.editTile(rowIndex, colIndex, undefined, undefined, direction);
+    this.editTile(y, x, undefined, undefined, direction);
   }
 }

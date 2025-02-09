@@ -47,7 +47,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   formGroup!: FormGroup;
 
-  enableFormConstructor: boolean = true;
+  isFormCtrOn: boolean = true;
   protected enableFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
@@ -65,17 +65,15 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   rowQty: number = this.colQty;
   rowHeight: number = 85;
 
-  public drawMatrix: FormMatrix<T> = {
+  public mtx: FormMatrix<T> = {
     tiles: new Map<number, Tile<T>>(),
-    drawMatrix: Array.from({ length: this.colQty }, () =>
-      Array(this.colQty).fill(0)
-    ),
+    mtx: Array.from({ length: this.colQty }, () => Array(this.colQty).fill(0)),
   };
 
   formActions!: FormEnhancedActions<T>;
 
-  formContextMenuActions!: FormEnhancedContextMenuActions<T>;
-  anchorPointContextMenuActions!: AnchorPointEnhancedContextMenuActions<T>;
+  formCtxMenuActions!: FormEnhancedContextMenuActions<T>;
+  apCtxMenuActions!: AnchorPointEnhancedContextMenuActions<T>;
 
   @Input()
   set formName(name: string) {
@@ -97,7 +95,7 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
     return {
       tiles,
-      drawMatrix: parsed.drawMatrix,
+      mtx: parsed.mtx,
     };
   }
 
@@ -110,17 +108,17 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     );
     const matrixStr = this.localStorageService.getItem(this.formName);
     if (matrixStr) {
-      this.drawMatrix = this.deserializeFormMatrix(matrixStr);
+      this.mtx = this.deserializeFormMatrix(matrixStr);
     }
 
     const enableFormStr = this.localStorageService.getItem(
       this.formName + this.enableFormStringSuffix
     );
     if (enableFormStr) {
-      this.enableFormConstructor = JSON.parse(enableFormStr);
+      this.isFormCtrOn = JSON.parse(enableFormStr);
     }
 
-    this.drawMatrix.tiles.forEach((tile) => {
+    this.mtx.tiles.forEach((tile) => {
       const updatedData = tile.cdkDropListData
         .map((source) => {
           const target: AppEntity<T> | undefined = this.allFields.find(
@@ -140,23 +138,22 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
       this.allFields,
       this.formName,
       this.colQty,
-      this.drawMatrix,
+      this.mtx,
       this.fb,
       this.localStorageService,
       this.toastrService
     );
-    this.anchorPointContextMenuActions =
-      new AnchorPointEnhancedContextMenuActions(
-        this.fb,
-        this.tileOps,
-        this.toastrService
-      );
+    this.apCtxMenuActions = new AnchorPointEnhancedContextMenuActions(
+      this.fb,
+      this.tileOps,
+      this.toastrService
+    );
 
-    this.formContextMenuActions = new FormEnhancedContextMenuActions(
+    this.formCtxMenuActions = new FormEnhancedContextMenuActions(
       this.fb,
       this.formGroup,
       this.tileOps,
-      this.anchorPointContextMenuActions,
+      this.apCtxMenuActions,
       this.toastrService
     );
 
@@ -205,17 +202,17 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   saveFormConstructorState(): void {
     this.tileOps.saveFormTemplate(
       this.enableFormStringSuffix,
-      JSON.stringify(this.enableFormConstructor)
+      JSON.stringify(this.isFormCtrOn)
     );
   }
 
   toggleFormConstructor(event: MatSlideToggleChange) {
-    this.enableFormConstructor = event.checked;
+    this.isFormCtrOn = event.checked;
     this.saveFormConstructorState();
   }
 
-  setCurrentFormElementForContextMenu(current: AppEntity<T>) {
-    this.formContextMenuActions.currentFormElementForContextMenu = current;
+  setActiveFormFieldCtxMenu(current: AppEntity<T>) {
+    this.formCtxMenuActions.currentFormElementForCtxMenu = current;
     this.setActionControlValue<boolean>(!current.disabled, ACTIONS.STATE);
     this.setActionControlValue<string>(current.color || '', ACTIONS.COLOR);
     this.setActionControlValue<string>(
@@ -224,30 +221,29 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
     );
   }
 
-  setCurrentRowColumnForContextMenu(rowIndex: number, colIndex: number) {
-    this.anchorPointContextMenuActions.rowIndex = rowIndex;
-    this.anchorPointContextMenuActions.colIndex = colIndex;
+  setActiveCoordinatesCtxMenu(y: number, x: number) {
+    this.apCtxMenuActions.y = y;
+    this.apCtxMenuActions.x = x;
   }
 
   public setActionControlValue<V>(value: V, actionType: ACTIONS) {
-    const action = this.formContextMenuActions.allActions.find(
+    const action = this.formCtxMenuActions.allActions.find(
       (a) => a.type === actionType
     );
-    const control = this.formContextMenuActions.formContextMenuFormGroup.get(
+    const control = this.formCtxMenuActions.formCtxMenuFormGroup.get(
       action?.appEntity?.alias || ''
     );
     control?.setValue(value);
   }
 
-  public showTileExistsCondition(): boolean {
-    const a = this.anchorPointContextMenuActions;
-    return !!this.drawMatrix.drawMatrix[a.rowIndex][a.colIndex];
+  public getTileExistsCondition(): boolean {
+    return !!this.mtx.mtx[this.apCtxMenuActions.y][this.apCtxMenuActions.x];
   }
 
-  public getAnchorPointPositionStyles(rowIndex: number, colIndex: number) {
+  public getApPositionStyles(y: number, x: number) {
     return {
-      top: `${rowIndex * this.rowHeight + 3}px`,
-      left: `calc(${this.tileMargin}px + 100% * ${colIndex} / ${this.colQty})`,
+      top: `${y * this.rowHeight + 3}px`,
+      left: `calc(${this.tileMargin}px + 100% * ${x} / ${this.colQty})`,
       width: `calc(${-this.tileMargin * 2}px + 100% / ${this.colQty})`,
       height: `${this.rowHeight - this.tileMargin * 2}px`,
     };
@@ -255,11 +251,11 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
 
   public getTilePositionStyles(tile: Tile<T>) {
     return {
-      ...this.getAnchorPointPositionStyles(tile.rowIndex, tile.colIndex),
-      width: `calc(${-this.tileMargin * 2}px + ${tile.colSpan} * 100% / ${
+      ...this.getApPositionStyles(tile.y, tile.x),
+      width: `calc(${-this.tileMargin * 2}px + ${tile.xSpan} * 100% / ${
         this.colQty
       })`,
-      height: `${this.rowHeight * tile.rowSpan - this.tileMargin * 2}px`,
+      height: `${this.rowHeight * tile.ySpan - this.tileMargin * 2}px`,
     };
   }
 
@@ -272,30 +268,31 @@ export abstract class AbstractEnhancedFormComponent<T extends Id>
   }
 
   startTileDrag(tile: Tile<T>) {
+    document.body.style.userSelect = 'none';
     this.draggedTile = tile;
   }
 
-  endTileDrag(rowIndexDrag: number, colIndexDrag: number) {
-    document.body.style.userSelect = 'auto';
-    const horizontalOffset = colIndexDrag - this.draggedTile.colIndex;
-    const verticalOffset = this.draggedTile.rowIndex - rowIndexDrag;
+  onTileDrop(yDrag: number, xDrag: number) {
+    const horizontalOffset = xDrag - this.draggedTile.x;
+    const verticalOffset = this.draggedTile.y - yDrag;
     this.tileOps.editTile(
-      this.draggedTile.rowIndex,
-      this.draggedTile.colIndex,
-      this.draggedTile.rowSpan,
-      this.draggedTile.colSpan,
+      this.draggedTile.y,
+      this.draggedTile.x,
+      this.draggedTile.ySpan,
+      this.draggedTile.xSpan,
       {
         horizontal: horizontalOffset,
         vertical: verticalOffset,
       }
     );
+    document.body.style.userSelect = 'auto';
   }
 
-  onDragOver(event: DragEvent) {
+  onTileDragOver(event: DragEvent) {
     event.preventDefault();
   }
 
   getConnectedTiles(): string[] {
-    return [...this.drawMatrix.tiles.keys()].map((key) => key.toString());
+    return [...this.mtx.tiles.keys()].map((key) => key.toString());
   }
 }

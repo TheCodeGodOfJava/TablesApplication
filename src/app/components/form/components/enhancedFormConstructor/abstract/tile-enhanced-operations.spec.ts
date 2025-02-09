@@ -33,9 +33,9 @@ describe('TileEnhancedOperations', () => {
     });
 
     const allFieldsMock: AppEntity<any>[] = [];
-    const drawMatrixMock: FormMatrix<any> = {
+    const mtxMock: FormMatrix<any> = {
       tiles: new Map<number, Tile<any>>(),
-      drawMatrix: Array.from({ length: colQty }, () => Array(colQty).fill(0)),
+      mtx: Array.from({ length: colQty }, () => Array(colQty).fill(0)),
     };
     const formName = 'testForm';
 
@@ -43,7 +43,7 @@ describe('TileEnhancedOperations', () => {
       allFieldsMock,
       formName,
       4,
-      drawMatrixMock,
+      mtxMock,
       formBuilder,
       localStorageServiceMock,
       toastrServiceMock
@@ -52,33 +52,33 @@ describe('TileEnhancedOperations', () => {
 
   it('should create a tile when space is available', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = 1;
-    const colIndex = 1;
-    const rowSpan = 1;
-    const colSpan = 1;
+    const matrix = tileOps.mtx.mtx;
+    const y = 1;
+    const x = 1;
+    const ySpan = 1;
+    const xSpan = 1;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Assert
     expect(toastrServiceMock.success).toHaveBeenCalledWith(
       'A tile 1x1 succesfully created!'
     );
-    expect(tileOps.drawMatrix.drawMatrix[0][0]).toBeDefined(); // Check if the tile was placed in the matrix
-    expect(tileOps.drawMatrix.tiles.size).toBeGreaterThan(0); // Ensure tiles are being added to the map
+    expect(tileOps.mtx.mtx[0][0]).toBeDefined(); // Check if the tile was placed in the matrix
+    expect(tileOps.mtx.tiles.size).toBeGreaterThan(0); // Ensure tiles are being added to the map
   });
 
   it('should not create a tile when no space is available horizontally', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = 0;
-    const colIndex = matrix[0].length - 1;
-    const rowSpan = 1;
-    const colSpan = 2;
+    const matrix = tileOps.mtx.mtx;
+    const y = 0;
+    const x = matrix[0].length - 1;
+    const ySpan = 1;
+    const xSpan = 2;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
@@ -88,19 +88,19 @@ describe('TileEnhancedOperations', () => {
 
   it('should not create a tile when another tile blocks space horisontally', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
+    const matrix = tileOps.mtx.mtx;
 
     for (let i = 0; i < matrix.length - 1; i++) {
       matrix[i][matrix[0].length - 1] = 1;
     }
 
-    const rowIndex = 0;
-    const colIndex = matrix[0].length - 2;
-    const rowSpan = 1;
-    const colSpan = 2;
+    const y = 0;
+    const x = matrix[0].length - 2;
+    const ySpan = 1;
+    const xSpan = 2;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
@@ -113,19 +113,19 @@ describe('TileEnhancedOperations', () => {
 
   it('should not create a tile when another tile blocks space vertically', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
+    const matrix = tileOps.mtx.mtx;
 
     for (let i = 0; i < matrix[0].length - 1; i++) {
       matrix[matrix.length - 1][i] = 1;
     }
 
-    const rowIndex = matrix.length - 2;
-    const colIndex = 0;
-    const rowSpan = 2;
-    const colSpan = 1;
+    const y = matrix.length - 2;
+    const x = 0;
+    const ySpan = 2;
+    const xSpan = 1;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
@@ -138,14 +138,14 @@ describe('TileEnhancedOperations', () => {
 
   it('should not create a tile when no space is available vertically', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = matrix.length - 1;
-    const colIndex = 0;
-    const rowSpan = 2;
-    const colSpan = 1;
+    const matrix = tileOps.mtx.mtx;
+    const y = matrix.length - 1;
+    const x = 0;
+    const ySpan = 2;
+    const xSpan = 1;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
@@ -155,20 +155,20 @@ describe('TileEnhancedOperations', () => {
 
   it('should edit a tile successfully', () => {
     // Arrange
-    const rowIndex = 0;
-    const colIndex = 0;
-    const rowSpan = 2;
-    const colSpan = 2;
+    const y = 0;
+    const x = 0;
+    const ySpan = 2;
+    const xSpan = 2;
 
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
 
     // Act
-    tileOps.editTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.editTile(y, x, ySpan, xSpan);
 
     // Assert
-    const tileId = tileOps.drawMatrix.drawMatrix[0][0];
+    const tileId = tileOps.mtx.mtx[0][0];
     expect(!!tileId).toBe(true); // Ensure the tile is moved
-    expect(tileOps.drawMatrix.tiles.get(tileId)?.rowSpan).toBe(2);
+    expect(tileOps.mtx.tiles.get(tileId)?.ySpan).toBe(2);
   });
 
   it('should clear all tiles', () => {
@@ -193,22 +193,20 @@ describe('TileEnhancedOperations', () => {
     expect(toastrServiceMock.success).toHaveBeenCalledWith(
       'Form tiles cleared!'
     );
-    const result: boolean = tileOps.drawMatrix.drawMatrix
-      .flat()
-      .some((num) => num !== 0);
+    const result: boolean = tileOps.mtx.mtx.flat().some((num) => num !== 0);
     expect(result).toBe(false);
-    expect(tileOps.drawMatrix.tiles.size).toBe(0); // Ensure tiles are cleared
+    expect(tileOps.mtx.tiles.size).toBe(0); // Ensure tiles are cleared
   });
 
   it('should handle error when trying to remove a tile that does not exist', () => {
     // Arrange
     const formGroupMock = formBuilder.group({});
     const alias = 'alias';
-    const rowIndex = 0;
-    const colIndex = 0;
+    const y = 0;
+    const x = 0;
 
     // Act
-    tileOps.removeTile(formGroupMock, alias, rowIndex, colIndex);
+    tileOps.removeTile(formGroupMock, alias, y, x);
 
     // Assert
     expect(toastrServiceMock.error).toHaveBeenCalledWith(
@@ -218,113 +216,113 @@ describe('TileEnhancedOperations', () => {
 
   it('should bring tiles down under the row we added', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = matrix.length - 1;
-    const colIndex = 0;
-    const rowSpan = 1;
-    const colSpan = matrix.length;
+    const matrix = tileOps.mtx.mtx;
+    const y = matrix.length - 1;
+    const x = 0;
+    const ySpan = 1;
+    const xSpan = matrix.length;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
     tileOps.duplicateAnchorPointRow(0, 1);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
-    expect(tile?.rowIndex).toBe(rowIndex + 1);
+    expect(tile?.y).toBe(y + 1);
   });
 
   it('should bring tiles up under the row we deleted', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = matrix.length - 1;
-    const colIndex = 0;
-    const rowSpan = 1;
-    const colSpan = matrix.length;
+    const matrix = tileOps.mtx.mtx;
+    const y = matrix.length - 1;
+    const x = 0;
+    const ySpan = 1;
+    const xSpan = matrix.length;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
+    tileOps.createTile(y, x, ySpan, xSpan);
     tileOps.deleteAnchorPointRow(0, 1);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
-    expect(tile?.rowIndex).toBe(rowIndex - 1);
+    expect(tile?.y).toBe(y - 1);
   });
 
   it('should move tile up', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = matrix.length - 1;
-    const colIndex = 0;
-    const rowSpan = 1;
-    const colSpan = matrix.length;
+    const matrix = tileOps.mtx.mtx;
+    const y = matrix.length - 1;
+    const x = 0;
+    const ySpan = 1;
+    const xSpan = matrix.length;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.moveTileUp(rowIndex, colIndex);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    tileOps.createTile(y, x, ySpan, xSpan);
+    tileOps.moveTileUp(y, x);
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
     expect(matrix[matrix.length - 1].every((num) => num === 0)).toBe(true);
     expect(matrix[matrix.length - 2].every((num) => num === tile?.id)).toBe(
       true
     );
-    expect(tile?.rowIndex).toBe(matrix.length - 2);
+    expect(tile?.y).toBe(matrix.length - 2);
   });
 
   it('should move tile down', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = 0;
-    const colIndex = 0;
-    const rowSpan = 1;
-    const colSpan = matrix.length;
+    const matrix = tileOps.mtx.mtx;
+    const y = 0;
+    const x = 0;
+    const ySpan = 1;
+    const xSpan = matrix.length;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.moveTileDown(rowIndex, colIndex);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    tileOps.createTile(y, x, ySpan, xSpan);
+    tileOps.moveTileDown(y, x);
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
     expect(matrix[0].every((num) => num === 0)).toBe(true);
     expect(matrix[1].every((num) => num === tile?.id)).toBe(true);
-    expect(tile?.rowIndex).toBe(1);
+    expect(tile?.y).toBe(1);
   });
 
   it('should move tile left', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = 0;
-    const colIndex = 1;
-    const rowSpan = matrix.length;
-    const colSpan = 1;
+    const matrix = tileOps.mtx.mtx;
+    const y = 0;
+    const x = 1;
+    const ySpan = matrix.length;
+    const xSpan = 1;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.moveTileLeft(rowIndex, colIndex);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    tileOps.createTile(y, x, ySpan, xSpan);
+    tileOps.moveTileLeft(y, x);
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
     expect(matrix.every((row) => row[1] === 0)).toBe(true);
     expect(matrix.every((row) => row[0] === tile?.id)).toBe(true);
-    expect(tile?.colIndex).toBe(0);
+    expect(tile?.x).toBe(0);
   });
 
   it('should move tile right', () => {
     // Arrange
-    const matrix = tileOps.drawMatrix.drawMatrix;
-    const rowIndex = 0;
-    const colIndex = 0;
-    const rowSpan = matrix.length;
-    const colSpan = 1;
+    const matrix = tileOps.mtx.mtx;
+    const y = 0;
+    const x = 0;
+    const ySpan = matrix.length;
+    const xSpan = 1;
 
     // Act
-    tileOps.createTile(rowIndex, colIndex, rowSpan, colSpan);
-    tileOps.moveTileRight(rowIndex, colIndex);
-    const tile = tileOps.drawMatrix.tiles.values().next().value;
+    tileOps.createTile(y, x, ySpan, xSpan);
+    tileOps.moveTileRight(y, x);
+    const tile = tileOps.mtx.tiles.values().next().value;
     // Assert
     expect(tile).not.toBeNull();
     expect(matrix.every((row) => row[0] === 0)).toBe(true);
     expect(matrix.every((row) => row[1] === tile?.id)).toBe(true);
-    expect(tile?.colIndex).toBe(1);
+    expect(tile?.x).toBe(1);
   });
 });
