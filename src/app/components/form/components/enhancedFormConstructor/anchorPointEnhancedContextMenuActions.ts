@@ -31,14 +31,8 @@ export class AnchorPointEnhancedContextMenuActions<
       icon: 'add_circle_outline',
       getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       getAction: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-        const tileColSpan: number = this.apFormGroup.get(
-          this.tileColSpanAlias
-        )?.value;
-
-        this.tileOps.createTile(this.y, this.x, tileRowSpan, tileColSpan);
+        const spans = this.getSpans();
+        this.tileOps.createTile(this.y, this.x, spans.ySpan, spans.xSpan);
       },
       getDescription: () => 'Add new tile',
       color: 'green',
@@ -48,13 +42,8 @@ export class AnchorPointEnhancedContextMenuActions<
       getShowCondition: () => !!this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'edit_note',
       getAction: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-        const tileColSpan: number = this.apFormGroup.get(
-          this.tileColSpanAlias
-        )?.value;
-        this.tileOps.editTile(this.y, this.x, tileRowSpan, tileColSpan);
+        const spans = this.getSpans();
+        this.tileOps.editTile(this.y, this.x, spans.ySpan, spans.xSpan);
       },
       getDescription: () => 'Edit tile',
       color: 'red',
@@ -79,17 +68,10 @@ export class AnchorPointEnhancedContextMenuActions<
       getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'control_point_duplicate',
       getAction: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-        this.tileOps.duplicateAnchorPointRow(this.y, tileRowSpan);
+        this.tileOps.duplicateAnchorPointRow(this.y, this.getSpans().ySpan);
       },
       getDescription: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-
-        return `Add ${tileRowSpan} row(s) here`;
+        return `Add ${this.getSpans().ySpan} row(s) here`;
       },
       color: 'green',
     },
@@ -98,17 +80,10 @@ export class AnchorPointEnhancedContextMenuActions<
       getShowCondition: () => !this.tileOps.mtx.mtx[this.y][this.x],
       icon: 'highlight_remove',
       getAction: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-        this.tileOps.deleteAnchorPointRow(this.y, tileRowSpan);
+        this.tileOps.deleteAnchorPointRow(this.y, this.getSpans().ySpan);
       },
       getDescription: () => {
-        const tileRowSpan: number = this.apFormGroup.get(
-          this.tileRowSpanAlias
-        )?.value;
-
-        return `Delete ${tileRowSpan} row(s) here`;
+        return `Delete ${this.getSpans().ySpan} row(s) here`;
       },
       color: 'red',
     },
@@ -208,6 +183,16 @@ export class AnchorPointEnhancedContextMenuActions<
         }
       });
     }
+  }
+
+  private getSpans(): { ySpan: number; xSpan: number } {
+    const tileRowSpan: number = this.apFormGroup.get(
+      this.tileRowSpanAlias
+    )?.value;
+    const tileColSpan: number = this.apFormGroup.get(
+      this.tileColSpanAlias
+    )?.value;
+    return { ySpan: Number(tileRowSpan), xSpan: Number(tileColSpan) };
   }
 
   private disableFormElement(
