@@ -1,16 +1,15 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Id } from '../../models/id';
-import { ACTIONS, AppAction } from '../data-tables/interfaces/appAction';
-import { AppEntity } from '../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../data-tables/interfaces/inputTypes';
-import { ProtoActions } from '../protoActions';
-import { TileOperations } from './components/abstract/tile-operations';
+import { Id } from '../../../../models/id';
+import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
+import { AppAction } from '../../../data-tables/interfaces/appAction';
+import { AppEntity } from '../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
+import { ProtoActions } from '../../../protoActions';
+import { TileOperations } from './abstract/tile-operations';
 
-export class FormContextMenuActions<T extends Id> extends ProtoActions<
-  AppEntity<T>
-> {
-  currentFormElementForContextMenu!: AppEntity<T>;
+export class FormContextMenuActions<T extends Id> extends ProtoActions {
+  currentFormElementForCtxMenu!: AppEntity<T>;
 
   override allActions: AppAction<AppEntity<T>>[] = [
     {
@@ -27,9 +26,9 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: boolean = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.disabled = !value;
+          this.currentFormElementForCtxMenu.disabled = !value;
           const mainGroupFormControl = this.mainFormGroup.get(
-            this.currentFormElementForContextMenu.alias
+            this.currentFormElementForCtxMenu.alias
           );
           value
             ? mainGroupFormControl?.enable()
@@ -53,7 +52,7 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: string = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.color = value;
+          this.currentFormElementForCtxMenu.color = value;
           this.tileOps.saveFormTemplate();
         },
       },
@@ -72,28 +71,26 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
         },
         action: (alias: string, fromGroup: FormGroup) => {
           const value: string = fromGroup.get(alias)?.value;
-          this.currentFormElementForContextMenu.placeholder = value;
+          this.currentFormElementForCtxMenu.placeholder = value;
 
-          const fc = this.tileOps.tileFormGroup.get(
-            this.tileOps.formFieldsOnOffAlias
-          );
+          const fc = this.tileOps.tileFormGroup.get(this.tileOps.onOffAlias);
 
           let selectedFormElements: string[] = fc?.value;
-          const placeHolder = this.currentFormElementForContextMenu.placeholder;
+          const placeHolder = this.currentFormElementForCtxMenu.placeholder;
           selectedFormElements = selectedFormElements.filter(
             (item) => item !== placeHolder
           );
           selectedFormElements.push(value);
 
           fc?.setValue(selectedFormElements);
-          
+
           this.tileOps.saveFormTemplate();
         },
       },
     },
   ];
 
-  formContextMenuFormGroup!: FormGroup;
+  formCtxMenuFormGroup!: FormGroup;
 
   constructor(
     protected fb: FormBuilder,
@@ -102,7 +99,7 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
     protected toastrService: ToastrService
   ) {
     super();
-    this.formContextMenuFormGroup = this.fb.group({});
+    this.formCtxMenuFormGroup = this.fb.group({});
     this.allActions
       .map((a) => a.appEntity)
       .forEach(
@@ -111,7 +108,7 @@ export class FormContextMenuActions<T extends Id> extends ProtoActions<
           tileOps.addControlsToFormGroup(
             c.alias,
             c.mainControl,
-            this.formContextMenuFormGroup
+            this.formCtxMenuFormGroup
           )
       );
   }

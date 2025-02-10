@@ -25,7 +25,7 @@
               mat-icon-button
               matTooltip="Create tile"
               matTooltipPosition="above"
-              [disabled]="!enableFormConstructor"
+              [disabled]="!isFormCtrOn"
               (click)="tileOps.createTile()"
             >
               <mat-icon class="success-color">add_circle_outline</mat-icon>
@@ -37,7 +37,7 @@
               matTooltip="Clear all tiles"
               matTooltipPosition="above"
               (click)="tileOps.clearAllTiles()"
-              [disabled]="!tiles.length || !enableFormConstructor"
+              [disabled]="!tiles.length || !isFormCtrOn"
             >
               <mat-icon class="danger-color">delete_sweep</mat-icon>
             </button>
@@ -47,7 +47,7 @@
               matTooltip="Remove last tile"
               matTooltipPosition="above"
               (click)="tileOps.removeLast()"
-              [disabled]="!tiles.length || !enableFormConstructor"
+              [disabled]="!tiles.length || !isFormCtrOn"
             >
               <mat-icon class="warning-color">clear</mat-icon>
             </button>
@@ -58,10 +58,10 @@
         <mat-slide-toggle
           matTooltip="Turn form constructor on/off"
           matTooltipPosition="above"
-          [checked]="enableFormConstructor"
+          [checked]="isFormCtrOn"
           (change)="toggleFormConstructor($event)"
         >
-          {{ "Form Constructor " + (enableFormConstructor ? "ON" : "OFF") }}
+          {{ "Form Constructor " + (isFormCtrOn ? "ON" : "OFF") }}
         </mat-slide-toggle>
       </div>
     </div>
@@ -79,9 +79,9 @@
       >
         @for (tile of tiles; track tile) {
         <mat-grid-tile
-          [colspan]="tile.colSpan"
-          [rowspan]="tile.rowSpan"
-          [ngClass]="'tile ' + (enableFormConstructor && 'tile-visibility')"
+          [colspan]="tile.xSpan"
+          [rowspan]="tile.ySpan"
+          [ngClass]="'tile ' + (isFormCtrOn && 'tile-visibility')"
           cdkDropListOrientation="horizontal"
           cdkDropList
           [cdkDropListData]="tile.cdkDropListData"
@@ -90,10 +90,10 @@
           @for (f of tile.cdkDropListData; track f) {
           <div
             cdkDrag
-            [cdkDragDisabled]="!enableFormConstructor"
+            [cdkDragDisabled]="!isFormCtrOn"
             class="form-item"
-            [contextMenuTriggerFor]="enableFormConstructor ? menu : null"
-            (contextmenu)="setCurrentFormElementForContextMenu(f)"
+            [contextMenuTriggerFor]="isFormCtrOn ? menu : null"
+            (contextmenu)="setActiveFormFieldCtxMenu(f)"
           >
             <base-input
               *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
@@ -140,7 +140,7 @@
         }
       </mat-grid-list>
     </div>
-    <div *ngIf="!enableFormConstructor" class="form-control-elements">
+    <div *ngIf="!isFormCtrOn" class="form-control-elements">
       <button mat-fab extended (click)="formActions.saveAction()">
         <mat-icon>save_as</mat-icon>
         UPDATE FORM
@@ -161,13 +161,13 @@
 </mat-menu>
 
 <ng-template #actions>
-  @for (action of formContextMenuActions.allActions; track action; ) {
+  @for (action of formCtxMenuActions.allActions; track action; ) {
   <div style="padding-right: 20px; padding-left: 15px">
     <base-checkbox
       (click)="$event.stopPropagation()"
       *ngIf="action.appEntity?.mainControl?.type === CONTROL_TYPE.BOOLEAN"
       [alias]="action.appEntity?.alias || ''"
-      [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+      [formGroup]="formCtxMenuActions.formCtxMenuFormGroup"
       [placeholder]="action.description"
       [action]="action.appEntity?.action"
     />
@@ -176,7 +176,7 @@
       *ngIf="action.appEntity?.mainControl?.type === CONTROL_TYPE.INPUT"
       [alias]="action.appEntity?.alias || ''"
       [placeholder]="action.description"
-      [formGroup]="formContextMenuActions.formContextMenuFormGroup"
+      [formGroup]="formCtxMenuActions.formCtxMenuFormGroup"
       [action]="action.appEntity?.action"
     />
   </div>

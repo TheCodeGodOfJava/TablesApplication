@@ -1,10 +1,10 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../interfaces/tile';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { Tile } from '../../../interfaces/tile';
 import { FormOperations } from './form-operations';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
 
 export class TileOperations<T> extends FormOperations<T> {
   CONTROL_TYPE = CONTROL_TYPE;
@@ -13,7 +13,7 @@ export class TileOperations<T> extends FormOperations<T> {
   rowHeight: number = 85;
   gutter: number = 6;
 
-  formFieldsOnOffAlias: string = 'formFieldsOnOff';
+  onOffAlias: string = 'formFieldsOnOff';
   tileColSpanAlias: string = 'tile-col-span';
   tileRowSpanAlias: string = 'tile-row-span';
 
@@ -36,7 +36,7 @@ export class TileOperations<T> extends FormOperations<T> {
       .filter((a) => this.allFields.find((f) => f.placeholder === a));
     this.tileFormFields = [
       {
-        alias: this.formFieldsOnOffAlias,
+        alias: this.onOffAlias,
         placeholder: 'Form fields on/off',
         mainControl: {
           type: CONTROL_TYPE.SELECT,
@@ -82,8 +82,11 @@ export class TileOperations<T> extends FormOperations<T> {
       tileColSpan = this.columnQuantity;
     }
     this.tiles.push({
-      rowSpan: tileRowSpan,
-      colSpan: tileColSpan,
+      id: Date.now(),
+      y: 0,
+      x: 0,
+      ySpan: tileRowSpan,
+      xSpan: tileColSpan,
       cdkDropListData: [],
     } as Tile<T>);
     this.toastrService.success(
@@ -93,14 +96,14 @@ export class TileOperations<T> extends FormOperations<T> {
   }
 
   clearAllTiles() {
-    this.tileFormGroup.get(this.formFieldsOnOffAlias)?.reset();
+    this.tileFormGroup.get(this.onOffAlias)?.reset();
     this.tiles.length = 0;
     this.saveFormTemplate();
     this.toastrService.success(`Cleared!`);
   }
 
   removeLast() {
-    const formControl = this.tileFormGroup.get(this.formFieldsOnOffAlias);
+    const formControl = this.tileFormGroup.get(this.onOffAlias);
     if (this.tiles.length === 1) {
       this.tiles.length = 0;
       formControl?.reset();

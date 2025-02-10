@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MASTER_TYPES } from '../../../constants';
-import { ACTIONS } from '../../data-tables/interfaces/appAction';
 import { AbstractTabGroupComponent } from '../abstract/abstract-tab-group.component';
 import { tabImports } from '../imports/tabImports';
+import { ACTIONS } from '../../data-tables/interfaces/ACTIONS';
 
 @Component({
   selector: 'professor-tab-group',

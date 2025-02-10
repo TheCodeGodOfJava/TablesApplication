@@ -10,12 +10,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BaseCheckboxComponent } from '../../../formParts/base-checkbox/base-checkbox.component';
-import { BaseDatePickerComponent } from '../../../formParts/base-date-picker/base-date-picker.component';
-import { BaseInputComponent } from '../../../formParts/base-input/base-input.component';
-import { BaseSelectComponent } from '../../../formParts/base-select/base-select.component';
-import { BaseTextFieldComponent } from '../../../formParts/base-text-field/base-text-field.component';
-import { ContextMenuTriggerDirective } from '../../../directives/context-menu/context-menu.directive';
+import { BaseCheckboxComponent } from '../../../../../formParts/base-checkbox/base-checkbox.component';
+import { BaseDatePickerComponent } from '../../../../../formParts/base-date-picker/base-date-picker.component';
+import { BaseInputComponent } from '../../../../../formParts/base-input/base-input.component';
+import { BaseSelectComponent } from '../../../../../formParts/base-select/base-select.component';
+import { BaseTextFieldComponent } from '../../../../../formParts/base-text-field/base-text-field.component';
+import { ContextMenuTriggerDirective } from '../../../../../directives/context-menu/context-menu.directive';
 import { MatMenuModule } from '@angular/material/menu';
 
 export const formImports = [

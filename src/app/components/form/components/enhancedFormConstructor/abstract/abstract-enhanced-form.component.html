@@ -1,0 +1,269 @@
+<div *ngIf="detail">
+  <div class="form-constructor-control">
+    <div class="form-constructor-wrapper">
+      <div class="button-group">
+        <button
+          mat-mini-fab
+          color="warn"
+          matTooltip="Clear all tiles"
+          matTooltipPosition="above"
+          (click)="
+            tileOps.clearAllTiles(
+              apCtxMenuActions.apFormGroup,
+              apCtxMenuActions.onOffAlias
+            )
+          "
+          [disabled]="!mtx.tiles.size || !isFormCtrOn"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+        </button>
+      </div>
+      <div>
+        <mat-slide-toggle
+          matTooltip="Turn form constructor on/off"
+          matTooltipPosition="above"
+          [checked]="isFormCtrOn"
+          (change)="toggleFormConstructor($event)"
+        >
+          {{ "Form Constructor " + (isFormCtrOn ? "ON" : "OFF") }}
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="form-constructor-main">
+      <div class="form-container" [style.height]="rowHeight * colQty + 'px'">
+        <ng-container *ngFor="let row of mtx.mtx; let y = index">
+          <ng-container *ngFor="let col of row; let x = index">
+            <div
+              [contextMenuTriggerFor]="isFormCtrOn ? apMenu : null"
+              (contextmenu)="setActiveCoordinatesCtxMenu(y, x)"
+            >
+              @if (mtx.mtx[y][x]) {
+
+              <ng-container *ngIf="mtx.tiles.get(mtx.mtx[y][x]) as tile">
+                <div
+                  *ngIf="tile.x === x && tile.y === y"
+                  [id]="tile.id.toString()"
+                  [ngClass]="'tile ' + (isFormCtrOn && 'tile-visibility')"
+                  [draggable]="isTileDraggable"
+                  (dragstart)="startTileDrag(tile)"
+                  cdkDropListOrientation="horizontal"
+                  cdkDropList
+                  [cdkDropListData]="tile.cdkDropListData"
+                  (cdkDropListDropped)="tileOps.dropField($event)"
+                  [cdkDropListConnectedTo]="getConnectedTiles()"
+                  [ngStyle]="getTilePositionStyles(tile)"
+                >
+                  <ng-container
+                    *ngFor="
+                      let f of tile.cdkDropListData;
+                      let i = index;
+                      let last = last
+                    "
+                  >
+                    <div
+                      *ngIf="i === 0"
+                      class="form-item-separator"
+                      [ngStyle]="{
+                        width:
+                          (isFormCtrOn ? 2 : 1) * multiplier * tileMargin + 'px'
+                      }"
+                    ></div>
+                    <div
+                      cdkDrag
+                      (mouseenter)="isTileDraggable = false"
+                      (mouseleave)="isTileDraggable = true"
+                      (cdkDragStarted)="startDrag()"
+                      (cdkDragEnded)="endDrag()"
+                      [cdkDragDisabled]="!isFormCtrOn"
+                      class="form-item"
+                      [contextMenuTriggerFor]="isFormCtrOn ? menu : null"
+                      (contextmenu)="
+                        setActiveFormFieldCtxMenu(f); $event.stopPropagation()
+                      "
+                    >
+                      <base-input
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.INPUT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [formGroup]="formGroup"
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-select
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.SELECT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [controllerPath]="controllerPath"
+                        [formGroup]="formGroup"
+                        [dependentAliases]="
+                          f.mainControl?.dependentAliases || []
+                        "
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-checkbox
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+                        [alias]="f.alias"
+                        [formGroup]="formGroup"
+                        [placeholder]="f.placeholder"
+                        [outputStringValue]="f.cell && f.cell(detail)"
+                      />
+                      <base-date-picker
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.DATE_INPUT"
+                        [alias]="f.alias"
+                        [formGroup]="formGroup"
+                        [placeholder]="f.placeholder"
+                        [formFieldColor]="f.color || ''"
+                      />
+                      <base-text-field
+                        *ngIf="f.mainControl?.type === CONTROL_TYPE.TEXT"
+                        [alias]="f.alias"
+                        [placeholder]="f.placeholder"
+                        [formGroup]="formGroup"
+                        [formFieldColor]="f.color || ''"
+                      />
+                    </div>
+                    <div
+                      class="form-item-separator"
+                      [ngStyle]="{
+                        width:
+                          (last
+                            ? (isFormCtrOn ? 2 : 1) * multiplier * tileMargin
+                            : (isFormCtrOn ? 4 : 2) * multiplier * tileMargin) +
+                          'px'
+                      }"
+                    ></div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              } @else {
+              <div
+                *ngIf="isFormCtrOn"
+                (dragover)="onTileDragOver($event)"
+                (drop)="onTileDrop(y, x)"
+                class="anchor-point"
+                [ngStyle]="getApPositionStyles(y, x)"
+              >
+                <mat-icon class="anchor-icon">control_camera</mat-icon>
+              </div>
+              }
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="!isFormCtrOn" class="form-control-elements">
+      <button mat-fab extended (click)="formActions.saveAction()">
+        <mat-icon>save_as</mat-icon>
+        UPDATE FORM
+      </button>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu>
+  @for (action of formCtxMenuActions.allActions; track action; ) {
+  <div *ngIf="action.appEntity as appEntity" class="contextMenu">
+    <base-checkbox
+      (click)="$event.stopPropagation()"
+      *ngIf="appEntity.mainControl?.type === CONTROL_TYPE.BOOLEAN"
+      [alias]="appEntity.alias || ''"
+      [formGroup]="formCtxMenuActions.formCtxMenuFormGroup"
+      [placeholder]="action.description"
+      [action]="appEntity.action"
+    />
+    <base-input
+      (click)="$event.stopPropagation()"
+      *ngIf="appEntity.mainControl?.type === CONTROL_TYPE.INPUT"
+      [alias]="appEntity.alias || ''"
+      [placeholder]="action.description"
+      [formGroup]="formCtxMenuActions.formCtxMenuFormGroup"
+      [action]="appEntity.action"
+    />
+  </div>
+  }
+</mat-menu>
+
+<ng-template #actions> </ng-template>
+
+<mat-menu #apMenu>
+  <div class="anchor-point-menu" style="padding: 12px">
+    <div *ngIf="getTileExistsCondition()" class="anchor-point-menu">
+      <div class="directions">
+        <div style="display: flex; justify-content: center">
+          <button
+            mat-icon-button
+            (click)="tileOps.moveTileUp(apCtxMenuActions.y, apCtxMenuActions.x)"
+          >
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileLeft(apCtxMenuActions.y, apCtxMenuActions.x)
+            "
+            style="margin-right: 20px"
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileRight(apCtxMenuActions.y, apCtxMenuActions.x)
+            "
+            style="margin-left: 20px"
+          >
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <div style="display: flex; justify-content: center">
+          <button
+            mat-icon-button
+            (click)="
+              tileOps.moveTileDown(apCtxMenuActions.y, apCtxMenuActions.x)
+            "
+          >
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+        </div>
+      </div>
+      <base-select
+        *ngIf="apCtxMenuActions.onOffField as onOffField"
+        [alias]="onOffField.alias"
+        [placeholder]="onOffField.placeholder"
+        [formGroup]="apCtxMenuActions.apFormGroup"
+        [filterLocalSource]="onOffField.mainControl?.filterLocalSource"
+        [action]="onOffField.action"
+      />
+    </div>
+
+    <div class="anchor-point-menu">
+      <ng-container *ngFor="let tileControl of apCtxMenuActions.apFields">
+        <base-input
+          (click)="$event.stopPropagation()"
+          *ngIf="tileControl.mainControl?.type === CONTROL_TYPE.INPUT"
+          [alias]="tileControl.alias"
+          [formGroup]="apCtxMenuActions.apFormGroup"
+          [placeholder]="tileControl.placeholder"
+        />
+      </ng-container>
+    </div>
+  </div>
+
+  @for (action of apCtxMenuActions.allActions; track action; ) {
+  <div *ngIf="action.getShowCondition()" class="contextMenu">
+    <button
+      mat-menu-item
+      (click)="action.getAction()"
+      style="margin-right: 10px"
+    >
+      <mat-icon [ngStyle]="{ color: action.color }">{{ action.icon }}</mat-icon>
+      <span>{{ action.getDescription() }}</span>
+    </button>
+  </div>
+  }
+</mat-menu>

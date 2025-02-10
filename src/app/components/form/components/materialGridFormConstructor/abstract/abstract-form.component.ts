@@ -3,17 +3,17 @@ import { ToastrService } from 'ngx-toastr';
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { Id } from '../../../../models/id';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { StateService } from '../../../../services/state/state.service';
-import { ACTIONS } from '../../../data-tables/interfaces/appAction';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
-import { formImports } from '../../form-imports/formImports';
-import { FormActions } from '../../formActions';
-import { FormContextMenuActions } from '../../formContextMenuActions';
-import { Tile } from '../../interfaces/tile';
 import { TileOperations } from './tile-operations';
+import { Id } from '../../../../../models/id';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { StateService } from '../../../../../services/state/state.service';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { formImports } from '../form-imports/formImports';
+import { FormContextMenuActions } from '../formContextMenuActions';
+import { Tile } from '../../../interfaces/tile';
+import { FormActions } from '../formActions';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
 
 @Component({
   standalone: true,
@@ -38,8 +38,8 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   formGroup!: FormGroup;
 
-  enableFormConstructor: boolean = true;
-  protected enabelFormStringSuffix: string = '_state';
+  isFormCtrOn: boolean = true;
+  protected enableFormStringSuffix: string = '_state';
 
   tileControls!: AppEntity<T>[];
 
@@ -56,7 +56,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
 
   formActions!: FormActions<T>;
 
-  formContextMenuActions!: FormContextMenuActions<T>;
+  formCtxMenuActions!: FormContextMenuActions<T>;
 
   @Input()
   set formName(name: string) {
@@ -85,10 +85,10 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
     }
 
     const enableFormStr = this.localStorageService.getItem(
-      this.formName + this.enabelFormStringSuffix
+      this.formName + this.enableFormStringSuffix
     );
     if (enableFormStr) {
-      this.enableFormConstructor = JSON.parse(enableFormStr);
+      this.isFormCtrOn = JSON.parse(enableFormStr);
     }
 
     this.tiles.forEach((tile) => {
@@ -116,7 +116,7 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
       this.toastrService
     );
 
-    this.formContextMenuActions = new FormContextMenuActions(
+    this.formCtxMenuActions = new FormContextMenuActions(
       this.fb,
       this.formGroup,
       this.tileOps,
@@ -166,23 +166,23 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   enableDisableFormConstructor(): void {
-    this.enableFormConstructor
+    this.isFormCtrOn
       ? this.tileOps.tileFormGroup.enable()
       : this.tileOps.tileFormGroup.disable();
 
     this.tileOps.saveFormTemplate(
-      this.enabelFormStringSuffix,
-      JSON.stringify(this.enableFormConstructor)
+      this.enableFormStringSuffix,
+      JSON.stringify(this.isFormCtrOn)
     );
   }
 
   toggleFormConstructor(event: MatSlideToggleChange) {
-    this.enableFormConstructor = event.checked;
+    this.isFormCtrOn = event.checked;
     this.enableDisableFormConstructor();
   }
 
-  setCurrentFormElementForContextMenu(current: AppEntity<T>) {
-    this.formContextMenuActions.currentFormElementForContextMenu = current;
+  setActiveFormFieldCtxMenu(current: AppEntity<T>) {
+    this.formCtxMenuActions.currentFormElementForCtxMenu = current;
     this.setActionControlValue<boolean>(!current.disabled, ACTIONS.STATE);
     this.setActionControlValue<string>(current.color || '', ACTIONS.COLOR);
     this.setActionControlValue<string>(
@@ -192,10 +192,10 @@ export abstract class AbstractFormComponent<T extends Id> implements OnInit {
   }
 
   setActionControlValue<V>(value: V, actionType: ACTIONS) {
-    const action = this.formContextMenuActions.allActions.find(
+    const action = this.formCtxMenuActions.allActions.find(
       (a) => a.type === actionType
     );
-    const control = this.formContextMenuActions.formContextMenuFormGroup.get(
+    const control = this.formCtxMenuActions.formCtxMenuFormGroup.get(
       action?.appEntity?.alias || ''
     );
     control?.setValue(value);

@@ -9,11 +9,11 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { FilterService } from '../../../../services/filter/filter.service';
-import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
-import { StateService } from '../../../../services/state/state.service';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { Tile } from '../../interfaces/tile';
+import { FilterService } from '../../../../../services/filter/filter.service';
+import { LocalStorageService } from '../../../../../services/local-storage/local-storage.service';
+import { StateService } from '../../../../../services/state/state.service';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { Tile } from '../../../interfaces/tile';
 import { FormOperations } from '../abstract/form-operations';
 import { TileOperations } from '../abstract/tile-operations';
 import { studentFormFields } from './student-form-fields';
@@ -82,14 +82,14 @@ describe('StudentFromComponent', () => {
   it('should toggle form constructor', fakeAsync(() => {
     spyOn(component, 'enableDisableFormConstructor');
     // Initial state
-    expect(component.enableFormConstructor).toBe(true);
+    expect(component.isFormCtrOn).toBe(true);
     // Simulate MatSlideToggleChange event
     const toggleEvent = { checked: false } as MatSlideToggleChange;
     component.toggleFormConstructor(toggleEvent);
     tick();
     fixture.detectChanges();
     // Expect form to be disabled after toggle
-    expect(component.enableFormConstructor).toBe(false);
+    expect(component.isFormCtrOn).toBe(false);
     // Verify that enableDisableFormConstructor was called
 
     expect(component.enableDisableFormConstructor).toHaveBeenCalled();
@@ -128,10 +128,10 @@ describe('FormOperations', () => {
     spyOn(formOperations, 'saveFormTemplate');
 
     const formGroup = formBuilder.group({
-      formFieldsOnOffAlias: formBuilder.control(['field1']),
+      onOffAlias: formBuilder.control(['field1']),
     });
 
-    formOperations.enableDisableFormElements('formFieldsOnOffAlias', formGroup);
+    formOperations.enableDisableFormElements('onOffAlias', formGroup);
 
     expect(formOperations.saveFormTemplate).toHaveBeenCalled();
   });
@@ -198,8 +198,8 @@ describe('TileOperations', () => {
     tileOperations.createTile();
 
     expect(tileOperations.tiles.length).toBe(1);
-    expect(tileOperations.tiles[0].colSpan).toBe(4);
-    expect(tileOperations.tiles[0].rowSpan).toBe(2);
+    expect(tileOperations.tiles[0].xSpan).toBe(4);
+    expect(tileOperations.tiles[0].ySpan).toBe(2);
     expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
   });
 
@@ -216,8 +216,8 @@ describe('TileOperations', () => {
     tileOperations.createTile();
 
     expect(tileOperations.tiles.length).toBe(1);
-    expect(tileOperations.tiles[0].colSpan).toBe(8); // Should reset to column quantity
-    expect(tileOperations.tiles[0].rowSpan).toBe(2);
+    expect(tileOperations.tiles[0].xSpan).toBe(8); // Should reset to column quantity
+    expect(tileOperations.tiles[0].ySpan).toBe(2);
     expect(tileOperations.saveFormTemplate).toHaveBeenCalled();
   });
 
@@ -232,8 +232,11 @@ describe('TileOperations', () => {
 
   it('should remove the last tile', () => {
     tileOperations.tiles.push({
-      rowSpan: 2,
-      colSpan: 4,
+      id: 1,
+      y: 0,
+      x: 0,
+      ySpan: 2,
+      xSpan: 4,
       cdkDropListData: [
         { alias: 'alias1', placeholder: 'field1' },
         { alias: 'alias2', placeholder: 'field2' },

@@ -25,7 +25,6 @@ import { BaseSelectComponent } from '../../../../formParts/base-select/base-sele
 import { Id } from '../../../../models/id';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
-import { ACTIONS } from '../../interfaces/appAction';
 import { AppEntity } from '../../interfaces/appEntity';
 import { DtOutput } from '../../interfaces/dtOutput';
 import { CONTROL_TYPE } from '../../interfaces/inputTypes';
@@ -34,6 +33,7 @@ import { TableActions } from '../../tableActions';
 import { ColumnsOperations } from './columnsOperations';
 import { GenericDataSource } from './genericDataSource';
 import { TableFormOperations } from './tableFormOperations';
+import { ACTIONS } from '../../interfaces/ACTIONS';
 
 @Component({
   standalone: true,

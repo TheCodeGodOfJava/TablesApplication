@@ -2,6 +2,6 @@ export interface FormTile {
   cdkDropListData: {
     alias: string;
   }[];
-  rowSpan: string;
-  colSpan: string;
+  ySpan: string;
+  xSpan: string;
 }

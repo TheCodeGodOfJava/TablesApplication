@@ -9,10 +9,10 @@ import { Student } from '../../../../models/student';
 import { LocalStorageService } from '../../../../services/local-storage/local-storage.service';
 import { StateService } from '../../../../services/state/state.service';
 import { TableService } from '../../../../services/table/table.service';
-import { ACTIONS } from '../../interfaces/appAction';
 import { tableImports } from '../../table-imports/tableImports';
 import { GenericDataSource } from '../abstract/genericDataSource';
 import { studentsColumns } from './columns';
+import { ACTIONS } from '../../interfaces/ACTIONS';
 
 @Component({
   selector: 'students-data-table',
