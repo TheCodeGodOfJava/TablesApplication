@@ -325,4 +325,28 @@ describe('TileEnhancedOperations', () => {
     expect(matrix.every((row) => row[1] === tile?.id)).toBe(true);
     expect(tile?.x).toBe(1);
   });
+
+  it('should move tile right and bottom', () => {
+    // Arrange
+    const matrix = tileOps.mtx.mtx;
+    const y = 0;
+    const x = 0;
+    const ySpan = 3;
+    const xSpan = 3;
+    const move = { hz: 3, vt: 2 };
+
+    // Act
+    tileOps.createTile(y, x, ySpan, xSpan);
+    tileOps.editTile(y, x, ySpan, xSpan, move);
+    const tile = tileOps.mtx.tiles.values().next().value;
+
+    // Assert
+    expect(tile).not.toBeNull();
+    
+    for (let i = move.vt; i < ySpan; i++) {
+      for (let j = move.hz; j < xSpan; j++) {
+        expect(matrix[i][j]).toBe(tile ? tile.id : -1);
+      }
+    }
+  });
 });
