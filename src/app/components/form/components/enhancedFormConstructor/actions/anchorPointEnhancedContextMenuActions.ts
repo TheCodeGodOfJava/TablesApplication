@@ -1,13 +1,13 @@
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Id } from '../../../../models/id';
-import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
-import { AnchorPointAction } from '../../../data-tables/interfaces/anchorPointAction';
-import { AppEntity } from '../../../data-tables/interfaces/appEntity';
-import { CONTROL_TYPE } from '../../../data-tables/interfaces/inputTypes';
-import { ProtoActions } from '../../../protoActions';
-import { Tile } from '../../interfaces/tile';
-import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
+import { Id } from '../../../../../models/id';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
+import { AnchorPointAction } from '../../../../data-tables/interfaces/anchorPointAction';
+import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
+import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
+import { ProtoActions } from '../../../../protoActions';
+import { Tile } from '../../../interfaces/tile';
+import { TileEnhancedOperations } from '../abstract/tile-enhanced-operations';
 
 export class AnchorPointEnhancedContextMenuActions<
   T extends Id

@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ACTIONS } from '../../../data-tables/interfaces/ACTIONS';
-import { FormMatrix } from '../../interfaces/formMatrix';
-import { TileEnhancedOperations } from './abstract/tile-enhanced-operations';
+import { ACTIONS } from '../../../../data-tables/interfaces/ACTIONS';
+import { FormMatrix } from '../../../interfaces/formMatrix';
+import { TileEnhancedOperations } from '../abstract/tile-enhanced-operations';
 import { AnchorPointEnhancedContextMenuActions } from './anchorPointEnhancedContextMenuActions';
 
 describe('AnchorPointEnhancedContextMenuActions', () => {

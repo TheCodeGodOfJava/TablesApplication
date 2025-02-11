@@ -11,11 +11,11 @@ import { AppEntity } from '../../../../data-tables/interfaces/appEntity';
 import { CONTROL_TYPE } from '../../../../data-tables/interfaces/inputTypes';
 import { FormMatrix } from '../../../interfaces/formMatrix';
 import { Tile } from '../../../interfaces/tile';
-import { AnchorPointEnhancedContextMenuActions } from '../anchorPointEnhancedContextMenuActions';
+import { AnchorPointEnhancedContextMenuActions } from '../actions/anchorPointEnhancedContextMenuActions';
 import { formEnhancedImports } from '../form-imports/formEnhancedImports';
-import { FormEnhancedActions } from '../formEnhancedActions';
-import { FormEnhancedContextMenuActions } from '../formEnhancedContextMenuActions';
 import { TileEnhancedOperations } from './tile-enhanced-operations';
+import { FormEnhancedActions } from '../actions/formEnhancedActions';
+import { FormEnhancedContextMenuActions } from '../actions/formEnhancedContextMenuActions';
 
 @Component({
   standalone: true,

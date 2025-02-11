@@ -191,7 +191,7 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
       if (!this.isRowActionAllowed(matrix, y, 'delete')) return;
       this.mtx.mtx.splice(y, 1);
       this.updateTileRowIndices(y, this.mtx.mtx[y]?.length || 0, -1);
-      this.saveResult('Current anchor point row deleted!');
+      this.saveResult('Anchor point row(s) deleted!');
     }
   }
 
@@ -246,11 +246,11 @@ export class TileEnhancedOperations<T> extends FormEnhancedOperations<T> {
     const matrix = this.mtx.mtx;
     const tileId: number = matrix[y][x];
     const tile: Tile<T> | undefined = this.mtx.tiles.get(tileId);
-    if (tile) {
-      const formControl = formGroup.get(alias);
+    if (tile) {      
       const tileValues = tile.cdkDropListData.map(
         (entity) => entity.placeholder
       );
+      const formControl = formGroup.get(alias);
       const restValues = formControl?.value.filter(
         (placeholder: string) => !tileValues.includes(placeholder)
       );
