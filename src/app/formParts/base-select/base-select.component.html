@@ -16,6 +16,8 @@
       [multiple]="isMulti"
       (closed)="action && action(alias, formGroup)"
       (click)="startLoadingOptions()"
+      iScroll
+      (infiniteScroll)="scrollEnd()"
     >
       <mat-option>
         <ngx-mat-select-search

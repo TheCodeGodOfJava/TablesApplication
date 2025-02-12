@@ -15,7 +15,7 @@ const SELECT_ITEM_HEIGHT_EM = 3;
 
 @Directive({
   standalone: true,
-  selector: '[contextMenuTriggerFor]',
+  selector: '[iScroll]',
   providers: [InfiniteScrollService],
 })
 export class MatSelectInfiniteScrollDirective

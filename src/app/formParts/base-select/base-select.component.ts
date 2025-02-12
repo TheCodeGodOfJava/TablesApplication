@@ -16,6 +16,7 @@ import {
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
+import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
 
 @Component({
   selector: 'base-select',
@@ -26,6 +27,7 @@ import { AbstractFormElementComponent } from '../abstract/abstractFormElementCom
     ReactiveFormsModule,
     NgxMatSelectSearchModule,
     CommonModule,
+    MatSelectInfiniteScrollDirective
   ],
   templateUrl: './base-select.component.html',
   styleUrl: './base-select.component.scss',
@@ -124,6 +126,10 @@ export class BaseSelectComponent
 
   startLoadingOptions() {
     this.loadOptionsForSelect();
+  }
+
+  scrollEnd() {
+    console.log('!');
   }
 
   ngOnDestroy(): void {
