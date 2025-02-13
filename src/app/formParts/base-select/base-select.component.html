@@ -1,4 +1,4 @@
-<ng-container *ngIf="isMulti !== null && !loading" [formGroup]="formGroup">
+<ng-container *ngIf="isMulti !== null" [formGroup]="formGroup">
   <mat-form-field
     floatLabel="always"
     [class]="className"
@@ -30,10 +30,7 @@
         >
         </ngx-mat-select-search>
       </mat-option>
-      <mat-option
-        *ngFor="let entry of options | async"
-        [value]="entry"
-      >
+      <mat-option *ngFor="let entry of options | async" [value]="entry">
         {{ entry }}
       </mat-option>
     </mat-select>

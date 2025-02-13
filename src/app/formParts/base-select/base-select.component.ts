@@ -9,10 +9,9 @@ import {
   Subject,
   debounceTime,
   distinctUntilChanged,
-  map,
   of,
   takeUntil,
-  tap,
+  tap
 } from 'rxjs';
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
@@ -51,7 +50,7 @@ export class BaseSelectComponent
   private totalOptions: number = 0;
   private currentPage: number = 0;
 
-  restoreScroll: Subject<number> = new Subject<number>();
+  protected restoreScroll: Subject<number> = new Subject<number>();
 
   @Input()
   pageSize: number = 20;
@@ -91,8 +90,6 @@ export class BaseSelectComponent
   masterType?: string;
 
   static toggledTables: Set<string> = new Set();
-
-  protected loading: boolean = false;
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -136,28 +133,27 @@ export class BaseSelectComponent
   }
 
   loadOptionsForSelect(): void {
-    this.loading = true;
     if (this.filterLocalSource) {
       this.options = this.filterLocalSource(this.alias, this.currentTerm);
     } else {
       if (this.currentPage !== this.lastLoadedPage) {
-        this.options = this.getServerOptions(this.currentTerm).pipe(
-          tap((optionsData) => {
-            this.totalOptions = optionsData.first;
-            const newOptions: string[] = optionsData.second;
-            this.loadedOptions = [...this.loadedOptions, ...newOptions].sort(
-              (a, b) => a.localeCompare(b)
-            );
-            this.lastLoadedPage = this.currentPage;
-            this.formGroup.get(this.alias)?.reset();
-            this.restoreScroll.next(newOptions.length);
-            this.loading = false;
-          }),
-          map(() => this.loadedOptions)
-        );
+        this.getServerOptions(this.currentTerm)
+          .pipe(
+            tap((optionsData) => {
+              this.totalOptions = optionsData.first;
+              const newOptions: string[] = optionsData.second;
+              this.loadedOptions = [...this.loadedOptions, ...newOptions].sort(
+                (a, b) => a.localeCompare(b)
+              );
+              this.options = of([...this.loadedOptions]);
+              this.lastLoadedPage = this.currentPage;
+              this.formGroup.get(this.alias)?.reset();
+              this.restoreScroll.next(newOptions.length);
+            })
+          )
+          .subscribe();
       }
     }
-    this.loading = false;
   }
 
   private getServerOptions(
