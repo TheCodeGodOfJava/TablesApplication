@@ -104,6 +104,7 @@ export const studentFormFields: AppEntity<Student>[] = [
       getControl: () => new FormControl<string | null>(null),
       dependentAliases: ['country', 'state'],
     },
+    iScroll: true
   },
   {
     alias: 'phone',
