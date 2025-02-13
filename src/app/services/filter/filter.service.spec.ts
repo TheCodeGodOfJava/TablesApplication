@@ -1,11 +1,18 @@
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { FilterService } from './filter.service';
 import { environment } from '../../../environments/environment';
+import { FilterService } from './filter.service';
 
 describe('FilterService', () => {
   let service: FilterService;
   let httpMock: HttpTestingController;
+  const mockResponse: { first: number; second: string[] } = {
+    first: 2,
+    second: ['example1', 'example2'],
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -29,14 +36,17 @@ describe('FilterService', () => {
     const controllerPath = 'exampleController';
     const field = 'exampleField';
     const term = 'exampleTerm';
-    const mockResponse: string[] = ['example1', 'example2'];
 
     service.getDataForFilter(controllerPath, field, term).subscribe((data) => {
       expect(data).toEqual(mockResponse);
     });
 
     const req = httpMock.expectOne(
-      `${environment.API_BASE_URL}${controllerPath}/filter?field=${encodeURIComponent(field)}&term=${encodeURIComponent(term)}`
+      `${
+        environment.API_BASE_URL
+      }${controllerPath}/filter?field=${encodeURIComponent(
+        field
+      )}&term=${encodeURIComponent(term)}&pageSize=0&currentPage=-1`
     );
 
     expect(req.request.method).toBe('GET');
@@ -47,14 +57,17 @@ describe('FilterService', () => {
     const controllerPath = 'exampleController';
     const field = 'example field';
     const term = 'example term';
-    const mockResponse: string[] = ['example1', 'example2'];
 
     service.getDataForFilter(controllerPath, field, term).subscribe((data) => {
       expect(data).toEqual(mockResponse);
     });
 
     const req = httpMock.expectOne(
-      `${environment.API_BASE_URL}${controllerPath}/filter?field=${encodeURIComponent(field)}&term=${encodeURIComponent(term)}`
+      `${
+        environment.API_BASE_URL
+      }${controllerPath}/filter?field=${encodeURIComponent(
+        field
+      )}&term=${encodeURIComponent(term)}&pageSize=0&currentPage=-1`
     );
 
     expect(req.request.method).toBe('GET');

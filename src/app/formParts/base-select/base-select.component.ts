@@ -150,8 +150,8 @@ export class BaseSelectComponent
             );
             this.lastLoadedPage = this.currentPage;
             this.formGroup.get(this.alias)?.reset();
-            this.loading = false;
             this.restoreScroll.next(newOptions.length);
+            this.loading = false;
           }),
           map(() => this.loadedOptions)
         );
