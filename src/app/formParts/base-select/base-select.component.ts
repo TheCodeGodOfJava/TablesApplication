@@ -9,14 +9,15 @@ import {
   Subject,
   debounceTime,
   distinctUntilChanged,
-  startWith,
+  map,
+  of,
   takeUntil,
   tap,
 } from 'rxjs';
 import { SELECT_SEARCH_PREFIX } from '../../constants';
+import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
-import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
 
 @Component({
   selector: 'base-select',
@@ -27,7 +28,7 @@ import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scro
     ReactiveFormsModule,
     NgxMatSelectSearchModule,
     CommonModule,
-    MatSelectInfiniteScrollDirective
+    MatSelectInfiniteScrollDirective,
   ],
   templateUrl: './base-select.component.html',
   styleUrl: './base-select.component.scss',
@@ -43,6 +44,20 @@ export class BaseSelectComponent
   ngOnInit(): void {
     this.isMulti = Array.isArray(this.formGroup.get(this.alias)?.value);
   }
+
+  private lastLoadedPage: number = -1;
+
+  private currentTerm: string = '';
+  private totalOptions: number = 0;
+  private currentPage: number = 0;
+
+  restoreScroll: Subject<number> = new Subject<number>();
+
+  @Input()
+  pageSize: number = 20;
+
+  @Input()
+  isInfiniteScroll: boolean = false;
 
   @Input()
   dependentAliases: string[] = [];
@@ -64,6 +79,7 @@ export class BaseSelectComponent
   protected PREFIX = SELECT_SEARCH_PREFIX;
 
   options!: Observable<string[]>;
+  private loadedOptions: string[] = [];
 
   private currentDep!: string;
   private currentDepValue!: string;
@@ -85,43 +101,80 @@ export class BaseSelectComponent
   }
 
   private initSelect(): void {
+    const resetAndLoadOptions = (term: string = '') => {
+      this.lastLoadedPage = -1;
+      this.currentTerm = term;
+      this.currentPage = 0;
+      this.options = of([]);
+      this.loadedOptions = [];
+      this.formGroup.get(this.alias)?.reset();
+    };
+
     this.formGroup
       .get(this.alias + this.PREFIX)
       ?.valueChanges.pipe(
-        startWith(''),
         takeUntil(this.subscriptions$),
         debounceTime(700),
         distinctUntilChanged(),
-        tap((term: string) => this.loadOptionsForSelect(term))
+        tap((term: string) => {
+          resetAndLoadOptions(term);
+          this.loadOptionsForSelect();
+        })
       )
       .subscribe();
+
     this.dependentAliases.forEach((parentSelectAlias) => {
       this.formGroup
         .get(parentSelectAlias)
-        ?.valueChanges.pipe(startWith(''), takeUntil(this.subscriptions$))
+        ?.valueChanges.pipe(takeUntil(this.subscriptions$))
         .subscribe((value) => {
           this.currentDep = parentSelectAlias;
           this.currentDepValue = value;
-          this.loadOptionsForSelect();
+          resetAndLoadOptions();
         });
     });
   }
 
-  loadOptionsForSelect(term: string = ''): void {
+  loadOptionsForSelect(): void {
     this.loading = true;
-    this.options = this.filterLocalSource
-      ? this.filterLocalSource(this.alias, term)
-      : this.filterService.getDataForFilter(
-          this.controllerPath,
-          this.alias,
-          term,
-          this.currentDep,
-          this.currentDepValue,
-          this.masterId,
-          this.masterType,
-          BaseSelectComponent.toggledTables.has(this.tableName)
+    if (this.filterLocalSource) {
+      this.options = this.filterLocalSource(this.alias, this.currentTerm);
+    } else {
+      if (this.currentPage !== this.lastLoadedPage) {
+        this.options = this.getServerOptions(this.currentTerm).pipe(
+          tap((optionsData) => {
+            this.totalOptions = optionsData.first;
+            const newOptions: string[] = optionsData.second;
+            this.loadedOptions = [...this.loadedOptions, ...newOptions].sort(
+              (a, b) => a.localeCompare(b)
+            );
+            this.lastLoadedPage = this.currentPage;
+            this.formGroup.get(this.alias)?.reset();
+            this.loading = false;
+            this.restoreScroll.next(newOptions.length);
+          }),
+          map(() => this.loadedOptions)
         );
+      }
+    }
     this.loading = false;
+  }
+
+  private getServerOptions(
+    term: string
+  ): Observable<{ first: number; second: string[] }> {
+    return this.filterService.getDataForFilter(
+      this.controllerPath,
+      this.alias,
+      term,
+      this.currentDep,
+      this.currentDepValue,
+      this.masterId,
+      this.masterType,
+      BaseSelectComponent.toggledTables.has(this.tableName),
+      this.isInfiniteScroll ? this.pageSize : undefined,
+      this.isInfiniteScroll ? this.currentPage : undefined
+    );
   }
 
   startLoadingOptions() {
@@ -129,7 +182,14 @@ export class BaseSelectComponent
   }
 
   scrollEnd() {
-    console.log('!');
+    if (
+      this.isInfiniteScroll &&
+      this.currentPage < Math.floor(this.totalOptions / this.pageSize)
+    ) {
+      this.lastLoadedPage = this.currentPage;
+      this.currentPage++;
+      this.loadOptionsForSelect();
+    }
   }
 
   ngOnDestroy(): void {

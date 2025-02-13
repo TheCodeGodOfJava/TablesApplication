@@ -8,10 +8,10 @@ import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 export class InfiniteScrollService {
   private threshold = '15%';
   private debounceTime = 150;
-  private complete!: boolean;
   private thrPx = 0;
   private thrPc = 0;
   private destroyed$ = new Subject<void>();
+  private restoredScrollDistance: number = 0;
   private selectItemHeightPx!: number;
   private panel!: Element;
 
@@ -23,16 +23,23 @@ export class InfiniteScrollService {
     config: {
       threshold: string;
       debounceTime: number;
-      complete: boolean;
+      restoreScroll: Subject<number>;
     }
   ) {
     this.threshold = config.threshold;
     this.debounceTime = config.debounceTime;
-    this.complete = config.complete;
 
     this.panel = panel;
     this.selectItemHeightPx = selectItemHeightPx;
     this.evaluateThreshold();
+    config.restoreScroll.pipe(takeUntil(this.destroyed$)).subscribe((count) => {
+      if (this.panel) {
+        setTimeout(() => {
+          this.panel.scrollTop =
+            this.restoredScrollDistance - count * this.selectItemHeightPx;
+        }, 50);
+      }
+    });
   }
 
   evaluateThreshold() {
@@ -59,14 +66,13 @@ export class InfiniteScrollService {
 
   handleScrollEvent(event: any, infiniteScrollCallback: () => void) {
     this.ngZone.runOutsideAngular(() => {
-      if (this.complete) {
-        return;
-      }
+
       const countOfRenderedOptions = Math.round(
         this.panel.scrollHeight / this.selectItemHeightPx
       );
       const infiniteScrollDistance =
         this.selectItemHeightPx * countOfRenderedOptions;
+      this.restoredScrollDistance = infiniteScrollDistance;
       const threshold =
         this.thrPc !== 0 ? infiniteScrollDistance * this.thrPc : this.thrPx;
 

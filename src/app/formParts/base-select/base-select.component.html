@@ -8,6 +8,7 @@
         ? { '--mdc-filled-text-field-container-color': formFieldColor }
         : {}
     "
+    (click)="startLoadingOptions()"
   >
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select
@@ -15,9 +16,11 @@
       placeholder="search"
       [multiple]="isMulti"
       (closed)="action && action(alias, formGroup)"
-      (click)="startLoadingOptions()"
       iScroll
       (infiniteScroll)="scrollEnd()"
+      threshold="5"
+      [debounceTime]="700"
+      [restoreScroll]="restoreScroll"
     >
       <mat-option>
         <ngx-mat-select-search
@@ -27,7 +30,10 @@
         >
         </ngx-mat-select-search>
       </mat-option>
-      <mat-option *ngFor="let entry of options | async" [value]="entry">
+      <mat-option
+        *ngFor="let entry of options | async"
+        [value]="entry"
+      >
         {{ entry }}
       </mat-option>
     </mat-select>
