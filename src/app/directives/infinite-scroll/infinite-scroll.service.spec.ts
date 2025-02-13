@@ -13,7 +13,6 @@ const mockNgZone = {
 @Component({
   template: `<mat-select
     iScroll
-    [threshold]="'10%'"
     [restoreScroll]="restoreScroll"
     (infiniteScroll)="onScroll()"
   ></mat-select>`,
@@ -34,24 +33,10 @@ describe('MatSelectInfiniteScrollDirective', () => {
   let mockInfiniteScrollService: InfiniteScrollService;
   let openedChangeSubject: Subject<boolean>;
   let restoreScroll: Subject<number>;
-  let mockPanel: Element;
-
   const mockElementRef = new ElementRef(document.createElement('div'));
 
   beforeEach(async () => {
     restoreScroll = new Subject<number>();
-
-    mockPanel = document.createElement('div');
-
-    Object.defineProperty(mockPanel, 'scrollHeight', {
-      value: 500,
-      writable: true,
-    });
-
-    Object.defineProperty(mockPanel, 'clientHeight', {
-      value: 200,
-      writable: true,
-    });
 
     openedChangeSubject = new Subject<boolean>();
 
@@ -96,6 +81,12 @@ describe('MatSelectInfiniteScrollDirective', () => {
 
   it('should create the directive', () => {
     expect(directive).toBeTruthy();
+  });
+
+  it('should evaluate percent threshold', () => {
+    mockInfiniteScrollService.evaluateThreshold();
+    expect(mockInfiniteScrollService.thrPx).toBe(0);
+    expect(mockInfiniteScrollService.thrPc).toBe(0.15);
   });
 
   it('should correctly handle restoreScroll subject', () => {

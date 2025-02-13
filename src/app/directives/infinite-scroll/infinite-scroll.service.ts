@@ -8,8 +8,8 @@ import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 export class InfiniteScrollService {
   private threshold = '15%';
   private debounceTime = 150;
-  private thrPx = 0;
-  private thrPc = 0;
+  thrPx = 0;
+  thrPc = 0;
   private destroyed$ = new Subject<void>();
   private restoredScrollDistance: number = 0;
   private selectItemHeightPx!: number;
