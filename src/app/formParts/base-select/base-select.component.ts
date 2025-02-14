@@ -100,13 +100,14 @@ export class BaseSelectComponent
   }
 
   private initSelect(): void {
+    this.options = of([this.formGroup.get(this.alias)?.value]);
+
     const resetAndLoadOptions = (term: string = '') => {
       this.lastLoadedPage = -1;
       this.currentTerm = term;
-      this.currentPage = 0;      
+      this.currentPage = 0;
       this.options = of([]);
       this.loadedOptions = [];
-      this.formGroup.get(this.alias)?.reset();
     };
 
     this.formGroup
@@ -137,25 +138,24 @@ export class BaseSelectComponent
   loadOptionsForSelect(): void {
     if (this.filterLocalSource) {
       this.options = this.filterLocalSource(this.alias, this.currentTerm);
-    } else {
-      if (this.currentPage !== this.lastLoadedPage) {
-        this.getServerOptions(this.currentTerm)
-          .pipe(
-            tap((optionsData) => {
-              this.totalOptions = optionsData.first;
-              const newOptions: string[] = optionsData.second;
-              this.loadedOptions = [...this.loadedOptions, ...newOptions].sort(
-                (a, b) => a.localeCompare(b)
-              );
-              this.options = of([...this.loadedOptions]);
-              this.lastLoadedPage = this.currentPage;
-              this.formGroup.get(this.alias)?.reset();
-              this.restoreScroll.next(newOptions.length);
-            })
-          )
-          .subscribe();
-      }
+      return;
     }
+  
+    if (this.currentPage === this.lastLoadedPage) return;
+  
+    this.getServerOptions(this.currentTerm).pipe(
+      tap(({ first: totalOptions, second: newOptions }) => {
+        this.totalOptions = totalOptions;
+  
+        const selectedValue = this.formGroup.get(this.alias)?.value;
+        const newSet = new Set([selectedValue, ...this.loadedOptions, ...newOptions]);
+     
+        this.loadedOptions = [...newSet].sort((a, b) => a.localeCompare(b));
+        this.options = of([...this.loadedOptions]);
+        this.lastLoadedPage = this.currentPage;
+        this.restoreScroll.next(newOptions.length);
+      })
+    ).subscribe();
   }
 
   private getServerOptions(
