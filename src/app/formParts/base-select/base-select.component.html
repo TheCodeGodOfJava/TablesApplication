@@ -1,4 +1,4 @@
-<ng-container *ngIf="isMulti !== null && !loading" [formGroup]="formGroup">
+<ng-container *ngIf="isMulti !== null" [formGroup]="formGroup">
   <mat-form-field
     floatLabel="always"
     [class]="className"
@@ -8,6 +8,7 @@
         ? { '--mdc-filled-text-field-container-color': formFieldColor }
         : {}
     "
+    (click)="startLoadingOptions()"
   >
     <mat-label>{{ placeholder }}</mat-label>
     <mat-select
@@ -15,7 +16,11 @@
       placeholder="search"
       [multiple]="isMulti"
       (closed)="action && action(alias, formGroup)"
-      (click)="startLoadingOptions()"
+      iScroll
+      (infiniteScroll)="scrollEnd()"
+      threshold="5"
+      [debounceTime]="700"
+      [restoreScroll]="restoreScroll"
     >
       <mat-option>
         <ngx-mat-select-search
@@ -29,5 +34,8 @@
         {{ entry }}
       </mat-option>
     </mat-select>
+    <div matSuffix>
+      <mat-icon (click)="onClear($event)">clear</mat-icon>
+    </div>
   </mat-form-field>
 </ng-container>

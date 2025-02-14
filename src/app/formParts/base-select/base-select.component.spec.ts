@@ -3,7 +3,6 @@ import {
   TestBed,
   fakeAsync,
   tick,
-  flush,
 } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,8 +19,11 @@ class MockFilterService {
     field: string,
     term: string,
     dep: string = ''
-  ): Observable<string[]> {
-    const mockData: string[] = ['example1', 'example2', 'example3'];
+  ): Observable<{ first: number; second: string[] }> {
+    const mockData: { first: number; second: string[] } = {
+      first: 3,
+      second: ['example1', 'example2', 'example3'],
+    };
     return of(mockData);
   }
 }
@@ -41,7 +43,7 @@ describe('BaseSelectComponent', () => {
         ReactiveFormsModule,
         NgxMatSelectSearchModule,
         BrowserAnimationsModule,
-        BaseSelectComponent
+        BaseSelectComponent,
       ],
       providers: [{ provide: FilterService, useValue: mockFilterService }],
     }).compileComponents();
@@ -80,7 +82,7 @@ describe('BaseSelectComponent', () => {
 
   it('should load options correctly', fakeAsync(() => {
     component.ngAfterViewInit();
-    component.loadOptionsForSelect('searchTerm');
+    component.loadOptionsForSelect();
     tick(700); // debounce time
 
     component.options.subscribe((options) => {
@@ -107,7 +109,7 @@ describe('BaseSelectComponent', () => {
     tick(700);
     component.formGroup.get('testAliasSelectSearch')?.setValue('newSearchTerm');
     tick(700);
-    expect(component.loadOptionsForSelect).toHaveBeenCalledWith('newSearchTerm');
+    expect(component.loadOptionsForSelect).toHaveBeenCalledWith();
   }));
 
   it('should clean up subscriptions on destroy', () => {

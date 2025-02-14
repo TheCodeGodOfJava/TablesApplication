@@ -101,6 +101,8 @@
                           f.mainControl?.dependentAliases || []
                         "
                         [formFieldColor]="f.color || ''"
+                        [isInfiniteScroll]="!!f.iScroll"
+                        [pageSize]="5"
                       />
                       <base-checkbox
                         *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"

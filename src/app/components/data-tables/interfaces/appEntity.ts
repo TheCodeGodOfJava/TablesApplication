@@ -25,4 +25,5 @@ export interface AppEntity<T> {
   width?: number;
   disabled?: boolean;
   color?: string;
+  iScroll?: boolean;
 }
