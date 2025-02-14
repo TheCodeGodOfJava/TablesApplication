@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import {
@@ -11,7 +12,7 @@ import {
   distinctUntilChanged,
   of,
   takeUntil,
-  tap
+  tap,
 } from 'rxjs';
 import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
@@ -28,6 +29,7 @@ import { AbstractFormElementComponent } from '../abstract/abstractFormElementCom
     NgxMatSelectSearchModule,
     CommonModule,
     MatSelectInfiniteScrollDirective,
+    MatIconModule,
   ],
   templateUrl: './base-select.component.html',
   styleUrl: './base-select.component.scss',
@@ -101,7 +103,7 @@ export class BaseSelectComponent
     const resetAndLoadOptions = (term: string = '') => {
       this.lastLoadedPage = -1;
       this.currentTerm = term;
-      this.currentPage = 0;
+      this.currentPage = 0;      
       this.options = of([]);
       this.loadedOptions = [];
       this.formGroup.get(this.alias)?.reset();
@@ -186,6 +188,11 @@ export class BaseSelectComponent
       this.currentPage++;
       this.loadOptionsForSelect();
     }
+  }
+
+  onClear(event: Event) {
+    this.formGroup.get(this.alias)?.reset();
+    event.stopPropagation();
   }
 
   ngOnDestroy(): void {

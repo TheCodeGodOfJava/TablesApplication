@@ -34,5 +34,8 @@
         {{ entry }}
       </mat-option>
     </mat-select>
+    <div matSuffix>
+      <mat-icon (click)="onClear($event)">clear</mat-icon>
+    </div>
   </mat-form-field>
 </ng-container>
