@@ -1,6 +1,7 @@
-import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSelect } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { By } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { InfiniteScrollService } from './infinite-scroll.service';
 import { MatSelectInfiniteScrollDirective } from './mat-select-infinite-scroll.directive';
@@ -19,41 +20,18 @@ const mockNgZone = {
 })
 class TestComponent {
   restoreScroll = new Subject<number>();
-  @ViewChild(MatSelectInfiniteScrollDirective)
-  directive!: MatSelectInfiniteScrollDirective;
   onScroll() {}
 }
 
-describe('MatSelectInfiniteScrollDirective', () => {
+describe('InfiniteScrollService', () => {
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
-  let directive: MatSelectInfiniteScrollDirective;
-  let mockMatSelect: jasmine.SpyObj<MatSelect>;
   let mockInfiniteScrollCallback: jasmine.Spy;
   let mockInfiniteScrollService: InfiniteScrollService;
-  let openedChangeSubject: Subject<boolean>;
   let restoreScroll: Subject<number>;
-  const mockElementRef = new ElementRef(document.createElement('div'));
 
   beforeEach(async () => {
     restoreScroll = new Subject<number>();
-
-    openedChangeSubject = new Subject<boolean>();
-
-    mockMatSelect = jasmine.createSpyObj<MatSelect>('MatSelect', [
-      'open',
-      'close',
-      'toggle',
-      'setDisabledState',
-    ]);
-
-    Object.defineProperty(mockMatSelect, 'panel', {
-      get: () => mockElementRef.nativeElement,
-    });
-
-    Object.defineProperty(mockMatSelect, 'openedChange', {
-      get: () => openedChangeSubject.asObservable(),
-    });
 
     mockInfiniteScrollService = new InfiniteScrollService(mockNgZone);
     spyOn(mockInfiniteScrollService, 'initialize').and.callThrough();
@@ -66,9 +44,8 @@ describe('MatSelectInfiniteScrollDirective', () => {
 
     await TestBed.configureTestingModule({
       declarations: [TestComponent],
-      imports: [MatSelectInfiniteScrollDirective],
+      imports: [MatSelectModule, MatSelectInfiniteScrollDirective],
       providers: [
-        { provide: MatSelect, useValue: mockMatSelect },
         { provide: InfiniteScrollService, useValue: mockInfiniteScrollService },
       ],
     }).compileComponents();
@@ -76,25 +53,65 @@ describe('MatSelectInfiniteScrollDirective', () => {
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    directive = component.directive;
   });
 
-  it('should create the directive', () => {
-    expect(directive).toBeTruthy();
+  afterEach(() => {
+    if (mockInfiniteScrollService) {
+      mockInfiniteScrollService.destroy();
+    }
   });
 
-  it('should evaluate percent threshold', () => {
+  it('should be created', () => {
+    expect(mockInfiniteScrollService).toBeTruthy();
+  });
+
+  it('should evaluate threshold correctly for percentage', () => {
     mockInfiniteScrollService.evaluateThreshold();
-    expect(mockInfiniteScrollService.thrPx).toBe(0);
-    expect(mockInfiniteScrollService.thrPc).toBe(0.15);
+    expect(mockInfiniteScrollService['thrPc']).toBe(0.15);
+    expect(mockInfiniteScrollService['thrPx']).toBe(0);
   });
 
   it('should correctly handle restoreScroll subject', () => {
     spyOn(component.restoreScroll, 'next');
-
-    // Emit restoreScroll value
     component.restoreScroll.next(100);
-
     expect(component.restoreScroll.next).toHaveBeenCalledWith(100);
+  });
+
+  // it('should trigger infinite scroll when threshold is reached', async () => {
+  //   // Get MatSelect component instance
+  //   const selectDebugElement = fixture.debugElement.query(
+  //     By.directive(MatSelect)
+  //   );
+  //   const selectInstance = selectDebugElement.componentInstance as MatSelect;
+
+  //   // Open MatSelect dropdown
+  //   selectInstance.open();
+  //   fixture.detectChanges();
+  //   await fixture.whenStable(); // Wait for overlay to be created
+
+  //   // Get the overlay container after MatSelect is opened
+  //   const overlayContainer = document.querySelector(
+  //     '.cdk-overlay-pane'
+  //   ) as HTMLElement;
+
+  //   console.log('Overlay container:', overlayContainer); // Debugging: Ensure it exists
+
+  //   expect(overlayContainer).toBeTruthy(); // Ensure the panel is found
+
+  //   // Simulate scrolling inside the overlay
+  //   overlayContainer.scrollTop = 1500;
+  //   overlayContainer.dispatchEvent(new Event('scroll'));
+
+  //   expect(mockInfiniteScrollCallback).toHaveBeenCalled();
+  // });
+
+  it('should clean up on destroy', () => {
+    spyOn(mockInfiniteScrollService['destroyed$'], 'next');
+    spyOn(mockInfiniteScrollService['destroyed$'], 'complete');
+
+    mockInfiniteScrollService.destroy();
+
+    expect(mockInfiniteScrollService['destroyed$'].next).toHaveBeenCalled();
+    expect(mockInfiniteScrollService['destroyed$'].complete).toHaveBeenCalled();
   });
 });
