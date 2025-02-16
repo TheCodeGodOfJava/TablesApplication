@@ -30,11 +30,11 @@
         >
         </ngx-mat-select-search>
       </mat-option>
-      <mat-option *ngFor="let entry of options | async" [value]="entry">
+      <mat-option *ngFor="let entry of getOptions() | async" [value]="entry">
         {{ entry }}
       </mat-option>
     </mat-select>
-    <div matSuffix>
+    <div matSuffix *ngIf="withReset">
       <mat-icon (click)="onClear($event)">clear</mat-icon>
     </div>
   </mat-form-field>

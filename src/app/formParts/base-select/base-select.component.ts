@@ -18,6 +18,7 @@ import { SELECT_SEARCH_PREFIX } from '../../constants';
 import { MatSelectInfiniteScrollDirective } from '../../directives/infinite-scroll/mat-select-infinite-scroll.directive';
 import { FilterService } from '../../services/filter/filter.service';
 import { AbstractFormElementComponent } from '../abstract/abstractFormElementComponent';
+import { DepData } from './depData';
 
 @Component({
   selector: 'base-select',
@@ -46,11 +47,9 @@ export class BaseSelectComponent
     this.isMulti = Array.isArray(this.formGroup.get(this.alias)?.value);
   }
 
-  private lastLoadedPage: number = -1;
-
-  private currentTerm: string = '';
   private totalOptions: number = 0;
-  private currentPage: number = 0;
+
+  private static updateProcess: number = 0;
 
   protected restoreScroll: Subject<number> = new Subject<number>();
 
@@ -67,6 +66,9 @@ export class BaseSelectComponent
   tableName: string = '';
 
   @Input()
+  withReset: boolean = false;
+
+  @Input()
   filterLocalSource?: (
     field: string,
     term: string,
@@ -79,11 +81,7 @@ export class BaseSelectComponent
 
   protected PREFIX = SELECT_SEARCH_PREFIX;
 
-  options!: Observable<string[]>;
-  private loadedOptions: string[] = [];
-
-  private currentDep!: string;
-  private currentDepValue!: string;
+  static optionsMap: Map<string, DepData> = new Map();
 
   @Input()
   masterId?: number;
@@ -99,15 +97,39 @@ export class BaseSelectComponent
     });
   }
 
-  private initSelect(): void {
-    this.options = of([this.formGroup.get(this.alias)?.value]);
+  private getInitialOptionsArray(value?: string | any[]): string[] {
+    const currentValue = value ? value : this.formGroup.get(this.alias)?.value;
+    return this.isMulti
+      ? currentValue || []
+      : currentValue
+      ? [currentValue]
+      : [];
+  }
 
-    const resetAndLoadOptions = (term: string = '') => {
-      this.lastLoadedPage = -1;
-      this.currentTerm = term;
-      this.currentPage = 0;
-      this.options = of([]);
-      this.loadedOptions = [];
+  private initSelect(): void {
+    const dependencyData: DepData = {
+      options: of(this.getInitialOptionsArray()),
+      lastLoadedPage: -1,
+      currentPage: 0,
+      currentTerm: '',
+      loadedOptions: [],
+    };
+
+    BaseSelectComponent.optionsMap.set(this.alias, dependencyData);
+
+    const resetAndLoadOptions = (
+      alias: string = '',
+      term: string = ''
+    ): DepData => {
+      const newData: DepData = {
+        options: of([]),
+        lastLoadedPage: -1,
+        currentPage: 0,
+        currentTerm: term,
+        loadedOptions: [],
+      };
+      BaseSelectComponent.optionsMap.set(alias || this.alias, newData);
+      return newData;
     };
 
     this.formGroup
@@ -117,61 +139,153 @@ export class BaseSelectComponent
         debounceTime(700),
         distinctUntilChanged(),
         tap((term: string) => {
-          resetAndLoadOptions(term);
+          resetAndLoadOptions(this.alias, term);
           this.loadOptionsForSelect();
         })
       )
       .subscribe();
 
-    this.dependentAliases.forEach((parentSelectAlias) => {
+    if (!this.isMulti) {
       this.formGroup
-        .get(parentSelectAlias)
-        ?.valueChanges.pipe(takeUntil(this.subscriptions$))
-        .subscribe((value) => {
-          this.currentDep = parentSelectAlias;
-          this.currentDepValue = value;
-          resetAndLoadOptions();
-        });
-    });
+        .get(this.alias)
+        ?.valueChanges.pipe(
+          takeUntil(this.subscriptions$),
+          distinctUntilChanged(),
+          tap((value) => {
+            if (BaseSelectComponent.updateProcess) return;
+            BaseSelectComponent.updateProcess =
+              this.dependentAliases.length - 1;
+
+            const aliasIndex = this.dependentAliases.indexOf(this.alias);
+
+            for (
+              let i = aliasIndex + 1;
+              i < this.dependentAliases.length;
+              i++
+            ) {
+              const parentAlias = this.dependentAliases[i];
+              const parentControl = this.formGroup.get(parentAlias);
+              if (!parentControl) continue;
+
+              const depData = resetAndLoadOptions(parentAlias);
+
+              if (value) {
+                this.filterService
+                  .getParentSelectValue(
+                    this.controllerPath,
+                    parentAlias,
+                    this.alias,
+                    value
+                  )
+                  .pipe(
+                    tap((serverValues) => {
+                      let options: string[] = [];
+                      if (serverValues.length === 1) {
+                        parentControl.setValue(serverValues[0]);
+                        options = [serverValues[0]];
+                      } else if (
+                        parentControl.value &&
+                        !serverValues.includes(parentControl.value)
+                      ) {
+                        parentControl.reset();
+                      } else {
+                        options = [parentControl.value];
+                      }
+                      depData.options = of(options);
+                      BaseSelectComponent.updateProcess--;
+                    })
+                  )
+                  .subscribe();
+              } else {
+                depData.options = of([parentControl.value]);
+                BaseSelectComponent.updateProcess--;
+              }
+            }
+
+            for (let i = aliasIndex - 1; i >= 0; i--) {
+              const childAlias = this.dependentAliases[i];
+              const childControl = this.formGroup.get(childAlias);
+              if (!childControl) continue;
+
+              const depData = resetAndLoadOptions(childAlias);
+              const childValue = childControl.value;
+              if (childValue) {
+                this.filterService
+                  .getParentSelectValue(
+                    this.controllerPath,
+                    this.alias,
+                    childAlias,
+                    childValue
+                  )
+                  .pipe(
+                    tap((serverValues) => {
+                      if (!serverValues.includes(value)) {
+                        childControl.reset();
+                      }
+                      depData.options = of([childValue]);
+                      BaseSelectComponent.updateProcess--;
+                    })
+                  )
+                  .subscribe();
+              } else {
+                BaseSelectComponent.updateProcess--;
+              }
+            }
+            const depData = resetAndLoadOptions(this.alias);
+            depData.options = of(value ? [value] : []);
+          })
+        )
+        .subscribe();
+    }
   }
 
   loadOptionsForSelect(): void {
-    if (this.filterLocalSource) {
-      this.options = this.filterLocalSource(this.alias, this.currentTerm);
+    const depData = BaseSelectComponent.optionsMap.get(this.alias);
+    if (this.filterLocalSource && depData) {
+      depData.options = this.filterLocalSource(this.alias, depData.currentTerm);
       return;
     }
-  
-    if (this.currentPage === this.lastLoadedPage) return;
-  
-    this.getServerOptions(this.currentTerm).pipe(
-      tap(({ first: totalOptions, second: newOptions }) => {
-        this.totalOptions = totalOptions;
-  
-        const selectedValue = this.formGroup.get(this.alias)?.value;
-        const newSet = new Set([selectedValue, ...this.loadedOptions, ...newOptions]);
-     
-        this.loadedOptions = [...newSet].sort((a, b) => a.localeCompare(b));
-        this.options = of([...this.loadedOptions]);
-        this.lastLoadedPage = this.currentPage;
-        this.restoreScroll.next(newOptions.length);
-      })
-    ).subscribe();
+
+    if (!depData || depData.currentPage === depData.lastLoadedPage) return;
+
+    this.getServerOptions(depData.currentTerm)
+      .pipe(
+        tap(({ first: totalOptions, second: newOptions }) => {
+          this.totalOptions = totalOptions;
+          const newSet = new Set([
+            ...this.getInitialOptionsArray(),
+            ...depData.loadedOptions,
+            ...newOptions,
+          ]);
+          depData.loadedOptions = [...newSet];
+          depData.options = of([...depData.loadedOptions.sort()]);
+          depData.lastLoadedPage = depData.currentPage;
+          this.restoreScroll.next(newOptions.length);
+        })
+      )
+      .subscribe();
   }
 
   private getServerOptions(
     term: string
   ): Observable<{ first: number; second: string[] }> {
+    const deps = this.dependentAliases
+      .filter((item) => item !== this.alias)
+      .map((alias) => ({ alias, value: this.formGroup.get(alias)?.value }))
+      .filter(({ value }) => value);
+
+    const depData = BaseSelectComponent.optionsMap.get(this.alias);
+
     return this.filterService.getDataForFilter(
       this.controllerPath,
       this.alias,
       term,
-      this.currentDep,
-      this.currentDepValue,
+      deps.map((d) => ({ first: d.alias, second: d.value })),
       this.masterId,
       this.masterType,
       BaseSelectComponent.toggledTables.has(this.tableName),
       this.isInfiniteScroll ? this.pageSize : undefined,
-      this.isInfiniteScroll ? this.currentPage : undefined
+      this.isInfiniteScroll ? depData?.currentPage : undefined
     );
   }
 
@@ -180,22 +294,29 @@ export class BaseSelectComponent
   }
 
   scrollEnd() {
+    const depData = BaseSelectComponent.optionsMap.get(this.alias);
     if (
+      depData &&
       this.isInfiniteScroll &&
-      this.currentPage < Math.floor(this.totalOptions / this.pageSize)
+      depData.currentPage < Math.floor(this.totalOptions / this.pageSize)
     ) {
-      this.lastLoadedPage = this.currentPage;
-      this.currentPage++;
+      depData.lastLoadedPage = depData.currentPage;
+      depData.currentPage++;
       this.loadOptionsForSelect();
     }
   }
 
   onClear(event: Event) {
-    this.formGroup.get(this.alias)?.reset();
     event.stopPropagation();
+    this.formGroup.get(this.alias)?.reset();
+  }
+
+  getOptions(): Observable<string[]> {
+    return BaseSelectComponent.optionsMap.get(this.alias)?.options || of([]);
   }
 
   ngOnDestroy(): void {
+    BaseSelectComponent.optionsMap.delete(this.alias);
     this.subscriptions$.next(true);
     this.subscriptions$.unsubscribe();
   }

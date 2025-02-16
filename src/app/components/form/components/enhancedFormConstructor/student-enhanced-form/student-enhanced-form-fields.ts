@@ -85,6 +85,7 @@ export const studentFormFields: AppEntity<Student>[] = [
     mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
+      dependentAliases: ['city', 'state', 'country'],
     },
   },
   {
@@ -93,7 +94,7 @@ export const studentFormFields: AppEntity<Student>[] = [
     mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
-      dependentAliases: ['country'],
+      dependentAliases: ['city', 'state', 'country'],
     },
   },
   {
@@ -102,9 +103,9 @@ export const studentFormFields: AppEntity<Student>[] = [
     mainControl: {
       type: CONTROL_TYPE.SELECT,
       getControl: () => new FormControl<string | null>(null),
-      dependentAliases: ['country', 'state'],
+      dependentAliases: ['city', 'state', 'country'],
     },
-    iScroll: true
+    iScroll: true,
   },
   {
     alias: 'phone',

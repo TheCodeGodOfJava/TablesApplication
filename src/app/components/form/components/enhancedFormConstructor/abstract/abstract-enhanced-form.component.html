@@ -103,6 +103,7 @@
                         [formFieldColor]="f.color || ''"
                         [isInfiniteScroll]="!!f.iScroll"
                         [pageSize]="5"
+                        [withReset]="true"
                       />
                       <base-checkbox
                         *ngIf="f.mainControl?.type === CONTROL_TYPE.BOOLEAN"

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,26 +13,53 @@ export class FilterService {
     controllerPath: string,
     field: string,
     term: string,
-    depAlias: string = '',
-    dep: string = '',
-    masterId: number | undefined = undefined,
+    dependencies: { first: string; second: string }[],
+    masterId?: number,
     masterType: string = '',
     tableToggle: boolean = false,
     pageSize: number = 0,
     currentPage: number = -1
   ): Observable<{ first: number; second: string[] }> => {
-    depAlias && (depAlias = `depAlias=${depAlias}&`);
-    dep = dep ? `dep=${dep}&` : '';
-    const masterIdStr = masterId ? `masterId=${masterId}&` : '';
-    masterType = masterType ? `masterType=${masterType}&` : '';
-    const tableToggleStr: string = tableToggle ? 'tableToggle=true&' : '';
+    const depsParams = dependencies.length
+      ? dependencies
+          .map(({ first, second }) => `depAliases=${first}&deps=${second}`)
+          .join('&') + '&'
+      : '';
+
+    const queryParams = new URLSearchParams({
+      field: field,
+      term: term,
+      masterId: masterId?.toString() || '',
+      masterType: masterType,
+      tableToggle: tableToggle ? 'true' : '',
+      pageSize: pageSize.toString(),
+      currentPage: currentPage.toString(),
+    });
+
     const url = `${
       environment.API_BASE_URL
-    }${controllerPath}/filter?${depAlias}${dep}${masterIdStr}${masterType}${tableToggleStr}field=${encodeURIComponent(
-      field
-    )}&term=${encodeURIComponent(
-      term || ''
-    )}&pageSize=${pageSize}&currentPage=${currentPage}`;
+    }${controllerPath}/filter?${depsParams}${queryParams.toString()}`;
+
     return this.hc.get<{ first: number; second: string[] }>(url);
   };
+
+  public getParentSelectValue(
+    controllerPath: string,
+    parentFieldAlias: string,
+    childFieldAlias: string,
+    childFieldValue: string
+  ): Observable<string[]> {
+    const params = new HttpParams()
+      .set('parentFieldAlias', parentFieldAlias)
+      .set('childFieldAlias', childFieldAlias)
+      .set('childFieldValue', childFieldValue);
+
+    return this.hc.get<string[]>(
+      `${environment.API_BASE_URL}${controllerPath}/getParentSelectValue`,
+      {
+        params,
+        responseType: 'json',
+      }
+    );
+  }
 }
