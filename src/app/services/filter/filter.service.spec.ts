@@ -13,6 +13,7 @@ describe('FilterService', () => {
     first: 2,
     second: ['example1', 'example2'],
   };
+  const dependencies: { first: string; second: string }[] = [];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,16 +38,13 @@ describe('FilterService', () => {
     const field = 'exampleField';
     const term = 'exampleTerm';
 
-    service.getDataForFilter(controllerPath, field, term).subscribe((data) => {
-      expect(data).toEqual(mockResponse);
-    });
-
+    service
+      .getDataForFilter(controllerPath, field, term, dependencies)
+      .subscribe((data) => {
+        expect(data).toEqual(mockResponse);
+      });
     const req = httpMock.expectOne(
-      `${
-        environment.API_BASE_URL
-      }${controllerPath}/filter?field=${encodeURIComponent(
-        field
-      )}&term=${encodeURIComponent(term)}&pageSize=0&currentPage=-1`
+      `${environment.API_BASE_URL}${controllerPath}/filter?field=exampleField&term=exampleTerm&masterId=&masterType=&tableToggle=&pageSize=0&currentPage=-1`
     );
 
     expect(req.request.method).toBe('GET');
@@ -58,16 +56,14 @@ describe('FilterService', () => {
     const field = 'example field';
     const term = 'example term';
 
-    service.getDataForFilter(controllerPath, field, term).subscribe((data) => {
-      expect(data).toEqual(mockResponse);
-    });
+    service
+      .getDataForFilter(controllerPath, field, term, dependencies)
+      .subscribe((data) => {
+        expect(data).toEqual(mockResponse);
+      });
 
     const req = httpMock.expectOne(
-      `${
-        environment.API_BASE_URL
-      }${controllerPath}/filter?field=${encodeURIComponent(
-        field
-      )}&term=${encodeURIComponent(term)}&pageSize=0&currentPage=-1`
+      `${environment.API_BASE_URL}${controllerPath}/filter?field=example+field&term=example+term&masterId=&masterType=&tableToggle=&pageSize=0&currentPage=-1`
     );
 
     expect(req.request.method).toBe('GET');
