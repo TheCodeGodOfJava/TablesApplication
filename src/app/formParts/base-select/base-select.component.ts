@@ -51,8 +51,6 @@ export class BaseSelectComponent
 
   private static updateProcess: number = 0;
 
-  protected restoreScroll: Subject<number> = new Subject<number>();
-
   @Input()
   pageSize: number = 20;
 
@@ -106,6 +104,21 @@ export class BaseSelectComponent
       : [];
   }
 
+  private resetAndLoadOptions = (
+    alias: string = '',
+    term: string = ''
+  ): DepData => {
+    const newData: DepData = {
+      options: of([]),
+      lastLoadedPage: -1,
+      currentPage: 0,
+      currentTerm: term,
+      loadedOptions: [],
+    };
+    BaseSelectComponent.optionsMap.set(alias || this.alias, newData);
+    return newData;
+  };
+
   private initSelect(): void {
     const dependencyData: DepData = {
       options: of(this.getInitialOptionsArray()),
@@ -117,21 +130,6 @@ export class BaseSelectComponent
 
     BaseSelectComponent.optionsMap.set(this.alias, dependencyData);
 
-    const resetAndLoadOptions = (
-      alias: string = '',
-      term: string = ''
-    ): DepData => {
-      const newData: DepData = {
-        options: of([]),
-        lastLoadedPage: -1,
-        currentPage: 0,
-        currentTerm: term,
-        loadedOptions: [],
-      };
-      BaseSelectComponent.optionsMap.set(alias || this.alias, newData);
-      return newData;
-    };
-
     this.formGroup
       .get(this.alias + this.PREFIX)
       ?.valueChanges.pipe(
@@ -139,7 +137,7 @@ export class BaseSelectComponent
         debounceTime(700),
         distinctUntilChanged(),
         tap((term: string) => {
-          resetAndLoadOptions(this.alias, term);
+          this.resetAndLoadOptions(this.alias, term);
           this.loadOptionsForSelect();
         })
       )
@@ -167,7 +165,7 @@ export class BaseSelectComponent
               const parentControl = this.formGroup.get(parentAlias);
               if (!parentControl) continue;
 
-              const depData = resetAndLoadOptions(parentAlias);
+              const depData = this.resetAndLoadOptions(parentAlias);
 
               if (value) {
                 this.filterService
@@ -207,7 +205,7 @@ export class BaseSelectComponent
               const childControl = this.formGroup.get(childAlias);
               if (!childControl) continue;
 
-              const depData = resetAndLoadOptions(childAlias);
+              const depData = this.resetAndLoadOptions(childAlias);
               const childValue = childControl.value;
               if (childValue) {
                 this.filterService
@@ -231,8 +229,6 @@ export class BaseSelectComponent
                 BaseSelectComponent.updateProcess--;
               }
             }
-            const depData = resetAndLoadOptions(this.alias);
-            depData.options = of(value ? [value] : []);
           })
         )
         .subscribe();
@@ -260,7 +256,6 @@ export class BaseSelectComponent
           depData.loadedOptions = [...newSet];
           depData.options = of([...depData.loadedOptions.sort()]);
           depData.lastLoadedPage = depData.currentPage;
-          this.restoreScroll.next(newOptions.length);
         })
       )
       .subscribe();
@@ -290,6 +285,9 @@ export class BaseSelectComponent
   }
 
   startLoadingOptions() {
+    const depData = this.resetAndLoadOptions(this.alias);
+    const currentValue = this.formGroup.get(this.alias)?.value;
+    depData.options = of(currentValue ? [currentValue] : []);
     this.loadOptionsForSelect();
   }
 

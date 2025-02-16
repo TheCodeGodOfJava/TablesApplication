@@ -77,34 +77,6 @@ describe('InfiniteScrollService', () => {
     expect(component.restoreScroll.next).toHaveBeenCalledWith(100);
   });
 
-  // it('should trigger infinite scroll when threshold is reached', async () => {
-  //   // Get MatSelect component instance
-  //   const selectDebugElement = fixture.debugElement.query(
-  //     By.directive(MatSelect)
-  //   );
-  //   const selectInstance = selectDebugElement.componentInstance as MatSelect;
-
-  //   // Open MatSelect dropdown
-  //   selectInstance.open();
-  //   fixture.detectChanges();
-  //   await fixture.whenStable(); // Wait for overlay to be created
-
-  //   // Get the overlay container after MatSelect is opened
-  //   const overlayContainer = document.querySelector(
-  //     '.cdk-overlay-pane'
-  //   ) as HTMLElement;
-
-  //   console.log('Overlay container:', overlayContainer); // Debugging: Ensure it exists
-
-  //   expect(overlayContainer).toBeTruthy(); // Ensure the panel is found
-
-  //   // Simulate scrolling inside the overlay
-  //   overlayContainer.scrollTop = 1500;
-  //   overlayContainer.dispatchEvent(new Event('scroll'));
-
-  //   expect(mockInfiniteScrollCallback).toHaveBeenCalled();
-  // });
-
   it('should clean up on destroy', () => {
     spyOn(mockInfiniteScrollService['destroyed$'], 'next');
     spyOn(mockInfiniteScrollService['destroyed$'], 'complete');

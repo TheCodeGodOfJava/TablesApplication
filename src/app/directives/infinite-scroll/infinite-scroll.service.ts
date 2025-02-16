@@ -11,7 +11,6 @@ export class InfiniteScrollService {
   thrPx = 0;
   thrPc = 0;
   private destroyed$ = new Subject<void>();
-  private restoredScrollDistance: number = 0;
   private selectItemHeightPx!: number;
   private panel!: Element;
 
@@ -23,7 +22,6 @@ export class InfiniteScrollService {
     config: {
       threshold: string;
       debounceTime: number;
-      restoreScroll: Subject<number>;
     }
   ) {
     this.threshold = config.threshold;
@@ -31,15 +29,7 @@ export class InfiniteScrollService {
 
     this.panel = panel;
     this.selectItemHeightPx = selectItemHeightPx;
-    this.evaluateThreshold();
-    config.restoreScroll.pipe(takeUntil(this.destroyed$)).subscribe((count) => {
-      if (this.panel) {
-        setTimeout(() => {
-          this.panel.scrollTop =
-            this.restoredScrollDistance - count * this.selectItemHeightPx;
-        }, 50);
-      }
-    });
+    this.evaluateThreshold();    
   }
 
   evaluateThreshold() {
@@ -72,7 +62,6 @@ export class InfiniteScrollService {
       );
       const infiniteScrollDistance =
         this.selectItemHeightPx * countOfRenderedOptions;
-      this.restoredScrollDistance = infiniteScrollDistance;
       const threshold =
         this.thrPc !== 0 ? infiniteScrollDistance * this.thrPc : this.thrPx;
 

@@ -23,7 +23,6 @@ export class MatSelectInfiniteScrollDirective
 {
   @Input() threshold: string = '15%';
   @Input() debounceTime: number = 150;
-  @Input() restoreScroll!: Subject<number>;
   @Output() infiniteScroll = new EventEmitter<void>();
 
   private destroyed$ = new Subject<boolean>();
@@ -43,7 +42,6 @@ export class MatSelectInfiniteScrollDirective
           this.infiniteScrollService.initialize(panel, selectItemHeightPx, {
             threshold: this.threshold,
             debounceTime: this.debounceTime,
-            restoreScroll: this.restoreScroll,
           });
 
           this.infiniteScrollService.registerScrollListener(() =>
