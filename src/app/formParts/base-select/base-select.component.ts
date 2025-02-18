@@ -104,7 +104,7 @@ export class BaseSelectComponent
       : [];
   }
 
-  private resetAndLoadOptions = (
+  public resetAndLoadOptions = (
     alias: string = '',
     term: string = ''
   ): DepData => {
@@ -316,6 +316,6 @@ export class BaseSelectComponent
   ngOnDestroy(): void {
     BaseSelectComponent.optionsMap.delete(this.alias);
     this.subscriptions$.next(true);
-    this.subscriptions$.unsubscribe();
+    this.subscriptions$.complete();
   }
 }

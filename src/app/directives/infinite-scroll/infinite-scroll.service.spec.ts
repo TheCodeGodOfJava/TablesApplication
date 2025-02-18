@@ -14,12 +14,10 @@ const mockNgZone = {
 @Component({
   template: `<mat-select
     iScroll
-    [restoreScroll]="restoreScroll"
     (infiniteScroll)="onScroll()"
   ></mat-select>`,
 })
 class TestComponent {
-  restoreScroll = new Subject<number>();
   onScroll() {}
 }
 
@@ -28,10 +26,8 @@ describe('InfiniteScrollService', () => {
   let fixture: ComponentFixture<TestComponent>;
   let mockInfiniteScrollCallback: jasmine.Spy;
   let mockInfiniteScrollService: InfiniteScrollService;
-  let restoreScroll: Subject<number>;
 
   beforeEach(async () => {
-    restoreScroll = new Subject<number>();
 
     mockInfiniteScrollService = new InfiniteScrollService(mockNgZone);
     spyOn(mockInfiniteScrollService, 'initialize').and.callThrough();
@@ -69,12 +65,6 @@ describe('InfiniteScrollService', () => {
     mockInfiniteScrollService.evaluateThreshold();
     expect(mockInfiniteScrollService['thrPc']).toBe(0.15);
     expect(mockInfiniteScrollService['thrPx']).toBe(0);
-  });
-
-  it('should correctly handle restoreScroll subject', () => {
-    spyOn(component.restoreScroll, 'next');
-    component.restoreScroll.next(100);
-    expect(component.restoreScroll.next).toHaveBeenCalledWith(100);
   });
 
   it('should clean up on destroy', () => {
