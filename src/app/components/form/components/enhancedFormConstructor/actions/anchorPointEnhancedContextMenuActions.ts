@@ -81,6 +81,7 @@ export class AnchorPointEnhancedContextMenuActions<
       icon: 'highlight_remove',
       getAction: () => {
         this.tileOps.deleteAnchorPointRow(this.y, this.getSpans().ySpan);
+        this.y = 0;
       },
       getDescription: () => {
         return `Delete ${this.getSpans().ySpan} row(s) here`;
